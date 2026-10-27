@@ -1,0 +1,41 @@
+ATP ROA Studio — third-party components
+
+Application icon / アプリアイコン
+University of Yamanashi GLIA Center official website: https://glia.yamanashi.ac.jp/
+Source app icon: https://glia.yamanashi.ac.jp/apple-touch-icon.png
+The official logo is retained in full, with resolution and file-format conversion only.
+Logo source URLs and checksums are in assets/logo-provenance.json.
+The logo retains its original ownership; it is not relicensed under the software GPL.
+
+AQuA2-Fiji: https://github.com/yu-lab-vt/AQuA2-Fiji
+Pinned commit ca807872077a736e906698047bd718ce54754eda
+GPL-3.0, author Xuelong Mi / Yu Lab and upstream contributors.
+Upstream Java sources, resources and license are retained in vendor/AQuA2-Fiji.
+The adapter java/StudioBridge.java calls the upstream helpers without modifying their algorithms.
+The Python median preprocessing and Python measurements are separate, explicitly documented steps.
+Native libraries included in the upstream source tree retain their upstream provenance.
+
+Bio-Formats 8.4.0: https://www.openmicroscopy.org/bio-formats/
+https://downloads.openmicroscopy.org/bio-formats/8.4.0/
+BSD and GPL components; OIR reader is in the GPL component.
+License files embedded in bioformats_package.jar remain intact.
+Source: https://github.com/ome/bioformats/tree/v8.4.0
+
+ImageJ 1.54p: https://imagej.net/ij/ (public domain)
+MorphoLibJ 1.6.2: https://github.com/ijpb/MorphoLibJ (LGPL-3.0)
+jdistlib 0.4.5: https://jdistlib.sourceforge.net/ (GPL)
+JNA 5.13.0: https://github.com/java-native-access/jna (LGPL / Apache-2.0)
+Apache Commons Math 3.6.1: https://commons.apache.org/proper/commons-math/ (Apache-2.0)
+Original JAR notices are retained.
+
+Python: https://www.python.org/ (PSF license; license in python/)
+Amazon Corretto 17: https://aws.amazon.com/corretto/ (GPL-2.0 with Classpath Exception;
+licenses, legal files and src.zip supplied in runtime/jre)
+PySide6 / Qt: https://www.qt.io/qt-for-python (LGPL-3.0 / GPL; dynamically loaded;
+replaceable wheels and license files in python/Lib/site-packages)
+NumPy, SciPy, h5py, tifffile, Pillow, Matplotlib, PyQtGraph, imageio: licenses retained
+in the corresponding package and .dist-info directories.
+imageio-ffmpeg includes FFmpeg and its upstream notices; codec build license applies.
+
+Build provenance, dependency versions and checksums are in the package manifest.
+This package is a local research preview, not an official AQuA2 or Bio-Formats release.

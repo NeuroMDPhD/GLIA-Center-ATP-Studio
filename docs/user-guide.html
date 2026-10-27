@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ATP ROA Studio — 操作マニュアル / User manual</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{font:16px/1.8 -apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic",sans-serif;color:#233b40;background:#f4f8f7;margin:0}
+main{max-width:1080px;margin:32px auto;padding:40px 48px;background:white;border:1px solid #d9e5e1;border-radius:14px}
+h1{font-size:32px;line-height:1.4;color:#13594d}h2{font-size:25px;margin:42px 0 16px;padding-top:14px;border-top:2px solid #daebe5}h3{font-size:20px;margin-top:28px}
+p{margin:10px 0 18px}a{color:#087563}table{border-collapse:collapse;width:100%;font-size:14px;margin:18px 0}th,td{padding:12px;border:1px solid #dbe5e1;text-align:left;vertical-align:top}th{background:#eaf4ef}
+code{font-family:ui-monospace,monospace;font-size:.9em;background:#edf4f1;border-radius:3px;padding:2px 4px;overflow-wrap:anywhere}pre{padding:16px;background:#edf4f1;overflow:auto}
+img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{margin-bottom:12px}.toc{background:#eff6f3;padding:16px 24px;border-radius:8px}.toc li{margin:3px 0}.toc ul{padding-left:24px}
+@media(max-width:720px){main{padding:22px 16px;margin:0;border-radius:0}h1{font-size:26px}table{font-size:12px}th,td{padding:7px}}
+@media print{body{background:white}main{border:0;margin:0;padding:0}h2,h3{break-after:avoid}tr,img{break-inside:avoid}a{color:inherit}}
+</style></head><body><main><h1 id="atp-roa-studio-user-manual">ATP ROA Studio 操作マニュアル / User manual</h1>
+<p>日本語・英語併記 · バージョン 0.1.0 · 研究用プレビュー<br />
+Japanese–English · Version 0.1.0 · Research preview</p>
+<div class="toc">
+<ul>
+<li><a href="#atp-roa-studio-user-manual">ATP ROA Studio 操作マニュアル / User manual</a><ul>
+<li><a href="#1-before-you-begin">1. はじめに / Before you begin</a></li>
+<li><a href="#2-download-and-launch">2. ダウンロードと起動 / Download and launch</a></li>
+<li><a href="#3-quick-start">3. 最短手順 / Quick start</a></li>
+<li><a href="#4-prepare-file-and-calibration">4. Prepare：ファイルと時空間設定 / File and calibration</a></li>
+<li><a href="#5-detectaqua2-detection-with-aqua2">5. Detect：AQuA2による検出 / Detection with AQuA2</a></li>
+<li><a href="#6-reviewroa-review-and-select-roas">6. Review：ROAを確認・選別する / Review and select ROAs</a></li>
+<li><a href="#7-exportroa-export-selected-results">7. Export：採用ROAの結果を保存する / Export selected results</a></li>
+<li><a href="#8-interpreting-measurements">8. 定量値の読み方 / Interpreting measurements</a></li>
+<li><a href="#9-saving-and-resuming">9. 保存と再開 / Saving and resuming</a></li>
+<li><a href="#10-troubleshooting">10. よくある問題 / Troubleshooting</a></li>
+<li><a href="#11-engine-and-reproducibility">11. エンジンと再現性 / Engine and reproducibility</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="1-before-you-begin">1. はじめに / Before you begin</h2>
+<p>ATP ROA Studioは、OIR動画からAQuA2で活動イベントを検出し、人が確認したROAだけを定量・出力するアプリです。ROAは時空間的な活動イベントを表し、1つの細胞や1匹の動物と同じ単位ではありません。</p>
+<p>ATP ROA Studio detects activity events in OIR movies with AQuA2, lets you review individual ROAs, and exports measurements for the ROAs you keep. An ROA is a spatiotemporal activity event; it is not necessarily one cell or one animal.</p>
+<p>処理の流れは <strong>準備 → 検出 → 確認 → 出力</strong> です。原本OIRを上書きせず、新しいプロジェクトフォルダーに保存します。解析中にインターネットへのデータ送信は行いません。</p>
+<p>The workflow is <strong>Prepare → Detect → Review → Export</strong>. Outputs go into a new project folder; the original OIR is not overwritten. Analysis does not upload recordings to the internet.</p>
+<h2 id="2-download-and-launch">2. ダウンロードと起動 / Download and launch</h2>
+<ol>
+<li>GitHubの <strong><a href="https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases">Releases</a></strong> から <code>ATP-ROA-Studio-Windows-x64.zip</code> をダウンロードします。<br />
+   Download <code>ATP-ROA-Studio-Windows-x64.zip</code> from <strong><a href="https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases">Releases</a></strong> on GitHub.</li>
+<li>ZIPを右クリックし、<strong>すべて展開</strong>を選びます。例：<code>C:\ATPStudio</code>。<br />
+   Right-click the ZIP and choose <strong>Extract All</strong>, for example into <code>C:\ATPStudio</code>.</li>
+<li>展開したフォルダー内のGLIAロゴ付き <strong><code>ATP ROA Studio.exe</code></strong> をダブルクリックします。<br />
+   Double-click <strong><code>ATP ROA Studio.exe</code></strong> with the GLIA logo inside the extracted folder.</li>
+<li>実行ファイルだけを移動せず、<code>python</code>、<code>runtime</code>、<code>assets</code>などの同梱フォルダーを一緒に保持します。<br />
+   Keep accompanying folders such as <code>python</code>, <code>runtime</code> and <code>assets</code> together with the executable.</li>
+</ol>
+<p>MATLAB・Fiji・Python・Javaの別途インストールは不要です。通常の利用でコマンド入力は必要ありません。GitHubの自動生成「Source code」ZIPは開発者用で、実行環境を含みません。</p>
+<p>No separate MATLAB, Fiji, Python or Java installation is required. Normal use needs no commands. GitHub’s automatically generated “Source code” ZIP is for developers and does not include the runtime.</p>
+<p>対象は <strong>Windows 10/11 x64</strong> です。Windows ARM64は検証対象に含みません。512×512画素・720フレーム程度では32 GB RAMを目安にし、検出時のメモリ上限は使用可能なRAMより低くします。現時点ではWindows実機での起動・全工程検証が未実施です。<a href="validation-status.html">検証状況</a>を確認してください。</p>
+<p>The target is <strong>Windows 10/11 x64</strong>. Windows ARM64 is outside the tested scope. For recordings near 512×512 pixels and 720 frames, 32 GB RAM is a practical starting point; set the detection memory limit below available RAM. Native Windows startup and end-to-end verification are still pending. See <a href="validation-status.html">Validation status</a>.</p>
+<h2 id="3-quick-start">3. 最短手順 / Quick start</h2>
+<table>
+<thead>
+<tr>
+<th>手順 / Step</th>
+<th>操作 / Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01 Prepare / 準備</td>
+<td><code>Choose OIR</code>で原本を選び、時間間隔と画素サイズを確認します。 / Choose an OIR and check the interval and pixel sizes.</td>
+</tr>
+<tr>
+<td>Experiment / 実験情報</td>
+<td>不要なら<code>Include experiment</code>のチェックを外します。 / Uncheck <code>Include experiment</code> if you do not want these details.</td>
+</tr>
+<tr>
+<td>Prepare files / ファイルを準備</td>
+<td>保存先を決め、TIFF・MP4・PNG・CSVを作成します。 / Choose an output folder and create TIFF, MP4, PNG and CSV files.</td>
+</tr>
+<tr>
+<td>02 Detect / 検出</td>
+<td>設定を確認し、<code>Run AQuA2</code>を押します。 / Check settings and select <code>Run AQuA2</code>.</td>
+</tr>
+<tr>
+<td>03 Review / 確認</td>
+<td>各ROAの位置と波形を見て、Keep・Exclude・Holdを選択します。 / Inspect each ROA’s location and trace; choose Keep, Exclude or Hold.</td>
+</tr>
+<tr>
+<td>04 Export / 出力</td>
+<td><code>Export selection</code>で採用ROAの結果を保存します。 / Select <code>Export selection</code> to save the kept ROAs.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-prepare-file-and-calibration">4. Prepare：ファイルと時空間設定 / File and calibration</h2>
+<p><img alt="準備画面の説明例 / Illustrative Prepare screen" src="screenshots/prepare.png" /></p>
+<p>上の画面例は説明用で、実験データを含みません。 / The example above is illustrative and contains no experimental data.</p>
+<h3 id="oir-choose-the-oir">OIRを選ぶ / Choose the OIR</h3>
+<p><code>Choose OIR</code>で撮影したOIRを選択します。分割されたOIRでは、マスターファイルと連番の補助ファイルを同じフォルダーに置き、マスターを選んでください。ファイルを選ぶと、フレーム数、画像サイズ、チャネル数、Z面数と校正値を読み込みます。</p>
+<p>Use <code>Choose OIR</code> to select the acquired OIR. For split recordings, keep the master and numbered companion files together and select the master. The app reads frame count, image dimensions, channels, Z planes and calibration.</p>
+<h3 id="serieschannelz-plane-what-these-selections-mean">Series・Channel・Z planeの意味 / What these selections mean</h3>
+<table>
+<thead>
+<tr>
+<th>項目 / Field</th>
+<th>意味と選び方 / Meaning and selection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Series / シリーズ</strong></td>
+<td>1つのOIR内の独立した画像セットです。フレーム番号ではありません。1つしかない場合は1のままにします。 / An independent image set inside an OIR, not a frame number. Leave it at 1 when there is only one.</td>
+</tr>
+<tr>
+<td><strong>ATP channel / チャネル</strong></td>
+<td>分析する蛍光信号です。ATPセンサーが撮影されたチャネルを選びます。チャネル1が常にATPとは限りません。 / The fluorescence signal to analyze. Select the channel used for the ATP sensor; channel 1 is not always ATP.</td>
+</tr>
+<tr>
+<td><strong>Z plane / Z面</strong></td>
+<td>深さ方向の1枚の撮影面です。1面撮影なら1を選択します。このアプリは複数Z面をまとめた3D解析を行いません。 / One imaging plane along depth. Select 1 for a single-plane recording. This app does not combine Z planes into a 3D analysis.</td>
+</tr>
+</tbody>
+</table>
+<p>例えば、720フレームの単一ATPチャネル・単一Z面動画が1セットなら、通常はSeries 1 / Channel 1 / Z plane 1です。複数チャネルでは撮影設定と照合してください。Series・Channel・Z planeを変更したら、<strong>Read metadata / 再読み込み</strong>を押します。</p>
+<p>For example, one 720-frame movie with a single ATP channel and one Z plane normally uses Series 1 / Channel 1 / Z plane 1. For multiple channels, check the acquisition settings. After changing any of these selections, press <strong>Read metadata</strong>.</p>
+<h3 id="calibration">Calibration / 時空間設定</h3>
+<table>
+<thead>
+<tr>
+<th>項目 / Field</th>
+<th>単位 / Unit</th>
+<th>確認内容 / What to check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interval / 時間間隔</td>
+<td>s/frame</td>
+<td>1フレーム取得にかかる秒数。1 Hzなら1秒、2 Hzなら0.5秒です。 / Seconds between frames: 1 Hz means 1 s; 2 Hz means 0.5 s.</td>
+</tr>
+<tr>
+<td>Pixel X / 画素幅</td>
+<td>µm/pixel</td>
+<td>横方向の1画素の長さです。 / Physical width of one pixel.</td>
+</tr>
+<tr>
+<td>Pixel Y / 画素高</td>
+<td>µm/pixel</td>
+<td>縦方向の1画素の長さです。 / Physical height of one pixel.</td>
+</tr>
+</tbody>
+</table>
+<p>OIRに値があれば自動入力します。欠損値は0で表示され、正しい正の値を入力するまで先に進めません。撮影装置の記録と照合してください。時間間隔を編集すると<code>Use manual interval</code>が有効になり、指定した等間隔の時間軸を使います。元の値に戻すには<code>Restore metadata</code>を押します。</p>
+<p>Values are filled automatically when available in the OIR. Missing values appear as 0; enter correct positive values before continuing. Check them against acquisition records. Editing the interval enables <code>Use manual interval</code> and applies a fixed time step. Use <code>Restore metadata</code> to restore the source values.</p>
+<p>画素サイズは面積、時間間隔は持続時間・AUC・時間関連の値に影響します。単位を確認し、校正値を変更した解析は新しいプロジェクトとして準備してください。</p>
+<p>Pixel sizes affect area; the frame interval affects durations, AUC and timing measurements. Check units carefully and prepare a new project when changing calibration for analysis.</p>
+<h3 id="experiment-experiment-details-are-optional">Experiment情報は任意 / Experiment details are optional</h3>
+<p><code>Include experiment / 実験情報を含める</code>にチェックを入れると、Animal ID、Slice ID、Recording ID、Condition、Reviewer、Treatment timeを記入できます。必要な項目だけ記入し、不明な情報を推測で埋めないでください。</p>
+<p>When <code>Include experiment</code> is checked, you can enter Animal ID, Slice ID, Recording ID, Condition, Reviewer and Treatment time. Fill only what you know; do not guess missing information.</p>
+<p>不要な場合はチェックを外してください。入力欄が無効になり、その状態で新しく準備したプロジェクトと結果表にはこれらの情報を含めません。Treatment timeは<strong>記録開始からの秒数</strong>で、不明なら<code>Not specified</code>のままにします。解析元のファイル名・校正値・設定は追跡のため保存されます。</p>
+<p>Uncheck it to skip these details. The fields become disabled, and a newly prepared project and its output tables omit them. Treatment time is <strong>seconds from recording start</strong>; leave it <code>Not specified</code> if unknown. Source filename, calibration and analysis settings are still retained for traceability.</p>
+<h3 id="output-location-and-conversion">保存先と変換 / Output location and conversion</h3>
+<p><code>Save to</code>で保存先を選び、<code>Prepare files</code>を押します。毎回別のプロジェクトフォルダーを作成します。保存先には原本に加えてTIFF・動画・解析中の一時データを保存できる空き容量を確保してください。</p>
+<p>Choose <code>Save to</code>, then press <code>Prepare files</code>. A new project folder is created each time. Allow enough disk space for TIFF, movies and temporary analysis data in addition to the original recording.</p>
+<table>
+<thead>
+<tr>
+<th>主な出力 / Main output</th>
+<th>内容 / Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>raw/movie.ome.tif</code></td>
+<td>選択チャネル・Z面の原画素値と適用した校正情報 / Source pixel values for the selected channel and Z plane, with applied calibration</td>
+</tr>
+<tr>
+<td><code>raw/preview.mp4</code></td>
+<td>原動画の表示用プレビュー / Display preview of the movie</td>
+</tr>
+<tr>
+<td><code>raw/mean_projection.png</code>, <code>max_projection.png</code></td>
+<td>平均・最大値投影 / Mean and maximum projections</td>
+</tr>
+<tr>
+<td><code>raw/fov_trace.csv</code>, <code>fov_trace.png</code></td>
+<td>視野全体の平均蛍光時系列 / Whole-field mean fluorescence trace</td>
+</tr>
+<tr>
+<td><code>project.json</code></td>
+<td>原本情報・校正値・設定・ファイル識別情報 / Source metadata, calibration, settings and file identifiers</td>
+</tr>
+</tbody>
+</table>
+<p>MP4は15 fpsの表示用動画です。<strong>再生時間は実際の撮影時間と異なる場合があります</strong>。画像内に表示される取得時刻を使い、MP4から蛍光強度を定量しないでください。</p>
+<p>MP4 playback is 15 fps. <strong>Playback duration may differ from acquisition duration.</strong> Use the acquisition timestamps shown in the movie; do not measure fluorescence intensity from MP4 pixels.</p>
+<h2 id="5-detectaqua2-detection-with-aqua2">5. Detect：AQuA2による検出 / Detection with AQuA2</h2>
+<p>準備完了後、<code>02 Detect</code>へ進みます。下表の初期値は開始点であり、ATP用に妥当性を確認した固定閾値ではありません。代表記録を用いて設定を確認し、群間比較では解析条件を揃えてください。</p>
+<p>After preparation, open <code>02 Detect</code>. The defaults below are starting points, not validated fixed thresholds for ATP. Check representative recordings and use harmonized settings for comparisons.</p>
+<table>
+<thead>
+<tr>
+<th>設定 / Setting</th>
+<th>初期値 / Default</th>
+<th>意味 / Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activity threshold / 活動閾値</td>
+<td>3.0 noise SD</td>
+<td>ノイズに対する活動検出の閾値 / Activity threshold relative to estimated noise</td>
+</tr>
+<tr>
+<td>Minimum area / 最小面積</td>
+<td>20 pixels</td>
+<td>小さい候補領域を除く基準 / Minimum candidate area</td>
+</tr>
+<tr>
+<td>Minimum duration / 最小持続</td>
+<td>5 frames</td>
+<td>短い候補活動を除く基準 / Minimum candidate duration</td>
+</tr>
+<tr>
+<td>Temporal threshold / 時間分割閾値</td>
+<td>3.5</td>
+<td>AQuA2の時間分割に用いる閾値 / Threshold used for temporal segmentation</td>
+</tr>
+<tr>
+<td>Baseline smoothing / 基準線平滑化</td>
+<td>25 frames</td>
+<td>基準線推定の平滑化窓 / Smoothing window for baseline estimation</td>
+</tr>
+<tr>
+<td>Baseline segment / 基準線区間</td>
+<td>200 frames</td>
+<td>基準線推定の区間長 / Segment length for baseline estimation</td>
+</tr>
+<tr>
+<td>Edge crop / 周辺除外</td>
+<td>5 pixels</td>
+<td>画像の各辺から除外する幅 / Margin removed from each image edge</td>
+</tr>
+<tr>
+<td>Median radius / メディアン半径</td>
+<td>1 pixel</td>
+<td>半径1は3×3、0は無効 / Radius 1 means 3×3; 0 disables filtering</td>
+</tr>
+<tr>
+<td>Memory limit / メモリ上限</td>
+<td>12 GB</td>
+<td>AQuA2に割り当てるJavaヒープ上限。アプリ全体の使用量上限ではありません。 / Java heap limit for AQuA2, not a cap on total application memory</td>
+</tr>
+</tbody>
+</table>
+<p><code>Run AQuA2</code>を押すと、基準線・ノイズ推定、活動領域検出、時間分割、空間分割、特徴量抽出を行います。処理時間は記録と設定に依存します。キャンセル後は中止処理が終わるまで待ってください。解析をやり直すと新しいrunが作られ、以前の結果と確認履歴を保持します。</p>
+<p><code>Run AQuA2</code> performs baseline/noise estimation, active-region detection, temporal segmentation, spatial segmentation and feature extraction. Runtime depends on the recording and settings. After cancelling, wait for cancellation to finish. Each new run retains earlier results and reviews.</p>
+<p>この版は、等間隔の2D+t動画と正方画素に対応します。動き補正・明示的退色補正・追加の全域イベント検出・CFU・手描きマスク・3D分割は未実装です。基準線推定は退色補正と同じ処理ではありません。</p>
+<p>This version supports uniformly sampled 2D+t movies and square pixels. Motion correction, explicit photobleaching correction, additional global-event detection, CFU, manually drawn masks and 3D segmentation are not implemented. Baseline estimation is not the same as photobleaching correction.</p>
+<h3 id="mat-importing-existing-mat-results">既存MATの読み込み / Importing existing MAT results</h3>
+<p><code>Import AQuA2 .mat</code>から既存のMATLAB v7.3形式のAQuA2結果を読み込めます。MATLABの起動は不要です。元動画に対応する結果チャネル1または2を指定してください。寸法・校正値とサンプルフレームを照合するため、別記録の結果や照合できない位置補正済み結果は拒否します。以前のfavoriteは★として残り、新しい確認状態はPendingです。</p>
+<p>Use <code>Import AQuA2 .mat</code> for existing MATLAB v7.3 AQuA2 results without running MATLAB. Select the matching result channel, 1 or 2. The app checks dimensions, calibration and sample frames, rejecting mismatched recordings or registered results whose mapping cannot be verified. Prior favorites appear as ★ and begin with Pending review status.</p>
+<h2 id="6-reviewroa-review-and-select-roas">6. Review：ROAを確認・選別する / Review and select ROAs</h2>
+<p>一覧または画像上のROAをクリックし、位置・広がり・動画・ΔF/F波形を確認します。緑はイベント全体の空間領域、黄色はそのフレームで活動している画素です。<code>Zoom</code>で選択イベントを拡大し、<code>Fit</code>で全視野に戻ります。スライダー・時刻・波形上のカーソルは同じフレームに対応します。</p>
+<p>Click an ROA in the table or image and inspect its location, extent, movie and ΔF/F trace. Teal shows the full spatial footprint; gold marks pixels active in the current frame. Use <code>Zoom</code> for the selected event and <code>Fit</code> for the whole field. The slider, timestamp and trace cursor correspond to the same frame.</p>
+<p><code>Raw</code>は原画像、<code>Median preview</code>は表示用のノイズ低減画像です。表示の切り替えは保存済みの検出設定・結果を変更しません。</p>
+<p><code>Raw</code> displays source images; <code>Median preview</code> reduces noise for viewing. Changing the display does not modify saved detection settings or results.</p>
+<table>
+<thead>
+<tr>
+<th>操作 / Action</th>
+<th>キー / Key</th>
+<th>結果 / Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keep / 採用</td>
+<td>A</td>
+<td>採用ROAの結果に含める / Include in selected results</td>
+</tr>
+<tr>
+<td>Exclude / 除外</td>
+<td>R</td>
+<td>採用結果から除外し、イベントと確認履歴は保持 / Exclude from selected results while retaining the event and review history</td>
+</tr>
+<tr>
+<td>Hold / 保留</td>
+<td>H</td>
+<td>判断を保留。採用結果には含めない / Defer the decision; omit from selected results</td>
+</tr>
+<tr>
+<td>Reset / 未確認へ</td>
+<td>—</td>
+<td>Pendingに戻す / Return to Pending</td>
+</tr>
+<tr>
+<td>Save note / メモ保存</td>
+<td>—</td>
+<td>採否を変えずにメモを保存 / Save a note without changing the decision</td>
+</tr>
+</tbody>
+</table>
+<p>ショートカットはReview画面で、文字入力欄に入力していない時に使えます。採否の理由をメモに残すと再確認しやすくなります。操作ごとに時刻・メモ・確認状態を保存し、実験情報が有効なら確認者も記録します。★は過去のfavoriteの印で、今回のKeepを自動指定するものではありません。</p>
+<p>Shortcuts work on the Review screen when you are not typing in a text field. Notes help explain decisions during later review. Each action saves time, note and review status, plus reviewer when experiment details are enabled. A ★ identifies a prior favorite; it does not automatically mark an event Keep.</p>
+<p>フィルターで未確認・採用・除外・保留などを絞り込めます。<code>Previous run</code>で過去の解析を開けます。同じ位置で繰り返すROAも別の活動イベントとして扱います。</p>
+<p>Filter the list by Pending, Keep, Exclude or Hold. Use <code>Previous run</code> to reopen an earlier analysis. Repeated ROAs at the same location remain separate activity events.</p>
+<h2 id="7-exportroa-export-selected-results">7. Export：採用ROAの結果を保存する / Export selected results</h2>
+<p><code>04 Export</code>で採用数・保留数・未確認数を確認し、必要なら<code>Include selected-ROA overlay MP4</code>を選んで<code>Export selection</code>を押します。毎回新しい出力フォルダーを作り、<code>RESULTS.html</code>を開きます。<strong>KeepにしたROAだけ</strong>が採用結果に含まれます。</p>
+<p>In <code>04 Export</code>, check the counts of kept, held and pending events. Optionally select <code>Include selected-ROA overlay MP4</code>, then press <code>Export selection</code>. Every export creates a new folder and opens <code>RESULTS.html</code>. <strong>Only Keep events</strong> enter the selected results.</p>
+<table>
+<thead>
+<tr>
+<th>ファイル / File</th>
+<th>内容 / Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selected_events.csv</code></td>
+<td>採用ROAの定量値 / Measurements for kept ROAs</td>
+</tr>
+<tr>
+<td><code>review_all_events.csv</code></td>
+<td>全ROAの定量値と確認状態 / Measurements and review states for every ROA</td>
+</tr>
+<tr>
+<td><code>selected_traces.csv</code></td>
+<td>採用ROAの全時間ΔF/Fと活動フレーム情報 / Full ΔF/F traces and active-frame flags for kept ROAs</td>
+</tr>
+<tr>
+<td><code>recording_summary.csv</code></td>
+<td>記録単位の件数、確認完了状態、採用発生頻度 / Recording-level counts, review completion and accepted onset rate</td>
+</tr>
+<tr>
+<td><code>ROA_XXXX.png</code>, <code>selected_traces.png</code></td>
+<td>個別・重ね合わせ波形 / Individual and combined traces</td>
+</tr>
+<tr>
+<td><code>selected_ROA_overlay.png</code>, <code>.mp4</code></td>
+<td>採用ROAの位置と動画 / Map and optional movie of kept ROAs</td>
+</tr>
+<tr>
+<td><code>selected_ROA_masks.tif</code></td>
+<td>1ページにつき1イベントの空間マスク / One spatial mask per event per page</td>
+</tr>
+<tr>
+<td><code>mask_page_index.csv</code></td>
+<td>TIFFページとイベントIDの対応 / TIFF-page to event-ID mapping</td>
+</tr>
+<tr>
+<td><code>selected_events.h5</code></td>
+<td>原画像座標の時空間マスクと波形 / Spatiotemporal masks in source-image coordinates and traces</td>
+</tr>
+<tr>
+<td><code>manifest.json</code></td>
+<td>原本・設定・選択・出力ファイル識別情報 / Source, settings, selections and output-file identifiers</td>
+</tr>
+</tbody>
+</table>
+<p>0イベント・0採用でも、ヘッダー付きCSVと記録要約を保存できます。採用がない場合、採用ROAの波形画像・マスクTIFF・MP4は作成しません。確認途中の出力も可能ですが、<code>review_complete</code>がFalseの場合は保留または未確認が残っています。</p>
+<p>Zero detections or zero selected events still produce CSV headers and a recording summary. With no selected events, selected trace plots, mask TIFF and overlay MP4 are not created. Partial review can be exported; <code>review_complete=False</code> means held or pending events remain.</p>
+<p>CSVはExcelで開きやすいUTF-8 BOM形式で、列名は英語です。測定できない値は0に置換せず空欄にし、<code>qc_flags</code>に理由を残します。</p>
+<p>CSVs use UTF-8 with a BOM for Excel compatibility and English column names. Unavailable values remain blank, rather than being replaced by zero; reasons appear in <code>qc_flags</code>.</p>
+<h2 id="8-interpreting-measurements">8. 定量値の読み方 / Interpreting measurements</h2>
+<table>
+<thead>
+<tr>
+<th>列 / Column</th>
+<th>定義 / Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>peak_dff</code>, <code>peak_time_s</code></td>
+<td>検出イベント区間内の元領域ΔF/Fの最大値と時刻 / Maximum original-footprint ΔF/F and its time within the detected event interval</td>
+</tr>
+<tr>
+<td><code>area_um2</code></td>
+<td>イベント中に活動した全画素の空間和集合×画素幅×画素高 / Union of spatial pixels active during the event × pixel width × pixel height</td>
+</tr>
+<tr>
+<td><code>duration_span_s</code></td>
+<td>最後の検出時刻−最初の検出時刻 / Last detected timestamp minus first detected timestamp</td>
+</tr>
+<tr>
+<td><code>active_sample_duration_s</code></td>
+<td>活動フレーム数×代表時間間隔 / Number of active frames × median interval</td>
+</tr>
+<tr>
+<td><code>auc_signed_dff_s</code></td>
+<td>検出開始〜終了のΔF/Fを台形積分 / Trapezoidal integral of ΔF/F from detected onset to end</td>
+</tr>
+<tr>
+<td><code>auc_positive_dff_s</code></td>
+<td>同区間の負値を0にして積分 / Same integral after clipping negative values to zero</td>
+</tr>
+<tr>
+<td><code>fwhm_s</code></td>
+<td>ゼロ基準ピークの50%交差間隔。AQuA2拡張窓内で線形補間 / Width between nearest 50%-of-peak crossings relative to zero, linearly interpolated within the AQuA2 extended window</td>
+</tr>
+<tr>
+<td><code>rise_10_90_s</code>, <code>fall_90_10_s</code></td>
+<td>ピーク前の10→90%上昇、ピーク後の90→10%下降 / 10→90% rise before the peak and 90→10% fall after it</td>
+</tr>
+<tr>
+<td><code>decay_tau_s</code>, <code>decay_fit_r2</code></td>
+<td>ピーク後の<code>A exp(-t/τ)+C</code>適合。6点以上・50%以上の下降・R²≥0.8・τ境界未到達を採用条件とする / Post-peak fit to <code>A exp(-t/τ)+C</code>; requires at least 6 points, a 50% fall, R²≥0.8 and no τ bound hit</td>
+</tr>
+<tr>
+<td><code>onset_from_drug_s</code></td>
+<td>投与時刻が指定された場合の相対開始時刻 / Onset relative to specified treatment time</td>
+</tr>
+<tr>
+<td><code>centroid_x_source_px</code>, <code>centroid_y_source_px</code></td>
+<td>原画像上の0始まり重心座標 / Zero-based centroid coordinates in the source image</td>
+</tr>
+<tr>
+<td><code>aqua_*</code></td>
+<td>AQuA2固有の測定値。上記と定義が異なる場合があります / Native AQuA2 measurements, whose definitions may differ</td>
+</tr>
+<tr>
+<td><code>qc_flags</code></td>
+<td>記録端での打切り、境界接触、非有限値、適合不良など / Flags for censoring, boundary contact, nonfinite values or unreliable fitting</td>
+</tr>
+</tbody>
+</table>
+<p><code>duration_span_s</code>と<code>active_sample_duration_s</code>は別の定義です。1フレームだけの活動では、前者は0秒でも後者は1フレーム分になります。<code>aqua_auc_dff_frames</code>はAQuA2のサンプル和で、秒単位のAUCと混同しないでください。</p>
+<p><code>duration_span_s</code> and <code>active_sample_duration_s</code> have different definitions. A one-frame event has zero timestamp span but one frame of sample duration. <code>aqua_auc_dff_frames</code> is the engine’s sample sum and should not be confused with AUC integrated in seconds.</p>
+<p>減衰τは波形を記述する値です。単独でATPの放出・分解・拡散などの機序を確定しません。イベント数は動物数ではなく、群間解析では個体・切片・記録の階層を別途保持してください。実験情報を省略した場合は、対応表を研究者側で管理してください。</p>
+<p>Decay τ describes the trace; it does not by itself identify ATP release, breakdown or diffusion mechanisms. Event count is not animal count. Preserve animal, slice and recording hierarchy for group analyses; if you omit experiment details, maintain that mapping separately.</p>
+<p>採用発生頻度は、最初から最後のサンプルまでの観測時間に対する採用イベントの開始数です。最初のサンプルから存在するイベントを除外します。採用条件と確認状況に依存し、全ATPイベント頻度を自動的に表すものではありません。</p>
+<p>Accepted onset rate counts kept event onsets over the interval from the first to last sample, excluding events already present at the first sample. It depends on selection criteria and review completeness and is not automatically the total ATP event frequency.</p>
+<h2 id="9-saving-and-resuming">9. 保存と再開 / Saving and resuming</h2>
+<p><code>Open project</code>からプロジェクトフォルダー内の<code>project.json</code>を選択します。確認状態とメモは操作時に保存されます。プロジェクトを移動するときは、<code>raw</code>・<code>runs</code>・<code>exports</code>などを含むフォルダー全体を移動してください。既存プロジェクトを開いた後にPrepare欄を書き換えても、過去の解析を自動更新しません。変更した校正・実験情報を適用するには新しいプロジェクトを準備します。</p>
+<p>Use <code>Open project</code> and select <code>project.json</code> inside the project folder. Review states and notes are saved when you act. To move a project, move the entire folder including <code>raw</code>, <code>runs</code> and <code>exports</code>. Editing Prepare fields after reopening a project does not automatically update prior analyses. Prepare a new project to apply changed calibration or experiment details.</p>
+<h2 id="10-troubleshooting">10. よくある問題 / Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>状況 / Symptom</th>
+<th>対処 / Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>起動しない / App does not open</td>
+<td>ZIP全体を展開したか、実行ファイルと同梱フォルダーが一緒か確認します。表示された起動ログの場所を確認します。 / Verify full extraction and keep bundled folders beside the executable. Check the startup-log location shown in any error message.</td>
+</tr>
+<tr>
+<td>Interval・Pixelが0 / Calibration is 0</td>
+<td>OIRから取得できていません。撮影記録を確認し正しい値を入力します。 / Metadata was unavailable; enter correct values from acquisition records.</td>
+</tr>
+<tr>
+<td>違うチャネルに見える / Wrong channel appears selected</td>
+<td>撮影時のチャネル割り当てを確認し、選択後にRead metadataを押します。 / Check acquisition channel assignments and press Read metadata after changing the selection.</td>
+</tr>
+<tr>
+<td>分割OIRを開けない / Split OIR cannot be read</td>
+<td>マスターと補助ファイルを同じ場所に置き、マスターを選びます。 / Keep the master and companion files together and select the master.</td>
+</tr>
+<tr>
+<td>Window exceeds recording length</td>
+<td>基準線平滑化窓と最小持続をフレーム数以下にします。 / Keep the smoothing window and minimum duration within the recording length.</td>
+</tr>
+<tr>
+<td>Square pixels required</td>
+<td>X/Y画素サイズを撮影記録と照合します。解析を通すために値を偽って同じにしないでください。 / Check X/Y calibration against acquisition records; do not falsify values to bypass the requirement.</td>
+</tr>
+<tr>
+<td>Irregular timestamps</td>
+<td>この検出版は等間隔時系列が必要です。手動間隔は実際の取得条件が確認できる場合に使います。 / Detection requires uniform sampling. Use a manual interval only when justified by actual acquisition conditions.</td>
+</tr>
+<tr>
+<td>メモリ不足・検出停止 / Memory error or stopped detection</td>
+<td>他の大きな処理を閉じ、使用可能RAMとMemory limitを確認します。 / Close other memory-intensive work and check available RAM and Memory limit.</td>
+</tr>
+<tr>
+<td>検出が0件 / No events detected</td>
+<td>選択チャネル・信号・設定を確認します。必ずイベントが出るよう閾値を調整するのではなく、代表例で妥当性を確認します。 / Check signal, channel and settings; validate representative examples rather than tuning solely to force events.</td>
+</tr>
+<tr>
+<td>採用CSVが空 / Selected CSV has no rows</td>
+<td>Keepにしたイベントがあるか確認します。Hold・Pending・★のみでは採用されません。 / Confirm that events are marked Keep; Hold, Pending and ★ alone do not select them.</td>
+</tr>
+<tr>
+<td>FWHMやτが空欄 / FWHM or τ is blank</td>
+<td><code>qc_flags</code>を確認します。観測範囲内に必要な交差がない場合や適合不良では空欄になります。 / Inspect <code>qc_flags</code>; missing crossings or unreliable fits leave measurements blank.</td>
+</tr>
+<tr>
+<td>MATが拒否される / MAT import rejected</td>
+<td>同じ原本・チャネル・校正・前処理の結果か確認します。 / Verify the same source, channel, calibration and compatible preprocessing.</td>
+</tr>
+</tbody>
+</table>
+<p>解析中のログは<code>Help → Show log</code>、詳細はプロジェクト内の<code>logs</code>および各<code>runs</code>内のログで確認できます。起動ログはWindowsでは通常<code>%LOCALAPPDATA%\ATP ROA Studio\startup.log</code>に保存します。問い合わせ先は<code>Help → About</code>に表示します。</p>
+<p>Use <code>Help → Show log</code> during analysis. Detailed logs are in the project’s <code>logs</code> directory and individual <code>runs</code> directories. On Windows, the startup log is normally <code>%LOCALAPPDATA%\ATP ROA Studio\startup.log</code>. Contact details are available in <code>Help → About</code>.</p>
+<h2 id="11-engine-and-reproducibility">11. エンジンと再現性 / Engine and reproducibility</h2>
+<p>検出エンジンは<a href="https://github.com/yu-lab-vt/AQuA2-Fiji">AQuA2-Fiji</a>の固定コミット<code>ca807872077a736e906698047bd718ce54754eda</code>を使用します。OIRはBio-Formats 8.4.0で読み込みます。前処理、エンジン設定、元ファイルの識別情報と確認履歴を保存します。Java版と既存MATLAB解析との数値的同等性は確認していません。異なる前処理やエンジン版のイベント数を、そのまま同じ解析結果として混合しないでください。</p>
+<p>Detection uses <a href="https://github.com/yu-lab-vt/AQuA2-Fiji">AQuA2-Fiji</a> at pinned commit <code>ca807872077a736e906698047bd718ce54754eda</code>; OIR reading uses Bio-Formats 8.4.0. Preprocessing, engine settings, source identifiers and review history are saved. Numerical equivalence between this Java pipeline and existing MATLAB analyses has not been established. Do not pool event counts from differing preprocessing or engine versions as if they were identical analyses.</p>
+<p><a href="validation-status.html">検証状況 / Validation status</a> · <a href="../THIRD_PARTY_NOTICES.txt">外部コンポーネント / Third-party notices</a></p></main></body></html>

@@ -1,0 +1,39 @@
+{
+  "aqua2_source": {
+    "commit": "ca807872077a736e906698047bd718ce54754eda",
+    "url": "https://codeload.github.com/yu-lab-vt/AQuA2-Fiji/zip/ca807872077a736e906698047bd718ce54754eda",
+    "sha256": "fa4a7c05a60e4ed009b6855868808d6c2ac62382410de11d1d6a2c3bda55975f"
+  },
+  "java_libraries": [
+    {
+      "filename": "bioformats_package.jar",
+      "url": "https://downloads.openmicroscopy.org/bio-formats/8.4.0/artifacts/bioformats_package.jar",
+      "sha256": "109225564fe6a2db3908f8cb4c651623d5f4232a8e21c51b451ace0453e92362"
+    },
+    {
+      "filename": "ij-1.54p.jar",
+      "url": "https://repo.maven.apache.org/maven2/net/imagej/ij/1.54p/ij-1.54p.jar",
+      "sha256": "2e1a09961dfb41cee66ddc821b2577a41a072566ce45a49bae69267099741e20"
+    },
+    {
+      "filename": "commons-math3-3.6.1.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar",
+      "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308"
+    },
+    {
+      "filename": "MorphoLibJ_-1.6.2.jar",
+      "url": "https://raw.githubusercontent.com/yu-lab-vt/AQuA2-Fiji/ca807872077a736e906698047bd718ce54754eda/lib/MorphoLibJ_-1.6.2.jar",
+      "sha256": "d38bc91c5a935a8f22c9e7782f74d5fcff3d7f09f4ef3cf4e2e2e5d4a23a78ed"
+    },
+    {
+      "filename": "jdistlib-0.4.5.jar",
+      "url": "https://raw.githubusercontent.com/yu-lab-vt/AQuA2-Fiji/ca807872077a736e906698047bd718ce54754eda/lib/jdistlib-0.4.5.jar",
+      "sha256": "44deb4b6b3d5fa50e8b11ef4a735d565f3b7f210786a49af66b6f103dcf71d4d"
+    },
+    {
+      "filename": "jna-jpms-5.13.0.jar",
+      "url": "https://raw.githubusercontent.com/yu-lab-vt/AQuA2-Fiji/ca807872077a736e906698047bd718ce54754eda/lib/jna-jpms-5.13.0.jar",
+      "sha256": "33bb64fab7ded056de3119d49cccde4bf7d413ad55c977b2760688cf97cc4308"
+    }
+  ]
+}

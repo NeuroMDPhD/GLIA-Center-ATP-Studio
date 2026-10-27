@@ -1,0 +1,33 @@
+{
+  "source_page": "https://glia.yamanashi.ac.jp/",
+  "assets": [
+    {
+      "source": "https://glia.yamanashi.ac.jp/favicon.ico",
+      "file": "yamanashi-glia-official.ico",
+      "sha256": "d206f375dfdaca38210cdc15fa08650878582ad61504fc146d55ab19c67d8d4f"
+    },
+    {
+      "source": "https://glia.yamanashi.ac.jp/apple-touch-icon.png",
+      "file": "yamanashi-glia-touch.png",
+      "sha256": "e0b02eb042f95055148d7691510fac883a94d713aedf3b71b6451e3f3a56d891"
+    },
+    {
+      "source": "https://glia.yamanashi.ac.jp/img/top/kv_logo.png",
+      "file": "yamanashi-glia-logo.png",
+      "sha256": "41236504b3602d3aff0a31530e67d0cf87369b0a82c471c73c856f55e00bc79d"
+    },
+    {
+      "source": "https://glia.yamanashi.ac.jp/img/common/header_logo.svg",
+      "file": "yamanashi-glia-header.svg",
+      "sha256": "1a0a19feec124a1e2a8e99735b2594267bde07179dae927bf5984cc2a01fb92b"
+    }
+  ],
+  "application_icons": {
+    "source_file": "yamanashi-glia-touch.png",
+    "operation": "Resolution and container conversion only; official logo retained in full.",
+    "files": {
+      "atp-studio.ico": "6f6bf47cd2edecec8337f574f164d9ecafa6354af270e72347000ad8f3ab5dfd",
+      "atp-studio.icns": "c491883e90b68abe68ea44b38f4ae7c164b627dfb6e5c2c167c7e043c53db97c"
+    }
+  }
+}
