@@ -1,0 +1,27 @@
+{
+  "upstream": "https://github.com/IBM/plex",
+  "commit": "71f558992315a12ca1f06a2215d57962a1992162",
+  "license": "SIL Open Font License 1.1",
+  "files": {
+    "OFL.txt": {
+      "url": "https://raw.githubusercontent.com/IBM/plex/71f558992315a12ca1f06a2215d57962a1992162/LICENSE.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    "IBMPlexSans-Regular.ttf": {
+      "url": "https://raw.githubusercontent.com/IBM/plex/71f558992315a12ca1f06a2215d57962a1992162/packages/plex-sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf",
+      "sha256": "975dcda37d80f038dcd143c22e33ca2d97a0cc5a929aace1c749153b0fe1afa5"
+    },
+    "IBMPlexSans-SemiBold.ttf": {
+      "url": "https://raw.githubusercontent.com/IBM/plex/71f558992315a12ca1f06a2215d57962a1992162/packages/plex-sans/fonts/complete/ttf/IBMPlexSans-SemiBold.ttf",
+      "sha256": "a20caf8286023a6a7a85e40b1d2a4ae9fc3e3b1f9eda8f4c542dd4986af67bb1"
+    },
+    "IBMPlexSansJP-Regular.ttf": {
+      "url": "https://raw.githubusercontent.com/IBM/plex/71f558992315a12ca1f06a2215d57962a1992162/packages/plex-sans-jp/fonts/complete/ttf/hinted/IBMPlexSansJP-Regular.ttf",
+      "sha256": "e5e9ee949e05ca25bf75be44d6412c7071fcdeb8ca6c4361a8d6aeb81f96289a"
+    },
+    "IBMPlexSansJP-SemiBold.ttf": {
+      "url": "https://raw.githubusercontent.com/IBM/plex/71f558992315a12ca1f06a2215d57962a1992162/packages/plex-sans-jp/fonts/complete/ttf/hinted/IBMPlexSansJP-SemiBold.ttf",
+      "sha256": "86b084fe5d11172153f81c5dd5f1bef8515d2b4ab6df63463801c218d97c0291"
+    }
+  }
+}

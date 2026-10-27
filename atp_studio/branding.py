@@ -1,6 +1,6 @@
 """Application creator and support details, separate from analysis-engine credits."""
 
-APP_NAME = 'ATP ROA Studio'
+APP_NAME = 'GLIA Center ATP Studio'
 CREATOR = 'Seunghwan Choi, MD, PhD'
 CONTACT_EMAIL = 'medic@khu.ac.kr'
 

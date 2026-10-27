@@ -5,10 +5,10 @@ from pathlib import Path
 import hashlib,json,shutil,zipfile,subprocess,re
 
 root=Path(__file__).resolve().parents[1]
-out=root/'dist/ATP-ROA-Studio-Windows-x64'
+out=root/'dist/GLIA-Center-ATP-Studio-Windows-x64'
 assert (out/'python/python.exe').is_file()
 assert (out/'python/pythonw.exe').is_file()
-assert (out/'ATP ROA Studio.exe').is_file()
+assert (out/'GLIA Center ATP Studio.exe').is_file()
 assert (out/'runtime/jre/bin/java.exe').is_file()
 assert (out/'python/Lib/site-packages/PySide6/QtWidgets.pyd').is_file()
 for name in ('atp_studio','java','docs','assets','launcher'):
@@ -36,10 +36,10 @@ def digest(p):
 files=[p for p in out.rglob('*') if p.is_file() and p.name!='PACKAGE_MANIFEST.json']
 for p in files:
     if p.suffix=='.oir' or p.name=='project.json':raise RuntimeError('Acquisition data must not be packaged')
-manifest={'app_version':'0.1.0','target':'Windows 10/11 x64','entry_point':'ATP ROA Studio.exe','native_windows_tested':False,
+manifest={'app_version':'0.2.0','target':'Windows 10/11 x64','entry_point':'GLIA Center ATP Studio.exe','native_windows_tested':False,
           'tested_platform':'macOS arm64','file_count':len(files),'files':{str(p.relative_to(out)):digest(p) for p in files}}
 (out/'PACKAGE_MANIFEST.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
-archive=root/'dist/ATP-ROA-Studio-Windows-x64.zip'
+archive=root/'dist/GLIA-Center-ATP-Studio-Windows-x64.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
     for p in out.rglob('*'):
         if p.is_file():z.write(p,Path(out.name)/p.relative_to(out))

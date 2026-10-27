@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 static int failure(const wchar_t *message) {
-    MessageBoxW(NULL, message, L"ATP ROA Studio", MB_OK | MB_ICONERROR);
+    MessageBoxW(NULL, message, L"GLIA Center ATP Studio", MB_OK | MB_ICONERROR);
     return 1;
 }
 
@@ -43,7 +43,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR arguments, int
                         NULL, root, &startup, &process)) {
         wchar_t message[1024];
         swprintf(message, 1024,
-                 L"Could not start ATP ROA Studio (Windows error %lu).\nExtract the complete ZIP again and try again.\n\n起動できませんでした。ZIP全体を再展開してお試しください。", GetLastError());
+                 L"Could not start GLIA Center ATP Studio (Windows error %lu).\nExtract the complete ZIP again and try again.\n\n起動できませんでした。ZIP全体を再展開してお試しください。", GetLastError());
         return failure(message);
     }
     CloseHandle(process.hThread);

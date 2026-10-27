@@ -34,7 +34,7 @@ def build_windows(zig):
     output = ROOT / 'build-cache/windows-launcher'
     output.mkdir(parents=True, exist_ok=True)
     resource = output / 'launcher.res'
-    binary = ROOT / 'dist/ATP-ROA-Studio-Windows-x64/ATP ROA Studio.exe'
+    binary = ROOT / 'dist/GLIA-Center-ATP-Studio-Windows-x64/GLIA Center ATP Studio.exe'
     binary.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run([zig, 'rc', '/c', '65001', '/fo', str(resource), 'windows_launcher.rc'],
                    cwd=ROOT / 'launcher', check=True)
@@ -46,18 +46,18 @@ def build_windows(zig):
 
 
 def build_mac():
-    bundle = ROOT / 'ATP ROA Studio.app/Contents'
+    bundle = ROOT / 'GLIA Center ATP Studio.app/Contents'
     (bundle / 'MacOS').mkdir(parents=True, exist_ok=True)
     (bundle / 'Resources').mkdir(exist_ok=True)
     shutil.copy2(ROOT / 'assets/atp-studio.icns', bundle / 'Resources/atp-studio.icns')
-    info = {'CFBundleName': 'ATP ROA Studio', 'CFBundleDisplayName': 'ATP ROA Studio',
-            'CFBundleExecutable': 'ATP ROA Studio', 'CFBundleIconFile': 'atp-studio.icns',
-            'CFBundleIdentifier': 'org.atproastudio.desktop', 'CFBundlePackageType': 'APPL',
-            'CFBundleVersion': '0.1.0', 'CFBundleShortVersionString': '0.1.0',
+    info = {'CFBundleName': 'GLIA Center ATP Studio', 'CFBundleDisplayName': 'GLIA Center ATP Studio',
+            'CFBundleExecutable': 'GLIA Center ATP Studio', 'CFBundleIconFile': 'atp-studio.icns',
+            'CFBundleIdentifier': 'org.gliacenter.atpstudio.desktop', 'CFBundlePackageType': 'APPL',
+            'CFBundleVersion': '0.2.0', 'CFBundleShortVersionString': '0.2.0',
             'LSMinimumSystemVersion': '11.0', 'NSHighResolutionCapable': True}
     (bundle / 'Info.plist').write_bytes(plistlib.dumps(info))
     subprocess.run(['clang', '-Os', '-Wall', '-Wextra', str(ROOT / 'launcher/macos_launcher.c'),
-                    '-framework', 'CoreFoundation', '-o', str(bundle / 'MacOS/ATP ROA Studio')], check=True)
+                    '-framework', 'CoreFoundation', '-o', str(bundle / 'MacOS/GLIA Center ATP Studio')], check=True)
     subprocess.run(['codesign', '--force', '--sign', '-', str(bundle.parent)], check=True)
     print(bundle.parent)
 

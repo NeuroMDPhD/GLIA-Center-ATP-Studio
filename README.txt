@@ -1,17 +1,17 @@
-ATP ROA Studio 0.1 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.2 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
-  dist/ATP-ROA-Studio-Windows-x64.zip
-  Extract the whole archive, then double-click ATP ROA Studio.exe (GLIA logo).
-  ZIP全体を展開し、GLIAロゴのATP ROA Studio.exeをダブルクリックしてください。
+  dist/GLIA-Center-ATP-Studio-Windows-x64.zip
+  Extract the whole archive, then double-click GLIA Center ATP Studio.exe (GLIA logo).
+  ZIP全体を展開し、GLIAロゴのGLIA Center ATP Studio.exeをダブルクリックしてください。
   Keep the executable with its accompanying folders; no setup or commands are needed.
   実行ファイルを同梱フォルダーと一緒に保存してください。セットアップやコマンド入力は不要です。
   MATLAB, Fiji and Python installations are not required.
   MATLAB・Fiji・Pythonの別途インストールは不要です。
 
 This Mac / このMac
-  Double-click ATP ROA Studio.app in the project folder.
-  プロジェクトフォルダー内のATP ROA Studio.appをダブルクリックしてください。
+  Double-click GLIA Center ATP Studio.app in the project folder.
+  プロジェクトフォルダー内のGLIA Center ATP Studio.appをダブルクリックしてください。
   This Mac launcher uses the existing local runtime; it is not a standalone Mac distribution.
   このMac用ランチャーは既存の実行環境を使用します。Mac単独配布版ではありません。
 

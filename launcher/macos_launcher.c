@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
         }
     }
     CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
-        CFSTR("ATP ROA Studio"),
-        CFSTR("Keep this app in the ATP-ROA-Studio folder together with its runtime.\nこのアプリを実行環境と同じATP-ROA-Studioフォルダー内に置いてください。"),
+        CFSTR("GLIA Center ATP Studio"),
+        CFSTR("Keep this app beside launch.py and the .venv folder.\nこのアプリをlaunch.pyと.venvフォルダーと同じ場所に置いてください。"),
         CFSTR("OK"), NULL, NULL, NULL);
     return 1;
 }

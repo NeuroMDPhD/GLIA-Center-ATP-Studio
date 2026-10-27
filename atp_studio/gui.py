@@ -7,30 +7,33 @@ import pyqtgraph as pg
 from scipy.ndimage import binary_erosion
 from .common import ROOT, Job, Cancelled, read_json
 from .project import Project, inspect_oir, create_project, detect, import_mat, export_selected, DEFAULT_DETECTION, applied_settings
-from .branding import APP_NAME, creator_html
+from .branding import APP_NAME, CREATOR, CONTACT_EMAIL, creator_html
+from .suggestions import LABELS, DEFAULTS as SUGGESTION_DEFAULTS, cached_suggestions, build_suggestions, reason_text, validate_config
 from . import __version__
 
 pg.setConfigOptions(imageAxisOrder='row-major',antialias=True,background='w',foreground='#4b5967')
 STATES={'pending':'Pending / 未確認','accepted':'Keep / 採用','rejected':'Exclude / 除外','hold':'Hold / 保留'}
 STYLE='''
-QWidget{font-family:"Yu Gothic UI","Hiragino Sans","Segoe UI";font-size:13px;color:#253342;}
-QMainWindow{background:#f3f6f8;} QFrame#card{background:white;border:1px solid #dfe7eb;border-radius:12px;}
-QLabel#title{font-size:26px;font-weight:700;color:#18333a;} QLabel#subtitle{color:#687a88;font-size:13px;}
+QWidget{font-family:"IBM Plex Sans","IBM Plex Sans JP";font-size:13px;color:#263c50;}
+QMainWindow{background:#f3f6fa;} QScrollArea,QScrollArea > QWidget > QWidget{background:#f3f6fa;} QFrame#card{background:white;border:1px solid #dbe5ee;border-radius:10px;}
+QLabel#title{font-size:27px;font-weight:600;color:#062c54;} QLabel#subtitle{color:#62788f;font-size:13px;}
 QLabel#heading{font-size:21px;font-weight:700;} QLabel#muted{color:#687a88;}
 QPushButton{background:white;border:1px solid #cddadd;border-radius:7px;padding:9px 14px;}
-QPushButton:hover{background:#e8f5f1;border-color:#128770;} QPushButton:disabled{color:#98a6ae;background:#f1f4f5;}
-QPushButton#primary{background:#107d69;color:white;border:0;font-weight:600;padding:11px 18px;}
-QPushButton#primary:hover{background:#086652;} QPushButton#nav{border:0;text-align:left;padding:17px 13px;background:transparent;color:#5e7180;}
-QPushButton#nav:checked{background:#dceee8;color:#096b58;font-weight:700;}
+QPushButton:hover{background:#eaf4fb;border-color:#007bc1;} QPushButton:disabled{color:#98a6ae;background:#f1f4f5;}
+QPushButton#primary{background:#007bc1;color:white;border:0;font-weight:600;padding:10px 15px;}
+QPushButton#primary:hover{background:#0265a0;} QPushButton#nav{border:0;text-align:left;padding:16px 8px;background:transparent;color:#526d85;}
+QPushButton#nav:checked{background:#deedf8;color:#005c93;font-weight:600;border-left:3px solid #007bc1;}
 QLineEdit,QSpinBox,QDoubleSpinBox,QComboBox,QPlainTextEdit{background:white;border:1px solid #cedbdf;border-radius:6px;padding:7px;}
 QLineEdit:disabled,QSpinBox:disabled,QDoubleSpinBox:disabled{background:#f0f3f5;color:#97a4ae;border-color:#e1e7eb;}
 QGroupBox QLabel:disabled{color:#97a4ae;}
 QGroupBox{background:white;border:1px solid #dfe7eb;border-radius:9px;margin-top:16px;padding:18px 12px 12px;}
 QGroupBox::title{subcontrol-origin:margin;left:12px;padding:0 5px;font-weight:600;}
 QHeaderView::section{background:#eef4f5;border:0;padding:8px;font-weight:600;}
-QTableWidget{background:white;border:1px solid #dde6e9;gridline-color:#eef2f4;selection-background-color:#d8eee7;selection-color:#134b3e;}
-QProgressBar{border:0;background:#e3ebe9;height:5px;} QProgressBar::chunk{background:#15957c;}
+QTableWidget{background:white;border:1px solid #dde6ee;gridline-color:#eef2f6;selection-background-color:#dceefa;selection-color:#062c54;}
+QProgressBar{border:0;background:#e3eaf2;height:5px;} QProgressBar::chunk{background:#007bc1;}
 QSplitter::handle{background:#e3eaed;width:4px;}
+QLabel#suggestion{background:#eaf2f9;border:1px solid #cddfeb;border-radius:7px;padding:8px;color:#183b5a;}
+QLabel#creator{font-size:11px;color:#536c84;}
 '''
 
 def label(text,name=None,wrap=True):
@@ -46,6 +49,21 @@ def button(text,fn,primary=False):
 def double(value=0,minimum=0,maximum=100000,decimals=6):
     b=W.QDoubleSpinBox();b.setRange(minimum,maximum);b.setDecimals(decimals);b.setValue(value);b.setSingleStep(.1);return b
 
+class PageScroll(W.QScrollArea):
+    """Fit the page to the viewport; scroll only below its usable minimum size."""
+    def setWidget(self,widget):
+        super().setWidget(widget);widget.installEventFilter(self)
+    def fit_content(self):
+        widget=self.widget()
+        if widget is None:return
+        size=self.viewport().size().expandedTo(widget.minimumSizeHint()).expandedTo(widget.minimumSize())
+        if widget.size()!=size:widget.resize(size)
+    def resizeEvent(self,event):
+        super().resizeEvent(event);self.fit_content()
+    def eventFilter(self,obj,event):
+        if obj is self.widget() and event.type()==C.QEvent.Type.LayoutRequest:C.QTimer.singleShot(0,self.fit_content)
+        return super().eventFilter(obj,event)
+
 class Worker(C.QThread):
     message=C.Signal(str);succeeded=C.Signal(object);failed=C.Signal(str)
     def __init__(self,fn): super().__init__();self.fn=fn;self.job=Job(self.message.emit)
@@ -56,22 +74,25 @@ class Worker(C.QThread):
 
 class MainWindow(W.QMainWindow):
     def __init__(self,project=None):
-        super().__init__();self.setWindowTitle('ATP ROA Studio · AQuA2');self.resize(1440,960);self.setMinimumSize(1100,780)
+        super().__init__();self.setWindowTitle(APP_NAME+' · AQuA2');self.resize(1640,1040);self.setMinimumSize(1000,700)
         self.project=None;self.metadata=None;self.worker=None;self.selected_id=None;self.current_data=None;self.movie=None
         self.events=[];self.voxel_cache={};self.preview_limits=(0,1);self.last_export=None
+        self.suggestion_doc=None;self.pending_suggestions=False;self.undo_snapshot=None;self.note_dirty=False;self.run_settings={}
         self.timer=C.QTimer(self);self.timer.setInterval(100);self.timer.timeout.connect(self.advance_frame)
-        central=W.QWidget();self.setCentralWidget(central);outer=W.QVBoxLayout(central);outer.setContentsMargins(24,20,24,12);outer.setSpacing(16)
-        head=W.QHBoxLayout();brand=W.QVBoxLayout();brand.addWidget(label('ATP ROA Studio','title'));brand.addWidget(label('From OIR to reviewed ATP activity / AQuA2によるATP解析','subtitle'));head.addLayout(brand);head.addStretch()
+        central=W.QWidget();self.setCentralWidget(central);outer=W.QVBoxLayout(central);outer.setContentsMargins(18,14,18,10);outer.setSpacing(10)
+        head=W.QHBoxLayout();brand=W.QVBoxLayout();brand.addWidget(label(APP_NAME,'title',False));brand.addWidget(label('Yamanashi · ATP activity review / ATP活動の確認と定量','subtitle',False));head.addLayout(brand);head.addStretch()
         self.open_btn=button('Open project / プロジェクトを開く',self.open_project);head.addWidget(self.open_btn);self.folder_btn=button('Open folder / フォルダー',self.open_folder);head.addWidget(self.folder_btn)
-        outer.addLayout(head);body=W.QHBoxLayout();body.setSpacing(20)
-        sidebar=W.QWidget();sidebar.setFixedWidth(205);sl=W.QVBoxLayout(sidebar);sl.setContentsMargins(0,4,0,0);self.nav=[]
+        outer.addLayout(head);body=W.QHBoxLayout();body.setSpacing(14)
+        sidebar=W.QWidget();sidebar.setFixedWidth(172);sl=W.QVBoxLayout(sidebar);sl.setContentsMargins(0,4,0,0);self.nav=[]
         self.stack=W.QStackedWidget()
         for i,text in enumerate(['01   Prepare / 準備','02   Detect / 検出','03   Review / 確認','04   Export / 出力']):
             b=W.QPushButton(text);b.setObjectName('nav');b.setCheckable(True);b.clicked.connect(lambda checked=False,n=i:self.go(n));sl.addWidget(b);self.nav.append(b)
-        sl.addStretch();sl.addWidget(label('LOCAL ANALYSIS','muted'));sl.addWidget(label('Originals preserved.\n原本を保持・確認履歴を保存','muted'));sl.addSpacing(12);sl.addWidget(label('v0.1 · Research preview / 研究用','muted'))
+        sl.addStretch();sl.addWidget(label('LOCAL ANALYSIS','muted'));sl.addWidget(label('Originals preserved.\n原本を保持・確認履歴を保存','muted'));sl.addSpacing(12)
+        sl.addWidget(label(CREATOR,'creator'));contact=label(f'<a style="color:#007bc1" href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a>','creator');contact.setOpenExternalLinks(True);sl.addWidget(contact)
+        sl.addWidget(label(f'v{__version__} · Research preview\n研究用プレビュー','muted'))
         body.addWidget(sidebar);body.addWidget(self.stack,1);outer.addLayout(body,1)
         self.setup_prepare();self.setup_detect();self.setup_review();self.setup_export()
-        self.progress=W.QProgressBar();self.progress.setRange(0,1);self.progress.setValue(0);self.progress.setTextVisible(False);outer.addWidget(self.progress)
+        self.progress=W.QProgressBar();self.progress.setFixedHeight(5);self.progress.setRange(0,1);self.progress.setValue(0);self.progress.setTextVisible(False);outer.addWidget(self.progress)
         bottom=W.QHBoxLayout();self.status=label('Choose an OIR to begin. / OIRファイルを選択してください。','muted');bottom.addWidget(self.status,1)
         self.cancel_btn=button('Cancel / 中止',self.cancel);self.cancel_btn.setEnabled(False);bottom.addWidget(self.cancel_btn);outer.addLayout(bottom)
         self.logbox=W.QPlainTextEdit();self.logbox.setReadOnly(True);self.logbox.setMaximumHeight(90);self.logbox.setVisible(False);outer.addWidget(self.logbox)
@@ -90,8 +111,10 @@ class MainWindow(W.QMainWindow):
         box.setStandardButtons(W.QMessageBox.StandardButton.Ok);box.exec()
 
     def page(self,title,sub):
-        page=W.QWidget();layout=W.QVBoxLayout(page);layout.setContentsMargins(2,0,2,0);layout.setSpacing(14)
-        layout.addWidget(label(title,'heading'));layout.addWidget(label(sub,'muted'));self.stack.addWidget(page);return layout
+        page=W.QWidget();layout=W.QVBoxLayout(page);layout.setContentsMargins(2,0,2,0);layout.setSpacing(8)
+        layout.addWidget(label(title,'heading'));layout.addWidget(label(sub,'muted'))
+        layout.setSizeConstraint(W.QLayout.SizeConstraint.SetMinimumSize)
+        scroll=PageScroll();scroll.setWidgetResizable(False);scroll.setFrameShape(W.QFrame.Shape.NoFrame);scroll.setWidget(page);self.stack.addWidget(scroll);return layout
 
     def setup_prepare(self):
         v=self.page('Prepare your recording / 記録を準備','Read spatial and temporal metadata from OIR, then check or edit. / OIRの時空間情報を読み込み、確認・修正します。')
@@ -137,34 +160,98 @@ class MainWindow(W.QMainWindow):
         row=W.QHBoxLayout();row.addWidget(button('Import AQuA2 .mat / 読み込み…',self.pick_mat));row.addStretch();row.addWidget(button('Run AQuA2 / 検出開始  →',self.start_detection,True));v.addLayout(row);v.addStretch()
 
     def setup_review(self):
-        v=self.page('Review ROAs / 位置と波形を確認','ROAs are spatiotemporal events, not individual cells. / ROAは時空間活動イベントであり、細胞単位とは限りません。')
-        bar=W.QHBoxLayout();self.filter=W.QComboBox();self.filter.addItems(['All / 全て','Pending / 未確認','Keep / 採用','Exclude / 除外','Hold / 保留','Saved favorite / 以前のfavorite']);self.filter.currentIndexChanged.connect(self.populate_table)
-        bar.addWidget(self.filter);self.review_count=label('No ROAs yet / ROA未検出','muted');bar.addWidget(self.review_count,1);bar.addWidget(button('Previous run / 以前の解析…',self.pick_run));v.addLayout(bar)
-        split=W.QSplitter();self.table=W.QTableWidget(0,5);self.table.setHorizontalHeaderLabels(['ROA','Review / 確認','Peak','Area µm²','★'])
-        self.table.setSelectionBehavior(W.QAbstractItemView.SelectionBehavior.SelectRows);self.table.setSelectionMode(W.QAbstractItemView.SelectionMode.SingleSelection)
-        self.table.setEditTriggers(W.QAbstractItemView.EditTrigger.NoEditTriggers);self.table.verticalHeader().hide()
+        v=self.page('Review ROAs / 位置と波形を確認','');v.itemAt(1).widget().hide()
+        bar=W.QHBoxLayout();self.filter=W.QComboBox();self.filter.addItems(['All reviews / 全確認状態','Pending / 未確認','Keep / 採用','Exclude / 除外','Hold / 保留','Saved favorite / 以前のfavorite'])
+        self.filter.currentIndexChanged.connect(lambda:self.populate_table())
+        self.suggestion_filter=W.QComboBox();self.suggestion_filter.addItem('All suggestions / 全ての提案',None)
+        for key,text in LABELS.items():self.suggestion_filter.addItem(text,key)
+        self.suggestion_filter.currentIndexChanged.connect(lambda:self.populate_table())
+        bar.addWidget(self.filter);bar.addWidget(self.suggestion_filter);bar.addWidget(button('Suggestion settings / 提案設定',self.suggestion_settings));bar.addStretch();bar.addWidget(button('Previous run / 以前の解析…',self.pick_run));v.addLayout(bar)
+        self.review_count=label('No ROAs yet / ROA未検出','muted');v.addWidget(self.review_count)
+        self.review_split=W.QSplitter();self.table=W.QTableWidget(0,3);self.table.setHorizontalHeaderLabels(['ROA','Review / 確認','Suggestion / 提案'])
+        self.table.setSelectionBehavior(W.QAbstractItemView.SelectionBehavior.SelectRows);self.table.setSelectionMode(W.QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.table.setEditTriggers(W.QAbstractItemView.EditTrigger.NoEditTriggers);self.table.verticalHeader().hide();self.table.verticalHeader().setDefaultSectionSize(30)
         self.table.horizontalHeader().setSectionResizeMode(W.QHeaderView.ResizeMode.ResizeToContents)
-        self.table.itemSelectionChanged.connect(self.select_row);self.table.setMinimumWidth(345);split.addWidget(self.table)
-        right=W.QWidget();r=W.QVBoxLayout(right);r.setContentsMargins(8,0,0,0)
+        self.table.horizontalHeader().setStretchLastSection(True);self.table.setMinimumWidth(290)
+        self.table.itemSelectionChanged.connect(self.select_row);self.table.currentCellChanged.connect(lambda:self.select_row())
+        self.review_split.addWidget(self.table)
+        right=W.QWidget();r=W.QVBoxLayout(right);r.setContentsMargins(6,0,0,0);r.setSpacing(6)
         displayrow=W.QHBoxLayout();self.display_mode=W.QComboBox();self.display_mode.addItems(['Raw / 原画像','Median preview / ノイズ低減表示'])
         self.display_mode.setCurrentIndex(1);self.display_mode.currentIndexChanged.connect(lambda:self.show_frame(self.slider.value()))
-        displayrow.addWidget(self.display_mode);displayrow.addWidget(label('Teal: footprint · Gold: active / 緑:領域・黄:活動','muted'));displayrow.addStretch()
-        displayrow.addWidget(button('Zoom / 拡大',self.zoom_event));displayrow.addWidget(button('Fit / 全体',lambda:self.view.autoRange()));r.addLayout(displayrow)
-        self.canvas=pg.GraphicsLayoutWidget();self.view=self.canvas.addViewBox(lockAspect=True,invertY=True);self.view.setMouseMode(pg.ViewBox.PanMode)
-        self.image=pg.ImageItem();self.overlay=pg.ImageItem();self.view.addItem(self.image);self.view.addItem(self.overlay)
-        self.canvas.scene().sigMouseClicked.connect(self.image_click);r.addWidget(self.canvas,4)
-        row=W.QHBoxLayout();self.play=button('▶ Play / 再生',self.toggle_play);row.addWidget(self.play)
+        displayrow.addWidget(self.display_mode);displayrow.addWidget(label('Cyan: outline · Gold: active / 水色:輪郭・黄:活動','muted'));displayrow.addStretch()
+        displayrow.addWidget(button('Reset views / 表示を戻す',self.fit_views));r.addLayout(displayrow)
+        self.visual_split=W.QSplitter(C.Qt.Orientation.Vertical);images=W.QWidget();images_layout=W.QHBoxLayout(images);images_layout.setContentsMargins(0,0,0,0);images_layout.setSpacing(8)
+        self.image_views=[]
+        for title in ['Full field / 全視野','Selected ROA / 選択ROAの拡大']:
+            pane=W.QWidget();layout=W.QVBoxLayout(pane);layout.setContentsMargins(0,0,0,0);layout.setSpacing(3);layout.addWidget(label(title,'muted'))
+            canvas=pg.GraphicsLayoutWidget();canvas.setBackground('#0c1f32');canvas.ci.layout.setContentsMargins(0,0,0,0)
+            view=canvas.addViewBox(lockAspect=True,invertY=True,enableMenu=False);view.setDefaultPadding(0);view.setMouseMode(pg.ViewBox.PanMode)
+            image=pg.ImageItem();overlay=pg.ImageItem();view.addItem(image);view.addItem(overlay)
+            canvas.scene().sigMouseClicked.connect(lambda event,vw=view:self.image_click(event,vw));layout.addWidget(canvas,1);images_layout.addWidget(pane,1)
+            self.image_views.append((canvas,view,image,overlay))
+        self.canvas,self.view,self.image,self.overlay=self.image_views[0]
+        self.zoom_canvas,self.zoom_view,self.zoom_image,self.zoom_overlay=self.image_views[1]
+        self.zoom_box=W.QGraphicsRectItem();self.zoom_box.setPen(pg.mkPen('#65c8ff',width=1.5,style=C.Qt.PenStyle.DashLine));self.view.addItem(self.zoom_box,ignoreBounds=True)
+        images.setMinimumHeight(180);self.visual_split.addWidget(images);self.visual_split.setChildrenCollapsible(False);self.visual_split.setMinimumHeight(300)
+        self.plot=pg.PlotWidget();self.plot.setLabel('bottom','Time',units='s');self.plot.setLabel('left','ΔF/F');self.plot.getAxis('left').enableAutoSIPrefix(False)
+        self.plot.showGrid(x=True,y=True,alpha=.15);self.plot.setMinimumHeight(115);self.cursor=pg.InfiniteLine(angle=90,pen=pg.mkPen('#b87816'))
+        self.visual_split.addWidget(self.plot);self.visual_split.setStretchFactor(0,4);self.visual_split.setStretchFactor(1,1);self.visual_split.setSizes([430,150]);r.addWidget(self.visual_split,1)
+        self.playback=W.QWidget();row=W.QHBoxLayout(self.playback);row.setContentsMargins(0,0,0,0)
+        self.play=button('▶ Play / 再生',self.toggle_play);row.addWidget(self.play)
         self.slider=W.QSlider(C.Qt.Orientation.Horizontal);self.slider.valueChanged.connect(self.show_frame);row.addWidget(self.slider,1)
-        self.frame_label=label('0.0 s','muted');row.addWidget(self.frame_label);r.addLayout(row)
-        self.plot=pg.PlotWidget();self.plot.setLabel('bottom','Time',units='s');self.plot.setLabel('left','ΔF/F');self.plot.showGrid(x=True,y=True,alpha=.15);self.plot.setMinimumHeight(160)
-        self.cursor=pg.InfiniteLine(angle=90,pen=pg.mkPen('#ad6e21'));r.addWidget(self.plot,2)
-        self.metric_text=label('Select an ROA in the table or image. / 一覧または画像でROAを選択してください。','muted');r.addWidget(self.metric_text)
-        split.addWidget(right);split.setSizes([350,700]);v.addWidget(split,1)
-        note=W.QHBoxLayout();note.addWidget(label('Review note / メモ'));self.note=W.QLineEdit();self.note.setPlaceholderText('Reason, edge, noise, repeats / 除外理由・境界・ノイズなど');note.addWidget(self.note,1);v.addLayout(note)
-        row=W.QHBoxLayout();row.addWidget(button('Keep / 採用 · A',lambda:self.decide('accepted'),True));row.addWidget(button('Exclude / 除外 · R',lambda:self.decide('rejected')));row.addWidget(button('Hold / 保留 · H',lambda:self.decide('hold')));row.addWidget(button('Reset / 未確認へ',lambda:self.decide('pending')))
-        row.addStretch();row.addWidget(button('Save note / メモ保存',self.save_note));row.addWidget(button('Export / 出力  →',lambda:self.go(3)));v.addLayout(row)
-        for key,state in [('A','accepted'),('R','rejected'),('H','hold')]:
-            shortcut=G.QShortcut(G.QKeySequence(key),self);shortcut.activated.connect(lambda s=state:self.decide(s) if self.stack.currentIndex()==2 and not isinstance(W.QApplication.focusWidget(),W.QLineEdit) else None)
+        self.frame_label=label('0.0 s','muted',False);row.addWidget(self.frame_label);r.addWidget(self.playback)
+        self.metric_text=label('Select an ROA. / ROAを選択してください。','muted');r.addWidget(self.metric_text)
+        self.suggestion_text=label('Suggestions are review aids, not ATP confirmation. / 提案は確認の補助であり、ATPの確定判定ではありません。','suggestion');r.addWidget(self.suggestion_text)
+        self.review_split.addWidget(right);self.review_split.setStretchFactor(0,0);self.review_split.setStretchFactor(1,1);self.review_split.setSizes([305,1040]);v.addWidget(self.review_split,1)
+        note=W.QHBoxLayout();self.selection_label=label('0 selected / 選択','muted',False);note.addWidget(self.selection_label)
+        self.note=W.QLineEdit();self.note.setPlaceholderText('Review note / 確認メモ');self.note.textEdited.connect(lambda:setattr(self,'note_dirty',True));note.addWidget(self.note,1);v.addLayout(note)
+        row=W.QHBoxLayout()
+        for text,state in [('Keep / 採用 · A ↵','accepted'),('Exclude / 除外 · R','rejected'),('Hold / 保留 · H','hold'),('Reset / 未確認 · U','pending')]:row.addWidget(button(text,lambda checked=False,s=state:self.decide(s),state=='accepted'))
+        self.undo_btn=button('Undo / 元に戻す',self.undo_review);self.undo_btn.setEnabled(False);row.addWidget(self.undo_btn)
+        row.addStretch();row.addWidget(button('Save note / メモ保存',self.save_note));row.addWidget(button('Export / 出力 →',lambda:self.go(3)));v.addLayout(row)
+        self.shortcuts=[]
+        for key,state in [('A','accepted'),('Return','accepted'),('Enter','accepted'),('R','rejected'),('Delete','rejected'),('Backspace','rejected'),('H','hold'),('U','pending')]:
+            shortcut=G.QShortcut(G.QKeySequence(key),self);shortcut.setAutoRepeat(False);shortcut.activated.connect(lambda s=state:self.decide(s));self.shortcuts.append(shortcut)
+        for key,fn in [('Space',self.toggle_play),(G.QKeySequence.StandardKey.Undo,self.undo_review)]:
+            shortcut=G.QShortcut(G.QKeySequence(key),self);shortcut.setAutoRepeat(False);shortcut.activated.connect(fn);self.shortcuts.append(shortcut)
+        W.QApplication.instance().focusChanged.connect(lambda:self.update_shortcuts())
+
+    def update_shortcuts(self):
+        focus=W.QApplication.focusWidget()
+        typing=isinstance(focus,(W.QLineEdit,W.QTextEdit,W.QPlainTextEdit,W.QAbstractSpinBox,W.QComboBox))
+        enabled=self.stack.currentIndex()==2 and self.stack.isEnabled() and not typing and W.QApplication.activeModalWidget() is None
+        for shortcut in getattr(self,'shortcuts',[]):shortcut.setEnabled(enabled)
+
+    def selected_event_ids(self):
+        return [int(self.table.item(i.row(),0).text()) for i in sorted(self.table.selectionModel().selectedRows(),key=lambda i:i.row())]
+
+    def suggestion_settings(self):
+        if not self.project or not self.events:return
+        dialog=W.QDialog(self);dialog.setWindowTitle('Suggestion settings / 提案設定');form=W.QFormLayout(dialog)
+        form.addRow(label('Adjust review aids; existing Keep/Exclude decisions stay saved. / 提案の基準を調整します。採用・除外の確認結果は保持されます。'))
+        cfg=self.suggestion_doc['config'] if self.suggestion_doc else SUGGESTION_DEFAULTS;fields={}
+        for key,text in [('signal_snr','Signal candidate SNR ≥ / 信号候補'),('noise_snr','Noise-like SNR < / ノイズ疑い'),('min_support_frames','Continuous frames ≥ / 連続フレーム'),('min_pixel_support','Raw pixel support ≥ / 原画像支持率')]:
+            widget=double(cfg[key],.01,10000,2)
+            if key=='min_pixel_support':widget.setRange(.01,1)
+            if key=='min_support_frames':widget.setRange(1,100);widget.setDecimals(0)
+            fields[key]=widget;form.addRow(text,widget)
+        buttons=W.QDialogButtonBox(W.QDialogButtonBox.StandardButton.Ok|W.QDialogButtonBox.StandardButton.Cancel);form.addRow(buttons)
+        buttons.rejected.connect(dialog.reject)
+        def accept():
+            try:validate_config({k:w.value() for k,w in fields.items()})
+            except ValueError as e:W.QMessageBox.warning(dialog,'Check settings / 設定を確認',str(e));return
+            dialog.accept()
+        buttons.accepted.connect(accept)
+        if dialog.exec()==W.QDialog.DialogCode.Accepted:self.calculate_suggestions({k:w.value() for k,w in fields.items()},True)
+        self.update_shortcuts()
+
+    def calculate_suggestions(self,config=None,force=False):
+        if not self.project or not self.events:return
+        if self.worker and self.worker.isRunning():self.pending_suggestions=True;return
+        self.pending_suggestions=False;path=self.project.path
+        def done(data):
+            self.suggestion_doc=data;self.populate_table(preserve=self.selected_event_ids());self.log('Suggestions ready. Decisions remain yours. / 提案を表示しました。確認結果はご自身で決定してください。')
+        self.run_job(lambda job:build_suggestions(Project(path),config,force,job),done)
 
     def setup_export(self):
         v=self.page('Export selected ROAs / 採用ROAを出力','Only events marked Keep in this run enter the selected results. / この解析で採用したイベントのみを出力します。')
@@ -187,18 +274,21 @@ class MainWindow(W.QMainWindow):
         for i,b in enumerate(self.nav): b.setChecked(i==index)
         if index!=2:self.timer.stop();self.play.setText('▶ Play / 再生') if hasattr(self,'play') else None
         if index==3:self.update_counts()
+        if index==2:C.QTimer.singleShot(0,self.fit_views)
+        self.update_shortcuts()
 
     def log(self,text):self.status.setText(text[:180]);self.logbox.appendPlainText(text)
     def run_job(self,fn,on_success):
         if self.worker and self.worker.isRunning():return
-        self.timer.stop();self.stack.setEnabled(False);self.open_btn.setEnabled(False)
+        self.timer.stop();self.play.setText('▶ Play / 再生');self.stack.setEnabled(False);self.open_btn.setEnabled(False);self.update_shortcuts()
         for b in self.nav:b.setEnabled(False)
         self.progress.setRange(0,0);self.cancel_btn.setEnabled(True)
         self.worker=Worker(fn);self.worker.message.connect(self.log);self.worker.succeeded.connect(on_success);self.worker.failed.connect(self.failure);self.worker.finished.connect(self.job_finished);self.worker.start()
     def job_finished(self):
         self.stack.setEnabled(True);self.open_btn.setEnabled(True)
         for b in self.nav:b.setEnabled(True)
-        self.progress.setRange(0,1);self.progress.setValue(1);self.cancel_btn.setEnabled(False)
+        self.progress.setRange(0,1);self.progress.setValue(1);self.cancel_btn.setEnabled(False);self.update_shortcuts()
+        if self.pending_suggestions:C.QTimer.singleShot(0,self.calculate_suggestions)
     def failure(self,message):
         self.log(message);box=W.QMessageBox(self);box.setWindowTitle('Task incomplete / 処理未完了');box.setText(message.split('\n\n')[0]);box.setDetailedText(message);box.exec()
     def cancel(self):
@@ -250,6 +340,8 @@ class MainWindow(W.QMainWindow):
         if p.manifest.get('status') not in ('prepared','review') or any(not (p.path/'raw'/name).is_file() for name in required):
             raise ValueError('This project is not fully prepared. Start file preparation again in a new project. / 準備が未完了です。新規プロジェクトで再変換してください。')
         self.project=p;self.movie=p.movie();self.times=p.times();self.preview_limits=p.manifest.get('display_limits',(0,255));self.events=p.events();self.voxel_cache={}
+        self.run_settings=read_json(p.run_dir()/'settings.json') if p.run_dir() else {}
+        self.suggestion_doc=cached_suggestions(p);self.pending_suggestions=bool(self.events and not self.suggestion_doc);self.undo_snapshot=None;self.undo_btn.setEnabled(False)
         from scipy.ndimage import median_filter
         sample=np.stack([median_filter(self.movie[i],size=3) for i in np.linspace(0,len(self.movie)-1,5,dtype=int)])
         low,high=np.percentile(sample,[1,99.5]);self.median_limits=(float(low),float(max(high,low+1)))
@@ -262,7 +354,8 @@ class MainWindow(W.QMainWindow):
         self.experiment_group.setChecked(a.get('include_experiment',True))
         self.drug.setValue(a['drug_s'] if a.get('drug_s') is not None else -1)
         self.detect_info.setText(f'{a.get("recording_id",p.path.name)}\n{self.movie.shape[0]} frames · Δt {np.median(np.diff(self.times)):.6g} s · {a["pixel_x_um"]:.6g} µm/pixel\nProject / 保存先: {p.path}')
-        self.slider.setRange(0,len(self.movie)-1);self.selected_id=None;self.current_data=None;self.plot.clear();self.populate_table();self.show_frame(self.slider.value());self.log('Project opened. / プロジェクトを開きました。')
+        self.slider.setRange(0,len(self.movie)-1);self.selected_id=None;self.current_data=None;self.plot.clear();self.populate_table();self.show_frame(self.slider.value());self.log('Project opened. / プロジェクトを開きました。');self.fit_views()
+        if self.pending_suggestions:C.QTimer.singleShot(0,self.calculate_suggestions)
     def require_project(self):
         if self.project:return True
         self.failure('Prepare or open a project first. / プロジェクトを準備するか開いてください。');return False
@@ -283,17 +376,30 @@ class MainWindow(W.QMainWindow):
         if not runs:return
         name,ok=W.QInputDialog.getItem(self,'Previous run / 以前の解析','Select a run / 解析を選択',[p.name for p in sorted(runs)],0,False)
         if ok:self.project.manifest['current_run']='runs/'+name;self.project.save();self.load_project(self.project.path)
-    def populate_table(self):
+    def populate_table(self,preserve=None):
         if not hasattr(self,'table'):return
         reviews=self.project.review() if self.project else {};filter_index=self.filter.currentIndex();statuses=[None,'pending','accepted','rejected','hold']
-        rows=[e for e in self.events if (filter_index==0 or (filter_index==5 and e['favorite_hint']) or (0<filter_index<5 and reviews.get(str(e['event_id']),{}).get('status','pending')==statuses[filter_index]))]
-        self.table.blockSignals(True);self.table.setRowCount(len(rows))
+        suggestions=(self.suggestion_doc or {}).get('events',{});category=self.suggestion_filter.currentData()
+        rows=[e for e in self.events if (filter_index==0 or (filter_index==5 and e['favorite_hint']) or (0<filter_index<5 and reviews.get(str(e['event_id']),{}).get('status','pending')==statuses[filter_index])) and (category is None or suggestions.get(str(e['event_id']),{}).get('category')==category)]
+        current=self.selected_id;self.table.blockSignals(True);self.table.clearSelection();self.table.setRowCount(len(rows))
+        short_states={'pending':'Pending / 未確認','accepted':'Keep / 採用','rejected':'Exclude / 除外','hold':'Hold / 保留'}
+        short_suggestions={'signal':'Signal / 信号候補','review':'Check / 要確認','noise':'Noise / 疑い'}
         for i,e in enumerate(rows):
-            vals=[str(e['event_id']),STATES[reviews.get(str(e['event_id']),{}).get('status','pending')],f'{e["peak_dff"]:.3f}' if e['peak_dff'] is not None else '—',f'{e["area_um2"]:.1f}','★' if e['favorite_hint'] else '']
-            for j,val in enumerate(vals):self.table.setItem(i,j,W.QTableWidgetItem(val))
-        self.table.blockSignals(False);self.update_counts()
-        if rows:self.table.selectRow(0)
-        else:self.selected_id=None;self.current_data=None;self.metric_text.setText('No ROAs match this filter. / 該当するROAがありません。');self.plot.clear();self.show_frame(self.slider.value())
+            result=suggestions.get(str(e['event_id']),{});state=reviews.get(str(e['event_id']),{}).get('status','pending');category=result.get('category')
+            vals=[str(e['event_id']),short_states[state],short_suggestions.get(category,'…')]
+            for j,val in enumerate(vals):
+                item=W.QTableWidgetItem(val);self.table.setItem(i,j,item)
+                if j==2:
+                    item.setForeground(G.QColor({'signal':'#006ca8','review':'#966019','noise':'#a34444'}.get(category,'#65788a')));item.setToolTip(reason_text(result))
+                else:item.setToolTip(f'ROA {e["event_id"]} · Peak {e.get("peak_dff")} ΔF/F · Area {e.get("area_um2")} µm²'+(' · ★ Favorite' if e.get('favorite_hint') else ''))
+        chosen=[i for i,e in enumerate(rows) if e['event_id'] in (preserve or [])]
+        if not chosen and rows:chosen=[0]
+        if chosen:
+            current_row=next((i for i in chosen if rows[i]['event_id']==current),chosen[0])
+            self.table.setCurrentCell(current_row,0,C.QItemSelectionModel.SelectionFlag.NoUpdate)
+            for i in chosen:self.table.selectionModel().select(self.table.model().index(i,0),C.QItemSelectionModel.SelectionFlag.Select|C.QItemSelectionModel.SelectionFlag.Rows)
+        self.table.blockSignals(False);self.update_counts();self.select_row()
+
     def update_counts(self):
         reviews=self.project.review() if self.project else {};counts={k:sum(r.get('status')==k for r in reviews.values()) for k in STATES}
         text=f'Keep / 採用 {counts["accepted"]}  ·  Exclude / 除外 {counts["rejected"]}  ·  Hold / 保留 {counts["hold"]}  ·  Pending / 未確認 {counts["pending"]}'
@@ -302,62 +408,102 @@ class MainWindow(W.QMainWindow):
             self.export_info.setText(f'{counts["accepted"]} kept / 採用 / {len(self.events)} detected / 検出')
             self.export_warning.setText(text+'\nOnly kept ROAs are exported; all review states are retained. / 採用ROAのみを出力し、全確認状態を保存します。')
     def select_row(self):
-        row=self.table.currentRow()
-        if row<0 or not self.project:return
-        item=self.table.item(row,0)
-        if item is None:return
-        eid=int(item.text());self.selected_id=eid;d=self.project.event_data(eid);self.current_data=d
-        e=next(x for x in self.events if x['event_id']==eid);self.note.setText(self.project.review()[str(eid)].get('note',''))
-        self.plot.clear();self.plot.plot(self.times,d['dff'],pen=pg.mkPen('#148d79',width=1.7))
-        span=pg.LinearRegionItem([e['onset_s'],e['end_s']],movable=False,brush=(20,150,120,25),pen=None);self.plot.addItem(span)
-        self.plot.addItem(self.cursor);drug=self.project.manifest['acquisition'].get('drug_s')
-        if drug is not None:self.plot.addItem(pg.InfiniteLine(drug,pen=pg.mkPen('#cf8c25',style=C.Qt.PenStyle.DashLine)))
-        def fmt(k):return 'N/A / 測定不可' if e[k] is None else f'{e[k]:.3g}'
-        self.metric_text.setText(f'ROA {eid}  ·  Peak {fmt("peak_dff")}  ·  Area / 面積 {fmt("area_um2")} µm²  ·  FWHM {fmt("fwhm_s")} s  ·  AUC {fmt("auc_signed_dff_s")} ΔF/F·s\nQC: {e["qc_flags"] or "No flags / なし"}'+('  ·  Saved favorite / 以前のfavorite・再確認が必要' if e['favorite_hint'] else ''))
-        frame=int(np.searchsorted(self.times,e['peak_time_s'] if e['peak_time_s'] is not None else e['onset_s']));self.slider.setValue(frame);self.show_frame(frame)
+        ids=self.selected_event_ids();self.selection_label.setText(f'{len(ids)} selected / 選択');self.selection_label.setToolTip('Shift: select a range / 範囲選択 · Ctrl/Cmd: add rows / 個別追加')
+        if not ids or not self.project:
+            self.selected_id=None;self.current_data=None;self.note.clear();self.note_dirty=False;self.plot.clear();self.zoom_box.hide()
+            self.metric_text.setText('No ROAs selected. / ROAが選択されていません。');self.suggestion_text.setText('Select an ROA to see the suggestion and reasons. / ROAを選択すると提案と理由を表示します。');self.show_frame(self.slider.value());return
+        row=self.table.currentRow();item=self.table.item(row,0);eid=int(item.text()) if item is not None and int(item.text()) in ids else ids[0]
+        review=self.project.review()
+        self.note.setText(review[str(eid)].get('note','') if len(ids)==1 else '');self.note_dirty=False
+        self.note.setPlaceholderText('Review note / 確認メモ' if len(ids)==1 else 'Optional shared note; leave unchanged to keep each note / 共通メモは任意・未編集なら各メモを保持')
+        if eid!=self.selected_id or self.current_data is None:
+            self.selected_id=eid;d=self.project.event_data(eid);self.current_data=d
+            e=next(x for x in self.events if x['event_id']==eid)
+            self.plot.clear();self.plot.plot(self.times,d['dff'],pen=pg.mkPen('#007bc1',width=1.8))
+            self.plot.addItem(pg.LinearRegionItem([e['onset_s'],e['end_s']],movable=False,brush=(0,123,193,25),pen=None));self.plot.addItem(self.cursor)
+            drug=self.project.manifest['acquisition'].get('drug_s')
+            if drug is not None:self.plot.addItem(pg.InfiniteLine(drug,pen=pg.mkPen('#b87816',style=C.Qt.PenStyle.DashLine)))
+            self.plot.enableAutoRange()
+            def fmt(k):return 'N/A' if e.get(k) is None else f'{e[k]:.3g}'
+            self.metric_text.setText(f'ROA {eid} · Peak {fmt("peak_dff")} ΔF/F · Area / 面積 {fmt("area_um2")} µm² · FWHM {fmt("fwhm_s")} s · AUC {fmt("auc_signed_dff_s")} ΔF/F·s'+(' · ★' if e.get('favorite_hint') else ''))
+            self.metric_text.setToolTip('QC: '+(e.get('qc_flags') or 'No flags / なし'))
+            self.zoom_event();frame=min(len(self.movie)-1,int(np.searchsorted(self.times,e['peak_time_s'] if e['peak_time_s'] is not None else e['onset_s'])));self.slider.setValue(frame);self.show_frame(frame)
+        result=(self.suggestion_doc or {}).get('events',{}).get(str(eid))
+        if result:
+            snr='N/A' if result['trace_snr'] is None else f'{result["trace_snr"]:.1f}'
+            pixels='N/A' if result['pixel_support'] is None else f'{result["pixel_support"]:.0%}'
+            self.suggestion_text.setText(f'Review aid / 参考: {LABELS[result["category"]]} · SNR {snr} · {result["support_frames"]} frames · Raw pixels / 原画像 {pixels}\n'+reason_text(result) )
+            self.suggestion_text.setToolTip(reason_text(result)+'\nReview aid only, not ATP confirmation. / 提案は確認の補助であり、ATPの確定判定ではありません。')
+        else:self.suggestion_text.setText('Calculating suggestions… / 提案を計算しています…')
+        self.update_shortcuts()
+
     def show_frame(self,index):
         if self.movie is None:return
-        index=min(index,len(self.movie)-1);frame=self.movie[index];levels=self.preview_limits
+        index=max(0,min(index,len(self.movie)-1));frame=self.movie[index];levels=self.preview_limits
         if self.display_mode.currentIndex()==1:
             from scipy.ndimage import median_filter
             frame=median_filter(frame,size=3);levels=self.median_limits
-        self.image.setImage(frame,autoLevels=False,levels=levels,autoDownsample=True)
         h,w=self.movie.shape[1:];over=np.zeros((h,w,4),dtype=np.uint8)
         if self.current_data is not None:
-            offset=np.asarray(read_json(self.project.run_dir()/'settings.json')['offset_yx']);v=self.current_data['voxels'];y=v[:,1]+offset[0];x=v[:,2]+offset[1]
-            mask=np.zeros((h,w),bool);mask[y,x]=True;edge=mask&~binary_erosion(mask);over[edge]=[14,205,166,230]
-            active=v[:,0]==index;over[y[active],x[active]]=[255,191,66,120]
-        self.overlay.setImage(over,autoLevels=False);self.frame_label.setText(f'{self.times[index]:.2f} s  ·  {index+1}/{len(self.movie)}');self.cursor.setValue(self.times[index])
+            offset=np.asarray(self.run_settings.get('offset_yx',[0,0]));v=self.current_data['voxels'];y=v[:,1]+offset[0];x=v[:,2]+offset[1]
+            mask=np.zeros((h,w),bool);mask[y,x]=True;edge=mask&~binary_erosion(mask);over[edge]=[69,204,255,240]
+            active=v[:,0]==index;over[y[active],x[active]]=[255,191,66,150]
+        for canvas,view,image,overlay in self.image_views:
+            image.setImage(frame,autoLevels=False,levels=levels,autoDownsample=True);overlay.setImage(over,autoLevels=False)
+        self.frame_label.setText(f'{self.times[index]:.2f} s · {index+1}/{len(self.movie)}');self.cursor.setValue(self.times[index])
+
+    def fit_views(self):
+        if self.movie is None:return
+        h,w=self.movie.shape[1:];self.view.setRange(rect=C.QRectF(0,0,w,h),padding=0)
+        if self.current_data is not None:self.zoom_event()
+        else:self.zoom_view.setRange(rect=C.QRectF(0,0,w,h),padding=0)
+
     def zoom_event(self):
         if self.current_data is None:return
-        v=self.current_data['voxels'];dy,dx=read_json(self.project.run_dir()/'settings.json')['offset_yx']
-        x0,x1=int(v[:,2].min()+dx),int(v[:,2].max()+dx);y0,y1=int(v[:,1].min()+dy),int(v[:,1].max()+dy)
-        margin=max(20,max(x1-x0,y1-y0)//2);self.view.setRange(xRange=(x0-margin,x1+margin),yRange=(y0-margin,y1+margin),padding=.02)
-    def image_click(self,event):
-        if not self.project or event.button()!=C.Qt.MouseButton.LeftButton:return
-        pt=self.view.mapSceneToView(event.scenePos());x,y=int(pt.x()),int(pt.y());frame=self.slider.value()
+        v=self.current_data['voxels'];dy,dx=self.run_settings.get('offset_yx',[0,0]);h,w=self.movie.shape[1:]
+        x0,x1=int(v[:,2].min()+dx),int(v[:,2].max()+dx)+1;y0,y1=int(v[:,1].min()+dy),int(v[:,1].max()+dy)+1
+        margin=max(10,max(x1-x0,y1-y0)//2);x0=max(0,x0-margin);x1=min(w,x1+margin);y0=max(0,y0-margin);y1=min(h,y1+margin)
+        rect=C.QRectF(x0,y0,x1-x0,y1-y0);self.zoom_view.setRange(rect=rect,padding=0);self.zoom_box.setRect(rect);self.zoom_box.show()
+
+    def image_click(self,event,view=None):
+        view=view or self.view
+        if not self.project or self.movie is None or event.button()!=C.Qt.MouseButton.LeftButton or not view.sceneBoundingRect().contains(event.scenePos()):return
+        pt=view.mapSceneToView(event.scenePos());x,y=math.floor(pt.x()),math.floor(pt.y());frame=self.slider.value()
         if not(0<=x<self.movie.shape[2] and 0<=y<self.movie.shape[1]):return
-        offset=read_json(self.project.run_dir()/'settings.json')['offset_yx'] if self.project.run_dir() else [0,0];matches=[]
+        offset=self.run_settings.get('offset_yx',[0,0]);matches=[]
         for i in range(self.table.rowCount()):
             eid=int(self.table.item(i,0).text())
             if eid not in self.voxel_cache:self.voxel_cache[eid]=self.project.event_data(eid)['voxels']
             v=self.voxel_cache[eid];spatial=(v[:,1]+offset[0]==y)&(v[:,2]+offset[1]==x)
             if np.any(spatial):matches.append((not np.any(spatial&(v[:,0]==frame)),i))
         if matches:self.table.selectRow(sorted(matches)[0][1])
+
     def toggle_play(self):
         if self.timer.isActive():self.timer.stop();self.play.setText('▶ Play / 再生')
         elif self.movie is not None:self.timer.start();self.play.setText('Ⅱ Pause / 停止')
     def advance_frame(self):self.slider.setValue((self.slider.value()+1)%(self.slider.maximum()+1))
     def decide(self,status):
-        if self.selected_id is None:return
-        row=self.table.currentRow();eid=self.selected_id;self.project.review_event(eid,status,self.note.text(),self.fields['reviewer'].text())
-        self.populate_table()
-        if self.filter.currentIndex()==0:
-            self.table.selectRow(min(row+1,self.table.rowCount()-1))
-        self.log(f'ROA {eid} → {STATES[status]} · Review saved / 確認結果を保存')
+        ids=self.selected_event_ids()
+        if not ids or not self.stack.isEnabled():return
+        row=self.table.currentRow();visible=[int(self.table.item(i,0).text()) for i in range(self.table.rowCount())]
+        self.undo_snapshot=self.project.review_events(ids,status,self.note.text() if self.note_dirty else None,self.fields['reviewer'].text());self.undo_btn.setEnabled(True)
+        self.populate_table(preserve=ids)
+        if len(ids)==1 and self.table.rowCount():
+            remaining=[int(self.table.item(i,0).text()) for i in range(self.table.rowCount())]
+            next_id=next((eid for eid in visible[max(0,row)+1:] if eid in remaining),None)
+            if next_id is not None:self.table.selectRow(remaining.index(next_id))
+            else:self.table.selectRow(min(max(0,row),self.table.rowCount()-1))
+        self.table.setFocus();self.log(f'{len(ids)} ROA(s) → {STATES[status]} · Saved / 保存済み')
+
     def save_note(self):
-        if self.selected_id is None:return
-        state=self.project.review()[str(self.selected_id)]['status'];self.project.review_event(self.selected_id,state,self.note.text(),self.fields['reviewer'].text());self.log('Note saved / メモを保存しました。')
+        ids=self.selected_event_ids()
+        if not ids or not self.note_dirty:return
+        self.undo_snapshot=self.project.review_events(ids,note=self.note.text(),reviewer=self.fields['reviewer'].text());self.undo_btn.setEnabled(True);self.note_dirty=False;self.log('Note saved / メモを保存しました。')
+
+    def undo_review(self):
+        if not self.undo_snapshot or not self.project or not self.stack.isEnabled():return
+        snapshot=self.undo_snapshot;self.project.restore_reviews(snapshot);self.undo_snapshot=None;self.undo_btn.setEnabled(False);self.populate_table(preserve=list(snapshot));self.table.setFocus();self.log('Previous review restored / 直前の確認結果に戻しました。')
+
     def start_export(self):
         if not self.require_project():return
         path=self.project.path;movie=self.export_movie.isChecked()
@@ -373,8 +519,10 @@ class MainWindow(W.QMainWindow):
 def main():
     if sys.platform=='win32':
         import ctypes
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('ATP.ROA.Studio')
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('GLIA.Center.ATP.Studio')
     app=W.QApplication(sys.argv);app.setApplicationName(APP_NAME)
+    from .theme import install_fonts
+    install_fonts(app)
     app.setWindowIcon(G.QIcon(str(ROOT/'assets/atp-studio.ico')))
     win=MainWindow(sys.argv[1] if len(sys.argv)>1 else None);win.show();sys.exit(app.exec())
 

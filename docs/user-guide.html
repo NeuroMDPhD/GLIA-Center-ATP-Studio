@@ -1,19 +1,23 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ATP ROA Studio — 操作マニュアル / User manual</title><style>
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{font:16px/1.8 -apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic",sans-serif;color:#233b40;background:#f4f8f7;margin:0}
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GLIA Center ATP Studio — 操作マニュアル / User manual</title><style>
+@font-face{font-family:Plex;src:url(../assets/fonts/IBMPlexSans-Regular.ttf)}
+@font-face{font-family:Plex;src:url(../assets/fonts/IBMPlexSans-SemiBold.ttf);font-weight:600 900}
+@font-face{font-family:PlexJP;src:url(../assets/fonts/IBMPlexSansJP-Regular.ttf)}
+
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{font:16px/1.8 Plex,PlexJP,sans-serif;color:#263c50;background:#f3f6fa;margin:0}
 main{max-width:1080px;margin:32px auto;padding:40px 48px;background:white;border:1px solid #d9e5e1;border-radius:14px}
-h1{font-size:32px;line-height:1.4;color:#13594d}h2{font-size:25px;margin:42px 0 16px;padding-top:14px;border-top:2px solid #daebe5}h3{font-size:20px;margin-top:28px}
-p{margin:10px 0 18px}a{color:#087563}table{border-collapse:collapse;width:100%;font-size:14px;margin:18px 0}th,td{padding:12px;border:1px solid #dbe5e1;text-align:left;vertical-align:top}th{background:#eaf4ef}
-code{font-family:ui-monospace,monospace;font-size:.9em;background:#edf4f1;border-radius:3px;padding:2px 4px;overflow-wrap:anywhere}pre{padding:16px;background:#edf4f1;overflow:auto}
-img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{margin-bottom:12px}.toc{background:#eff6f3;padding:16px 24px;border-radius:8px}.toc li{margin:3px 0}.toc ul{padding-left:24px}
+h1{font-size:32px;line-height:1.4;color:#062c54}h2{font-size:25px;margin:42px 0 16px;padding-top:14px;border-top:2px solid #deedf8}h3{font-size:20px;margin-top:28px}
+p{margin:10px 0 18px}a{color:#007bc1}table{border-collapse:collapse;width:100%;font-size:14px;margin:18px 0}th,td{padding:12px;border:1px solid #dbe5e1;text-align:left;vertical-align:top}th{background:#eaf2f9}
+code{font-family:ui-monospace,monospace;font-size:.9em;background:#edf3f8;border-radius:3px;padding:2px 4px;overflow-wrap:anywhere}pre{padding:16px;background:#edf3f8;overflow:auto}
+img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{margin-bottom:12px}.toc{background:#edf3f8;padding:16px 24px;border-radius:8px}.toc li{margin:3px 0}.toc ul{padding-left:24px}
 @media(max-width:720px){main{padding:22px 16px;margin:0;border-radius:0}h1{font-size:26px}table{font-size:12px}th,td{padding:7px}}
 @media print{body{background:white}main{border:0;margin:0;padding:0}h2,h3{break-after:avoid}tr,img{break-inside:avoid}a{color:inherit}}
-</style></head><body><main><h1 id="atp-roa-studio-user-manual">ATP ROA Studio 操作マニュアル / User manual</h1>
-<p>日本語・英語併記 · バージョン 0.1.0 · 研究用プレビュー<br />
-Japanese–English · Version 0.1.0 · Research preview</p>
+</style></head><body><main><h1 id="glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</h1>
+<p>日本語・英語併記 · バージョン 0.2.0 · 研究用プレビュー<br>
+Japanese–English · Version 0.2.0 · Research preview</p>
 <div class="toc">
 <ul>
-<li><a href="#atp-roa-studio-user-manual">ATP ROA Studio 操作マニュアル / User manual</a><ul>
+<li><a href="#glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</a><ul>
 <li><a href="#1-before-you-begin">1. はじめに / Before you begin</a></li>
 <li><a href="#2-download-and-launch">2. ダウンロードと起動 / Download and launch</a></li>
 <li><a href="#3-quick-start">3. 最短手順 / Quick start</a></li>
@@ -30,19 +34,19 @@ Japanese–English · Version 0.1.0 · Research preview</p>
 </ul>
 </div>
 <h2 id="1-before-you-begin">1. はじめに / Before you begin</h2>
-<p>ATP ROA Studioは、OIR動画からAQuA2で活動イベントを検出し、人が確認したROAだけを定量・出力するアプリです。ROAは時空間的な活動イベントを表し、1つの細胞や1匹の動物と同じ単位ではありません。</p>
-<p>ATP ROA Studio detects activity events in OIR movies with AQuA2, lets you review individual ROAs, and exports measurements for the ROAs you keep. An ROA is a spatiotemporal activity event; it is not necessarily one cell or one animal.</p>
+<p>GLIA Center ATP Studioは、OIR動画からAQuA2で活動イベントを検出し、人が確認したROAだけを定量・出力するアプリです。ROAは時空間的な活動イベントを表し、1つの細胞や1匹の動物と同じ単位ではありません。</p>
+<p>GLIA Center ATP Studio detects activity events in OIR movies with AQuA2, lets you review individual ROAs, and exports measurements for the ROAs you keep. An ROA is a spatiotemporal activity event; it is not necessarily one cell or one animal.</p>
 <p>処理の流れは <strong>準備 → 検出 → 確認 → 出力</strong> です。原本OIRを上書きせず、新しいプロジェクトフォルダーに保存します。解析中にインターネットへのデータ送信は行いません。</p>
 <p>The workflow is <strong>Prepare → Detect → Review → Export</strong>. Outputs go into a new project folder; the original OIR is not overwritten. Analysis does not upload recordings to the internet.</p>
 <h2 id="2-download-and-launch">2. ダウンロードと起動 / Download and launch</h2>
 <ol>
-<li>GitHubの <strong><a href="https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases">Releases</a></strong> から <code>ATP-ROA-Studio-Windows-x64.zip</code> をダウンロードします。<br />
-   Download <code>ATP-ROA-Studio-Windows-x64.zip</code> from <strong><a href="https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases">Releases</a></strong> on GitHub.</li>
-<li>ZIPを右クリックし、<strong>すべて展開</strong>を選びます。例：<code>C:\ATPStudio</code>。<br />
+<li>GitHubの <strong><a href="https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases">Releases</a></strong> から <code>GLIA-Center-ATP-Studio-Windows-x64.zip</code> をダウンロードします。<br>
+   Download <code>GLIA-Center-ATP-Studio-Windows-x64.zip</code> from <strong><a href="https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases">Releases</a></strong> on GitHub.</li>
+<li>ZIPを右クリックし、<strong>すべて展開</strong>を選びます。例：<code>C:\ATPStudio</code>。<br>
    Right-click the ZIP and choose <strong>Extract All</strong>, for example into <code>C:\ATPStudio</code>.</li>
-<li>展開したフォルダー内のGLIAロゴ付き <strong><code>ATP ROA Studio.exe</code></strong> をダブルクリックします。<br />
-   Double-click <strong><code>ATP ROA Studio.exe</code></strong> with the GLIA logo inside the extracted folder.</li>
-<li>実行ファイルだけを移動せず、<code>python</code>、<code>runtime</code>、<code>assets</code>などの同梱フォルダーを一緒に保持します。<br />
+<li>展開したフォルダー内のGLIAロゴ付き <strong><code>GLIA Center ATP Studio.exe</code></strong> をダブルクリックします。<br>
+   Double-click <strong><code>GLIA Center ATP Studio.exe</code></strong> with the GLIA logo inside the extracted folder.</li>
+<li>実行ファイルだけを移動せず、<code>python</code>、<code>runtime</code>、<code>assets</code>などの同梱フォルダーを一緒に保持します。<br>
    Keep accompanying folders such as <code>python</code>, <code>runtime</code> and <code>assets</code> together with the executable.</li>
 </ol>
 <p>MATLAB・Fiji・Python・Javaの別途インストールは不要です。通常の利用でコマンド入力は必要ありません。GitHubの自動生成「Source code」ZIPは開発者用で、実行環境を含みません。</p>
@@ -253,10 +257,48 @@ Japanese–English · Version 0.1.0 · Research preview</p>
 <p><code>Import AQuA2 .mat</code>から既存のMATLAB v7.3形式のAQuA2結果を読み込めます。MATLABの起動は不要です。元動画に対応する結果チャネル1または2を指定してください。寸法・校正値とサンプルフレームを照合するため、別記録の結果や照合できない位置補正済み結果は拒否します。以前のfavoriteは★として残り、新しい確認状態はPendingです。</p>
 <p>Use <code>Import AQuA2 .mat</code> for existing MATLAB v7.3 AQuA2 results without running MATLAB. Select the matching result channel, 1 or 2. The app checks dimensions, calibration and sample frames, rejecting mismatched recordings or registered results whose mapping cannot be verified. Prior favorites appear as ★ and begin with Pending review status.</p>
 <h2 id="6-reviewroa-review-and-select-roas">6. Review：ROAを確認・選別する / Review and select ROAs</h2>
-<p>一覧または画像上のROAをクリックし、位置・広がり・動画・ΔF/F波形を確認します。緑はイベント全体の空間領域、黄色はそのフレームで活動している画素です。<code>Zoom</code>で選択イベントを拡大し、<code>Fit</code>で全視野に戻ります。スライダー・時刻・波形上のカーソルは同じフレームに対応します。</p>
-<p>Click an ROA in the table or image and inspect its location, extent, movie and ΔF/F trace. Teal shows the full spatial footprint; gold marks pixels active in the current frame. Use <code>Zoom</code> for the selected event and <code>Fit</code> for the whole field. The slider, timestamp and trace cursor correspond to the same frame.</p>
-<p><code>Raw</code>は原画像、<code>Median preview</code>は表示用のノイズ低減画像です。表示の切り替えは保存済みの検出設定・結果を変更しません。</p>
-<p><code>Raw</code> displays source images; <code>Median preview</code> reduces noise for viewing. Changing the display does not modify saved detection settings or results.</p>
+<h3 id="full-field-close-up-and-trace">全視野・拡大像・波形 / Full field, close-up and trace</h3>
+<p>左の一覧でROAを選ぶと、中央に<strong>全視野</strong>、右に<strong>選択ROAの拡大像</strong>を同時に表示します。水色の輪郭はイベント全体の領域、黄色は現在フレームの活動画素です。全視野の点線枠は拡大範囲を示します。<code>Reset views</code>で初期表示に戻せます。画像と波形の境界をドラッグすると高さを変更できます。</p>
+<p>Select an ROA in the table to show the <strong>full field</strong> and <strong>selected ROA close-up</strong> together. Cyan outlines mark the footprint, gold marks active pixels, and the dashed box locates the close-up in the full field. <code>Reset views</code> restores the views. Drag the divider between the images and trace to adjust their heights.</p>
+<p><strong>再生バーは波形の下</strong>にあります。2つの画像、スライダー、時刻、波形の縦線は同じフレームに同期します。画像クリックでも一覧内のROAを選べます。小さい画面ではページをスクロールして下の操作欄に移動できます。</p>
+<p><strong>Playback is below the trace.</strong> Both images, the slider, timestamp and trace cursor show the same frame. Clicking an event in either image selects its row. On smaller screens, scroll the page to reach the controls below.</p>
+<p><code>Raw</code>は原画像、<code>Median preview</code>は表示用のノイズ低減画像です。切り替えても保存済みの検出結果は変わりません。ROAは細胞数ではなく、時空間的な活動イベントです。</p>
+<p><code>Raw</code> displays source images; <code>Median preview</code> reduces noise for viewing without changing detection results. ROAs are spatiotemporal events, not cell counts.</p>
+<p><img alt="Review screen — synthetic illustration / 合成データによる説明画面" src="screenshots/review.png" /></p>
+<h3 id="suggestions-and-evidence">提案と根拠 / Suggestions and evidence</h3>
+<p><code>Suggestion</code>列と画像下のパネルに、<strong>Signal candidate / 信号候補、Check / 要確認、Noise-like / ノイズ疑い</strong>を表示します。SNR、連続フレーム数、原画像支持率と判定理由を確認できます。提案フィルターで一覧を絞れます。確認状態のフィルターとは独立して組み合わせられます。</p>
+<p>The <code>Suggestion</code> column and evidence panel show <strong>Signal candidate, Check or Noise-like</strong>, with SNR, continuous frames, raw-image pixel support and reasons. Use the suggestion filter together with the review-status filter to narrow the list.</p>
+<p><strong>提案は検証済みのATP分類器や確率ではありません。</strong> ATPの同定、動き・ドリフト・重複イベントの完全な除去を保証しません。必ず原画像と波形を見て判断してください。提案は既存の採用・除外・保留やAQuA2のイベントを変更しません。</p>
+<p><strong>These rules are not a validated ATP classifier or probability.</strong> They do not establish ATP identity or guarantee removal of motion, drift or duplicate events. Confirm the source images and trace. Suggestions do not change review decisions or AQuA2 events.</p>
+<table>
+<thead>
+<tr>
+<th>初期基準 / Default rule</th>
+<th>内容 / Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Signal candidate / 信号候補</td>
+<td>SNR ≥ 5、ピークを支える連続3フレーム以上、原画像支持率 ≥ 35%、下記の注意項目なし。 / SNR ≥ 5, at least 3 supporting consecutive frames, raw pixel support ≥ 35%, and no caution flags below.</td>
+</tr>
+<tr>
+<td>Noise-like / ノイズ疑い</td>
+<td>SNR &lt; 2。自動除外はしません。 / SNR &lt; 2; no automatic exclusion.</td>
+</tr>
+<tr>
+<td>Check / 要確認</td>
+<td>中間SNR、短いピーク、低い原画像支持率、分断領域、活動の空白、解析境界、記録端の打切り、推定不能など。 / Intermediate SNR, brief peak, low raw support, fragmentation, intermittent activity, analysis boundary, recording truncation or unavailable estimates.</td>
+</tr>
+</tbody>
+</table>
+<p>SNRは、イベント区間内の最大ΔF/Fから区間外の中央値を引き、区間外の <code>1.4826 × MAD</code> で割ります。ノイズ推定からイベント区間と前後2フレームを除外し、12フレーム未満またはノイズ推定が不定なら要確認とします。ピーク周囲で基準線＋2倍ノイズを超える連続フレームを数えます。</p>
+<p>SNR is the peak ΔF/F within the event minus the off-event median, divided by off-event <code>1.4826 × MAD</code>. The event plus two frames on each side is excluded from noise estimation. Fewer than 12 off-event frames or undefined noise yields Check. Continuous support counts frames around the peak exceeding baseline plus twice the noise.</p>
+<p>原画像支持率は、ピーク±1フレームで活動する最大256画素を標本化し、最大40区間外フレームの中央値から2倍の画素ノイズを超えて上昇した割合です。画像座標のクロップ補正を適用します。8近傍の最大連結領域が全領域の50%未満、または検出区間の活動フレーム率が70%未満なら注意項目とします。これらは経験的な補助基準です。</p>
+<p>Raw support samples up to 256 pixels active within one frame of the peak. It measures the fraction whose mean peak-neighborhood intensity rises above the median of up to 40 off-event frames by twice the per-pixel robust noise. Source-coordinate crop offsets are applied. A largest 8-connected component below 50% of the footprint or active-frame occupancy below 70% adds a caution flag. These are heuristic review aids.</p>
+<p><code>Suggestion settings</code>でSNR、連続フレーム数、原画像支持率の基準を変更できます。各解析内に設定・ルール版・入力識別情報・根拠を保存し、出力にも添付します。基準を厳しくしても検出数そのものは変わりません。</p>
+<p>Use <code>Suggestion settings</code> to adjust SNR, frame support and raw pixel support thresholds. Each run retains settings, rule version, input identifiers and evidence; exports include a snapshot. Stricter suggestion settings do not change the number of detected events.</p>
+<h3 id="keyboard-and-multiple-selection">キーボードと複数選択 / Keyboard and multiple selection</h3>
 <table>
 <thead>
 <tr>
@@ -268,35 +310,47 @@ Japanese–English · Version 0.1.0 · Research preview</p>
 <tbody>
 <tr>
 <td>Keep / 採用</td>
-<td>A</td>
-<td>採用ROAの結果に含める / Include in selected results</td>
+<td>A / Enter</td>
+<td>選択した全ROAを採用 / Keep all selected ROAs</td>
 </tr>
 <tr>
 <td>Exclude / 除外</td>
-<td>R</td>
-<td>採用結果から除外し、イベントと確認履歴は保持 / Exclude from selected results while retaining the event and review history</td>
+<td>R / Delete / Backspace</td>
+<td>選択した全ROAを除外 / Exclude all selected ROAs</td>
 </tr>
 <tr>
 <td>Hold / 保留</td>
 <td>H</td>
-<td>判断を保留。採用結果には含めない / Defer the decision; omit from selected results</td>
+<td>選択した全ROAを保留 / Hold all selected ROAs</td>
 </tr>
 <tr>
 <td>Reset / 未確認へ</td>
-<td>—</td>
-<td>Pendingに戻す / Return to Pending</td>
+<td>U</td>
+<td>選択した全ROAをPendingに戻す / Reset selected ROAs to Pending</td>
+</tr>
+<tr>
+<td>Undo / 元に戻す</td>
+<td>Ctrl+Z (Windows), Cmd+Z (Mac)</td>
+<td>直前の一括確認またはメモ変更を戻す / Undo the last review batch or note change</td>
+</tr>
+<tr>
+<td>Play / Pause / 再生・停止</td>
+<td>Space</td>
+<td>同期動画を再生・停止 / Play or pause synchronized views</td>
 </tr>
 <tr>
 <td>Save note / メモ保存</td>
-<td>—</td>
-<td>採否を変えずにメモを保存 / Save a note without changing the decision</td>
+<td>ボタン / Button</td>
+<td>採否を変えず選択ROAのメモを保存 / Save notes without changing decisions</td>
 </tr>
 </tbody>
 </table>
-<p>ショートカットはReview画面で、文字入力欄に入力していない時に使えます。採否の理由をメモに残すと再確認しやすくなります。操作ごとに時刻・メモ・確認状態を保存し、実験情報が有効なら確認者も記録します。★は過去のfavoriteの印で、今回のKeepを自動指定するものではありません。</p>
-<p>Shortcuts work on the Review screen when you are not typing in a text field. Notes help explain decisions during later review. Each action saves time, note and review status, plus reviewer when experiment details are enabled. A ★ identifies a prior favorite; it does not automatically mark an event Keep.</p>
-<p>フィルターで未確認・採用・除外・保留などを絞り込めます。<code>Previous run</code>で過去の解析を開けます。同じ位置で繰り返すROAも別の活動イベントとして扱います。</p>
-<p>Filter the list by Pending, Keep, Exclude or Hold. Use <code>Previous run</code> to reopen an earlier analysis. Repeated ROAs at the same location remain separate activity events.</p>
+<p>最初の行をクリックし、<strong>Shiftを押しながら最後の行をクリック</strong>すると範囲選択できます。<strong>Ctrl（MacではCmd）＋クリック</strong>で行を個別に追加・解除できます。Shift＋上下キーでも範囲を伸ばせます。画像・波形は選択範囲内の現在行を表示し、採用・除外・保留は選択した全行に適用します。単独選択の採否後は次の行へ進みます。</p>
+<p>Click the first row, then <strong>Shift-click the last row</strong> to select a range. <strong>Ctrl-click (Cmd-click on Mac)</strong> adds or removes individual rows. Shift+Up/Down also extends the range. Images and trace preview the current selected row; decisions apply to every selected row. After a single-row decision, the selection advances.</p>
+<p>文字入力中は確認ショートカットを無効にします。複数行のメモ欄を編集しなければ各ROAの既存メモを保持します。編集すると共通メモとして選択行に適用します。Undoはこの画面で行った直前の操作のみが対象で、プロジェクトや解析を切り替えるとリセットされます。</p>
+<p>Review shortcuts are disabled while typing. If you do not edit the multi-selection note field, each ROA keeps its own note. Editing it applies the shared note to selected rows. Undo restores only the last operation in this view and resets when switching projects or runs.</p>
+<p>採否は操作ごとに保存され、確認時刻と一括操作IDを履歴に残します。実験情報が有効なら確認者も記録します。★は過去のfavoriteの印で、自動採用を意味しません。<code>Previous run</code>で以前の解析に戻れます。</p>
+<p>Each decision is saved immediately, with review time and a batch ID in history. Reviewer is recorded when experiment details are enabled. A ★ marks a prior favorite, not automatic acceptance. Use <code>Previous run</code> to reopen earlier analyses.</p>
 <h2 id="7-exportroa-export-selected-results">7. Export：採用ROAの結果を保存する / Export selected results</h2>
 <p><code>04 Export</code>で採用数・保留数・未確認数を確認し、必要なら<code>Include selected-ROA overlay MP4</code>を選んで<code>Export selection</code>を押します。毎回新しい出力フォルダーを作り、<code>RESULTS.html</code>を開きます。<strong>KeepにしたROAだけ</strong>が採用結果に含まれます。</p>
 <p>In <code>04 Export</code>, check the counts of kept, held and pending events. Optionally select <code>Include selected-ROA overlay MP4</code>, then press <code>Export selection</code>. Every export creates a new folder and opens <code>RESULTS.html</code>. <strong>Only Keep events</strong> enter the selected results.</p>
@@ -310,7 +364,11 @@ Japanese–English · Version 0.1.0 · Research preview</p>
 <tbody>
 <tr>
 <td><code>selected_events.csv</code></td>
-<td>採用ROAの定量値 / Measurements for kept ROAs</td>
+<td>採用ROAの定量値とsuggestion列 / Measurements and suggestion columns for kept ROAs</td>
+</tr>
+<tr>
+<td><code>review_suggestions.json</code></td>
+<td>提案基準・版・根拠・入力識別情報 / Suggestion rules, version, evidence and input identifiers</td>
 </tr>
 <tr>
 <td><code>review_all_events.csv</code></td>
@@ -485,8 +543,8 @@ Japanese–English · Version 0.1.0 · Research preview</p>
 </tr>
 </tbody>
 </table>
-<p>解析中のログは<code>Help → Show log</code>、詳細はプロジェクト内の<code>logs</code>および各<code>runs</code>内のログで確認できます。起動ログはWindowsでは通常<code>%LOCALAPPDATA%\ATP ROA Studio\startup.log</code>に保存します。問い合わせ先は<code>Help → About</code>に表示します。</p>
-<p>Use <code>Help → Show log</code> during analysis. Detailed logs are in the project’s <code>logs</code> directory and individual <code>runs</code> directories. On Windows, the startup log is normally <code>%LOCALAPPDATA%\ATP ROA Studio\startup.log</code>. Contact details are available in <code>Help → About</code>.</p>
+<p>解析中のログは<code>Help → Show log</code>、詳細はプロジェクト内の<code>logs</code>および各<code>runs</code>内のログで確認できます。起動ログはWindowsでは通常<code>%LOCALAPPDATA%\GLIA Center ATP Studio\startup.log</code>に保存します。制作者と問い合わせ先は画面左下と<code>Help → About</code>に表示します。</p>
+<p>Use <code>Help → Show log</code> during analysis. Detailed logs are in the project’s <code>logs</code> directory and individual <code>runs</code> directories. On Windows, the startup log is normally <code>%LOCALAPPDATA%\GLIA Center ATP Studio\startup.log</code>. Creator and contact details appear at the bottom left and in <code>Help → About</code>.</p>
 <h2 id="11-engine-and-reproducibility">11. エンジンと再現性 / Engine and reproducibility</h2>
 <p>検出エンジンは<a href="https://github.com/yu-lab-vt/AQuA2-Fiji">AQuA2-Fiji</a>の固定コミット<code>ca807872077a736e906698047bd718ce54754eda</code>を使用します。OIRはBio-Formats 8.4.0で読み込みます。前処理、エンジン設定、元ファイルの識別情報と確認履歴を保存します。Java版と既存MATLAB解析との数値的同等性は確認していません。異なる前処理やエンジン版のイベント数を、そのまま同じ解析結果として混合しないでください。</p>
 <p>Detection uses <a href="https://github.com/yu-lab-vt/AQuA2-Fiji">AQuA2-Fiji</a> at pinned commit <code>ca807872077a736e906698047bd718ce54754eda</code>; OIR reading uses Bio-Formats 8.4.0. Preprocessing, engine settings, source identifiers and review history are saved. Numerical equivalence between this Java pipeline and existing MATLAB analyses has not been established. Do not pool event counts from differing preprocessing or engine versions as if they were identical analyses.</p>

@@ -1,4 +1,4 @@
-# ATP ROA Studio
+# GLIA Center ATP Studio
 
 **OIRからATP活動の確認・定量まで / From OIR to reviewed ATP activity**
 
@@ -8,13 +8,13 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases/download/v0.1.0/ATP-ROA-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases/download/v0.1.0/ATP-ROA-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/ATP-ROA-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
-1. このリポジトリの **Releases** から `ATP-ROA-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。  
-   Download `ATP-ROA-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
-2. ZIP全体を展開し、GLIAロゴの **`ATP ROA Studio.exe`** をダブルクリックします。実行ファイルと同梱フォルダーを一緒に保持してください。  
-   Extract the entire ZIP, then double-click **`ATP ROA Studio.exe`** with the GLIA logo. Keep the executable and accompanying folders together.
-3. MATLAB・Fiji・Pythonの別途インストールは不要です。解析はローカルで行います。  
+1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
+   Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
+2. ZIP全体を展開し、GLIAロゴの **`GLIA Center ATP Studio.exe`** をダブルクリックします。実行ファイルと同梱フォルダーを一緒に保持してください。<br>
+   Extract the entire ZIP, then double-click **`GLIA Center ATP Studio.exe`** with the GLIA logo. Keep the executable and accompanying folders together.
+3. MATLAB・Fiji・Pythonの別途インストールは不要です。解析はローカルで行います。<br>
    No separate MATLAB, Fiji or Python installation is required. Analysis runs locally.
 
 **対象 / Target:** Windows 10/11 x64。研究用プレビューです。Windows実機検証は未実施です。 / Research preview; native Windows execution has not yet been verified. See [検証状況 / Validation status](docs/VALIDATION.md).
@@ -34,7 +34,10 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 - OIRのフレーム間隔と画素サイズを読み込み、手動修正できます。 / Read and edit the frame interval and pixel sizes.
 - 実験情報は任意です。「Include experiment」のチェックを外すと省略できます。 / Experiment details are optional; uncheck “Include experiment” to omit them.
-- 画像・動画・ΔF/F波形を見ながら、採用・除外・保留を選択します。 / Review images, movies and ΔF/F traces; keep, exclude or hold each event.
+- 全視野とROA拡大像を同時に表示し、波形下のバーで再生します。 / View the full field and selected ROA side by side; playback is below the trace.
+- 根拠付きの信号候補・要確認・ノイズ疑いの提案を表示します。最終判断はユーザーが行います。 / Explainable signal-candidate, check and noise-like suggestions support human review.
+- Shiftで範囲選択し、A/Enter（採用）、R/Delete（除外）、H（保留）で一括確認できます。 / Shift-select rows and review them together with A/Enter (Keep), R/Delete (Exclude) or H (Hold).
+- 山梨大学サイトに基づく青・紺色と、同梱のIBM Plex Sans / JPフォントを使用します。 / Blue and navy styling follows the university website, with bundled IBM Plex Sans / JP fonts.
 - 面積、ピーク、持続時間、AUC、FWHM、上昇・下降時間、減衰τなどを出力します。 / Export area, peak, duration, AUC, FWHM, rise/fall times and decay τ.
 - 原本を保持し、解析設定と確認履歴を保存します。 / Preserve source files and save analysis settings and review history.
 
@@ -48,6 +51,6 @@ Analyze one channel and one Z plane at a time with uniform 2D+t sampling. AQuA2 
 
 ## エンジンとライセンス / Engine and license
 
-[AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) と [Bio-Formats](https://www.openmicroscopy.org/bio-formats/) を使用します。アプリのソフトウェアライセンスは [GPL-3.0](LICENSE) です。外部ライブラリーとGLIAロゴにはそれぞれの権利・ライセンスが適用されます。制作者と問い合わせ先はアプリのAboutに表示します。
+[AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) と [Bio-Formats](https://www.openmicroscopy.org/bio-formats/) を使用します。アプリのソフトウェアライセンスは [GPL-3.0](LICENSE) です。外部ライブラリーとGLIAロゴにはそれぞれの権利・ライセンスが適用されます。制作者と問い合わせ先は左下とAboutに表示します。
 
-Uses [AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) and [Bio-Formats](https://www.openmicroscopy.org/bio-formats/). Application software is licensed under [GPL-3.0](LICENSE). Third-party components and the GLIA logo retain their respective rights and licenses. Creator and contact details appear in the app’s About dialog.
+Uses [AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) and [Bio-Formats](https://www.openmicroscopy.org/bio-formats/). Application software is licensed under [GPL-3.0](LICENSE). Third-party components and the GLIA logo retain their respective rights and licenses. Creator and contact details appear at the bottom left and in About.

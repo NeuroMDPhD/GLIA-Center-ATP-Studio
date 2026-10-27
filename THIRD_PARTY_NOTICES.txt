@@ -1,4 +1,4 @@
-ATP ROA Studio — third-party components
+GLIA Center ATP Studio — third-party components
 
 Application icon / アプリアイコン
 University of Yamanashi GLIA Center official website: https://glia.yamanashi.ac.jp/
@@ -39,3 +39,11 @@ imageio-ffmpeg includes FFmpeg and its upstream notices; codec build license app
 
 Build provenance, dependency versions and checksums are in the package manifest.
 This package is a local research preview, not an official AQuA2 or Bio-Formats release.
+
+IBM Plex Sans and IBM Plex Sans JP
+  https://github.com/IBM/plex
+  Copyright IBM Corp. Licensed under the SIL Open Font License 1.1.
+  Bundled unmodified fonts, license and source hashes: assets/fonts/.
+  University-inspired interface colors: #007bc1 and #062c54 from
+  https://www.yamanashi.ac.jp/ (website theme, checked 2026-10-27).
+  This styling does not assert institutional endorsement or formal brand certification.

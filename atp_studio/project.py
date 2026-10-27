@@ -8,6 +8,7 @@ from PIL import Image
 from .common import *
 from .metrics import quantify
 from .media import limits, grayscale, movie_mp4, trace_png
+from . import __version__
 
 EXPERIMENT_FIELDS=('animal_id','slice_id','recording_id','condition','reviewer','drug_s')
 
@@ -52,7 +53,7 @@ def create_project(meta,parent,settings,job=None):
     source=Path(meta['source_path']); directory=new_directory(parent,source.stem+'_ATP')
     for sub in ('raw','runs','exports','logs'): (directory/sub).mkdir()
     p=Project(directory)
-    p.manifest=dict(schema_version=1,app_version='0.1.0',created_at=stamp(),status='converting',
+    p.manifest=dict(schema_version=1,app_version=__version__,created_at=stamp(),status='converting',
         source=meta,acquisition={**settings,'time_source':time_source,'shape':[n,h,w]},
         current_run=None,source_files=[])
     p.save()
@@ -104,14 +105,30 @@ class Project:
         with h5py.File(self.run_dir()/'events.h5','r') as f:
             g=f[str(event_id)];return {k:g[k][()] for k in g}
     def review_event(self,event_id,status,note='',reviewer=''):
-        if status not in ('pending','accepted','rejected','hold'): raise ValueError('Invalid review state')
-        if event_id not in [e['event_id'] for e in self.events()]: raise ValueError('Unknown event ID')
-        run=self.run_dir();r=self.review();before=r.get(str(event_id),{})
-        after=dict(status=status,note=note,updated_at=stamp())
-        if self.manifest['acquisition'].get('include_experiment',True):after['reviewer']=reviewer
-        r[str(event_id)]=after;save_json(run/'review.json',r)
-        with open(run/'review_history.jsonl','a',encoding='utf-8') as f:
-            f.write(json.dumps(dict(event_id=event_id,before=before,after=after),ensure_ascii=False)+'\n')
+        return self.review_events([event_id],status,note,reviewer)
+    def apply_review_updates(self,updates,action='review'):
+        from uuid import uuid4
+        known={e['event_id'] for e in self.events()};reviews=self.review();before={};after={}
+        for eid,change in updates.items():
+            if eid not in known:raise ValueError('Unknown event ID')
+            old=reviews.get(str(eid),{});item={**old,**change,'updated_at':stamp()}
+            if item.get('status') not in ('pending','accepted','rejected','hold'):raise ValueError('Invalid review state')
+            if not self.manifest['acquisition'].get('include_experiment',True):item.pop('reviewer',None)
+            before[eid]=dict(old);after[str(eid)]=item
+        if not after:return {}
+        transaction=uuid4().hex
+        entries=[dict(event_id=eid,before=before[eid],after=after[str(eid)],action=action,batch_id=transaction,batch_size=len(after)) for eid in before]
+        save_json(self.run_dir()/'review.json',{**reviews,**after})
+        with (self.run_dir()/'review_history.jsonl').open('a',encoding='utf-8') as f:
+            f.write(''.join(json.dumps(entry,ensure_ascii=False)+'\n' for entry in entries))
+        return before
+    def review_events(self,event_ids,status=None,note=None,reviewer=''):
+        change={'reviewer':reviewer}
+        if status is not None:change['status']=status
+        if note is not None:change['note']=note
+        return self.apply_review_updates({int(eid):dict(change) for eid in event_ids})
+    def restore_reviews(self,snapshot):
+        return self.apply_review_updates(snapshot,action='undo')
 
 def _store_events(p,run,records,shape,offset,engine,job):
     times=p.times();a=p.manifest['acquisition'];rows=[];reviews={}
@@ -255,18 +272,21 @@ def export_selected(p,with_movie=True,job=None):
         raise ValueError('Prepared TIFF has changed; export stopped. / TIFFが変更されたため出力を中止しました。')
     events=p.events();reviews=p.review();run=p.run_dir()
     if run is None: raise ValueError('Detect events or import MAT first. / 先に検出またはMAT読み込みを完了してください。')
+    from .suggestions import build_suggestions,export_columns
+    suggestions=build_suggestions(p,job=job)
     selected=[e for e in events if reviews.get(str(e['event_id']),{}).get('status')=='accepted']
     out=new_directory(p.path/'exports','selected');acq=p.manifest['acquisition'];times=p.times()
     setting=read_json(run/'settings.json');offset=np.asarray(setting['offset_yx']);n,h,w=acq['shape']
-    exportmeta=dict(status='running',created_at=stamp(),run=str(run.relative_to(p.path)),selected_ids=[r['event_id'] for r in selected],
+    exportmeta=dict(status='running',app_version=__version__,created_at=stamp(),run=str(run.relative_to(p.path)),selected_ids=[r['event_id'] for r in selected],
                     project=p.manifest,review=reviews,engine_settings=setting)
     save_json(out/'manifest.json',exportmeta)
+    if suggestions:save_json(out/'review_suggestions.json',suggestions)
     try:
         include_experiment=acq.get('include_experiment',True)
         metadata={k:acq.get(k,'') for k in EXPERIMENT_FIELDS if k!='drug_s'} if include_experiment else {}
         all_rows=[]
         for e in events:
-            row={**metadata,**e,**reviews.get(str(e['event_id']),{})}
+            row={**metadata,**e,**(export_columns(suggestions['events'].get(str(e['event_id']))) if suggestions else {}),**reviews.get(str(e['event_id']),{})}
             if not include_experiment:
                 row.pop('reviewer',None);row.pop('onset_from_drug_s',None)
             row['centroid_x_analysis_px']=row.pop('centroid_x_px')
@@ -312,8 +332,9 @@ def export_selected(p,with_movie=True,job=None):
             'biological_n':'not computed; animal_id must be retained when pooling'}
         write_csv(out/'recording_summary.csv',[summary]);
         from html import escape
-        (out/'RESULTS.html').write_text('<!doctype html><meta charset="utf-8"><title>ATP ROA results</title><style>body{font:16px system-ui;max-width:960px;margin:40px auto;line-height:1.65}img{max-width:100%}code{background:#eee}</style>'
-            +f'<h1>ATP ROA results / 解析結果</h1><p>Kept / 採用 {len(selected)} / Detected / 検出 {len(events)} · Hold / 保留 {counts["hold"]} · Pending / 未確認 {counts["pending"]}</p>'
+        (out/'RESULTS.html').write_text('<!doctype html><meta charset="utf-8"><title>GLIA Center ATP Studio — Results</title><style>body{font:16px system-ui;max-width:960px;margin:40px auto;line-height:1.65}img{max-width:100%}code{background:#eee}</style>'
+            +f'<h1>GLIA Center ATP Studio / 解析結果</h1><p>Kept / 採用 {len(selected)} / Detected / 検出 {len(events)} · Hold / 保留 {counts["hold"]} · Pending / 未確認 {counts["pending"]}</p>'
+            +'<p>Suggestions are heuristic review aids, not a validated ATP classifier. The suggestion columns do not change your decisions.<br>提案は確認の補助であり、検証済みATP分類器ではありません。提案列は確認結果を変更しません。</p>'
             +'<p>ROAs are spatiotemporal events, not individual cells or animal replicates.<br>ROAは時空間活動イベントです。細胞数・動物数とは異なります。</p>'
             +'<img src="selected_ROA_overlay.png"><p><a href="selected_events.csv">Features / 定量値</a> · <a href="selected_traces.csv">Traces / 時系列</a> · <a href="review_all_events.csv">Review / 確認履歴</a> · <a href="manifest.json">Settings / 設定</a></p>'
             +'<p>FWHM and rise/fall use linearly interpolated threshold crossings relative to zero-baseline AQuA2 ΔF/F. Unobserved crossings remain blank. AUC uses trapezoidal integration between detected onset and end. Decay τ fits A exp(-t/τ)+C and requires R²≥0.8.<br>FWHM・上昇下降時間はゼロ基準のΔF/F閾値交差を線形補間します。交差が観察されない場合は空欄です。AUCは検出開始から終了までの台形積分、減衰τはR²≥0.8の指数適合値です。</p>'
