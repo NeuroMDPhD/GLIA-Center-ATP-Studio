@@ -2,9 +2,13 @@
 
 **OIRからATP活動の確認・定量まで / From OIR to reviewed ATP activity**
 
-Windows向けのデスクトップ解析アプリです。OIRの時空間情報を読み込み、AQuA2で活動イベントを検出し、ユーザーが採用したROAの特徴量を出力します。画面とマニュアルは日本語・英語併記です。
+**山梨大学・[山梨GLIAセンター](https://glia.yamanashi.ac.jp/)のメンバー向けに開発した解析アプリです。**
 
-A desktop analysis app for Windows. Read OIR spatial and temporal metadata, detect activity events with AQuA2, review ROAs, and export measurements for the events you select. The interface and manual use Japanese and English.
+**Developed for members of the [Yamanashi GLIA Center](https://glia.yamanashi.ac.jp/) at the University of Yamanashi.**
+
+Windows向けのデスクトップ解析アプリです。OIRの時空間情報を読み込み、[AQuA2](https://github.com/yu-lab-vt/AQuA2)で活動イベントを検出し、ユーザーが採用したROAの特徴量を出力します。画面とマニュアルは日本語・英語併記です。
+
+A desktop analysis app for Windows. Read OIR spatial and temporal metadata, detect activity events with [AQuA2](https://github.com/yu-lab-vt/AQuA2), review ROAs, and export measurements for the events you select. The interface and manual use Japanese and English.
 
 ## ダウンロードと起動 / Download and start
 
@@ -50,7 +54,15 @@ Analyze one channel and one Z plane at a time with uniform 2D+t sampling. AQuA2 
 
 本リポジトリに実験原本・解析プロジェクト・実データの画面画像は含めません。マニュアルの画面例は説明用です。 / This repository excludes original recordings, analysis projects and screenshots of real research data. Manual screenshots are illustrative.
 
-## エンジンとライセンス / Engine and license
+## 原著ソフトウェアとライセンス / Original software and licenses
+
+活動イベント検出の基盤は、Yu Labと貢献者が開発した **AQuA2 (Activity Quantification and Analysis)** です。本アプリはそのFiji/Java実装を利用し、OIR変換・ROA確認・定量結果の出力を行うGUIを提供します。
+
+Activity-event detection is based on **AQuA2 (Activity Quantification and Analysis)**, developed by Yu Lab and its contributors. This app uses its Fiji/Java implementation and provides a GUI for OIR conversion, ROA review and quantitative export.
+
+- [AQuA2 — 原著プロジェクト / Original project](https://github.com/yu-lab-vt/AQuA2)
+- [AQuA2-Fiji — 本アプリで使用する実装 / Implementation used by this app](https://github.com/yu-lab-vt/AQuA2-Fiji)
+- [AQuA2の引用情報 / AQuA2 citation information](https://github.com/yu-lab-vt/AQuA2#reference)
 
 [AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) と [Bio-Formats](https://www.openmicroscopy.org/bio-formats/) を使用します。アプリのソフトウェアライセンスは [GPL-3.0](LICENSE) です。外部ライブラリーとGLIAロゴにはそれぞれの権利・ライセンスが適用されます。制作者と問い合わせ先は左下とAboutに表示します。
 
