@@ -8,7 +8,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.1/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.1/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
 1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
@@ -33,6 +33,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 **Choose OIR → Check calibration → MP4 / PNG / TIFF / CSV → AQuA2 → Review ROAs → Export selected results**
 
 - OIRのフレーム間隔と画素サイズを読み込み、手動修正できます。 / Read and edit the frame interval and pixel sizes.
+- OIR選択時に同じフォルダーを保存先に設定し、MP4・TIFF・CSV・PNGを個別に選択できます。 / Default to the OIR folder and independently select MP4, TIFF, CSV and PNG outputs.
 - 実験情報は任意です。「Include experiment」のチェックを外すと省略できます。 / Experiment details are optional; uncheck “Include experiment” to omit them.
 - 全視野とROA拡大像を同時に表示し、波形下のバーで再生します。 / View the full field and selected ROA side by side; playback is below the trace.
 - 根拠付きの信号候補・要確認・ノイズ疑いの提案を表示します。最終判断はユーザーが行います。 / Explainable signal-candidate, check and noise-like suggestions support human review.

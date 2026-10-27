@@ -6,7 +6,7 @@ from PySide6 import QtCore as C, QtGui as G, QtWidgets as W
 import pyqtgraph as pg
 from scipy.ndimage import binary_erosion
 from .common import ROOT, Job, Cancelled, read_json
-from .project import Project, inspect_oir, create_project, detect, import_mat, export_selected, DEFAULT_DETECTION, applied_settings
+from .project import Project, inspect_oir, create_project, detect, import_mat, export_selected, DEFAULT_DETECTION, applied_settings, preparation_formats
 from .branding import APP_NAME, CREATOR, CONTACT_EMAIL, creator_html
 from .suggestions import LABELS, DEFAULTS as SUGGESTION_DEFAULTS, cached_suggestions, build_suggestions, reason_text, validate_config
 from . import __version__
@@ -138,8 +138,14 @@ class MainWindow(W.QMainWindow):
         for key,name in [('animal_id','Animal ID / 個体ID'),('slice_id','Slice ID / 切片ID'),('recording_id','Recording ID / 記録ID'),('condition','Condition / 条件'),('reviewer','Reviewer / 確認者')]:
             w=W.QLineEdit();self.fields[key]=w;f.addRow(name,w)
         self.drug=double(-1,-1,100000,2);self.drug.setSpecialValueText('Not specified / 未入力');f.addRow('Treatment time / 投与時刻 (s)',self.drug);split.addWidget(group,1);v.addLayout(split)
-        row=W.QHBoxLayout();self.destination=W.QLineEdit(str(Path.home()/'Documents'/'ATP_ROA_Projects'));row.addWidget(label('Save to / 保存先'));row.addWidget(self.destination,1);row.addWidget(button('Browse / 参照…',self.pick_destination));v.addLayout(row)
-        self.prepare_note=label('Analyze the selected channel and Z plane. Export source-resolution TIFF, MP4, PNG and a whole-field CSV. / 選択したチャネル・Z面を原解像度TIFF、MP4、PNG、視野全体のCSVに変換します。','muted');v.addWidget(self.prepare_note)
+        row=W.QHBoxLayout();self.destination=W.QLineEdit();self.destination.setPlaceholderText('OIR folder — set when a file is chosen / OIR選択時に同じフォルダーを設定')
+        row.addWidget(label('Save to / 保存先'));row.addWidget(self.destination,1);row.addWidget(button('Browse / 参照…',self.pick_destination));v.addLayout(row)
+        group=W.QGroupBox('Files to save / 保存するファイル');choices=W.QHBoxLayout(group);self.output_formats={}
+        for key,text in [('mp4','MP4 / 動画'),('tif','TIFF / 原画像'),('csv','CSV / 全視野の時系列'),('png','PNG / 投影・波形')]:
+            checkbox=W.QCheckBox(text);checkbox.setChecked(True);choices.addWidget(checkbox);self.output_formats[key]=checkbox
+        self.output_formats['tif'].setToolTip('Save an additional TIFF beside the OIR. The project always keeps a working TIFF for analysis. / OIRと同じフォルダーにTIFFを出力します。解析用TIFFはプロジェクト内に保持します。')
+        v.addWidget(group)
+        self.prepare_note=label('Checked formats are saved in this folder; default: beside the OIR. Existing files are preserved. The analysis project keeps its own working TIFF even if TIFF export is off. / チェックした形式を保存先（初期値：OIRと同じフォルダー）に出力します。既存ファイルは保持します。TIFF出力を外しても解析用TIFFはプロジェクト内に保持します。','muted');v.addWidget(self.prepare_note)
         v.addStretch();self.prepare_btn=button('Prepare files / ファイルを準備  →',self.prepare,True);v.addWidget(self.prepare_btn,alignment=C.Qt.AlignmentFlag.AlignRight)
 
     def setup_detect(self):
@@ -296,7 +302,7 @@ class MainWindow(W.QMainWindow):
     def pick_oir(self):
         path,_=W.QFileDialog.getOpenFileName(self,'Choose OIR / OIRを選択',str(Path.home()),'Olympus OIR (*.oir)')
         if path:
-            self.source.setText(path);self.metadata=None
+            self.source.setText(path);self.metadata=None;self.destination.setText(str(Path(path).resolve().parent))
             for w in (self.series,self.channel,self.zplane):w.setValue(1)
             self.reinspect()
     def reinspect(self):
@@ -320,6 +326,7 @@ class MainWindow(W.QMainWindow):
     def preparation_settings(self):
         settings={k:w.text().strip() for k,w in self.fields.items()}
         settings.update(include_experiment=self.experiment_group.isChecked(),interval_s=self.dt.value(),pixel_x_um=self.px.value(),pixel_y_um=self.py.value(),override_time=self.override.isChecked(),drug_s=None if self.drug.value()<0 else self.drug.value())
+        settings['prepare_formats']={key:widget.isChecked() for key,widget in self.output_formats.items()}
         return applied_settings(settings)
     def prepare(self):
         if not self.metadata:self.failure('Choose an OIR and read metadata first. / OIRを選択し情報を読み込んでください。');return
@@ -327,7 +334,7 @@ class MainWindow(W.QMainWindow):
             self.failure('Series/channel/Z changed. Read metadata again. / シリーズ・チャネル・Zを変更したため再読み込みが必要です。');return
         if min(self.dt.value(),self.px.value(),self.py.value())<=0:self.failure('Enter a positive frame interval and X/Y pixel sizes. / 時間間隔とX/Y画素サイズを入力してください。');return
         settings=self.preparation_settings()
-        m=dict(self.metadata);parent=self.destination.text()
+        m=dict(self.metadata);parent=self.destination.text().strip() or str(Path(m['source_path']).resolve().parent)
         self.run_job(lambda job:create_project(m,parent,settings,job),lambda p:(self.load_project(p),self.go(1)))
     def open_project(self):
         f,_=W.QFileDialog.getOpenFileName(self,'Open project / プロジェクトを開く',self.destination.text(),'ATP project (project.json)')
@@ -336,7 +343,7 @@ class MainWindow(W.QMainWindow):
             except Exception as e:self.failure(str(e))
     def load_project(self,path):
         p=Project(path)
-        required=['movie.ome.tif','time_s.npy','preview.mp4','mean_projection.png','max_projection.png','fov_trace.csv','fov_trace.png']
+        required=['movie.ome.tif','time_s.npy']
         if p.manifest.get('status') not in ('prepared','review') or any(not (p.path/'raw'/name).is_file() for name in required):
             raise ValueError('This project is not fully prepared. Start file preparation again in a new project. / 準備が未完了です。新規プロジェクトで再変換してください。')
         self.project=p;self.movie=p.movie();self.times=p.times();self.preview_limits=p.manifest.get('display_limits',(0,255));self.events=p.events();self.voxel_cache={}
@@ -352,6 +359,9 @@ class MainWindow(W.QMainWindow):
         self.dt.blockSignals(True);self.dt.setValue(a['interval_s']);self.dt.blockSignals(False);self.px.setValue(a['pixel_x_um']);self.py.setValue(a['pixel_y_um']);self.override.setChecked(a.get('override_time',False))
         for key,widget in self.fields.items():widget.setText(a.get(key,''))
         self.experiment_group.setChecked(a.get('include_experiment',True))
+        selected_formats=preparation_formats(p.manifest.get('preparation',{}).get('formats'))
+        for key,widget in self.output_formats.items():widget.setChecked(selected_formats[key])
+        self.destination.setText(str(p.path.parent))
         self.drug.setValue(a['drug_s'] if a.get('drug_s') is not None else -1)
         self.detect_info.setText(f'{a.get("recording_id",p.path.name)}\n{self.movie.shape[0]} frames · Δt {np.median(np.diff(self.times)):.6g} s · {a["pixel_x_um"]:.6g} µm/pixel\nProject / 保存先: {p.path}')
         self.slider.setRange(0,len(self.movie)-1);self.selected_id=None;self.current_data=None;self.plot.clear();self.populate_table();self.show_frame(self.slider.value());self.log('Project opened. / プロジェクトを開きました。');self.fit_views()

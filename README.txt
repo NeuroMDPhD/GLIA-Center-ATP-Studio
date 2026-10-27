@@ -1,4 +1,4 @@
-GLIA Center ATP Studio 0.2 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.2.1 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
   dist/GLIA-Center-ATP-Studio-Windows-x64.zip
@@ -33,3 +33,11 @@ Verification / 検証
 
 Original recordings, prior analyses and local QA projects are not included in the distribution.
 実験原本・既存解析・ローカル検証プロジェクトは配布物に含めていません。
+
+Preparation files / 準備時の出力
+  Choosing an OIR sets Save to to the same folder. Check MP4, TIFF, CSV and PNG independently.
+  OIR選択時に同じフォルダーを保存先に設定します。MP4・TIFF・CSV・PNGを個別に選択できます。
+  Selected files are saved beside the OIR by default, with unique names.
+  選択したファイルは初期設定でOIRと同じフォルダーに、重複しない名前で保存します。
+  The project retains its working TIFF even when TIFF export is unchecked.
+  TIFF出力を外しても、解析用TIFFはプロジェクト内に保持します。

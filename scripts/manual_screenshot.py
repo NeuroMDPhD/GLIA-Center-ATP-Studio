@@ -12,7 +12,8 @@ app=W.QApplication([])
 from atp_studio.theme import install_fonts
 install_fonts(app)
 window=MainWindow()
-window.destination.setText('C:\\ATP_ROA_Projects')
+window.destination.setText('C:\\Recordings')
+window.source.setText('C:\\Recordings\\example_ATP.oir')
 window.on_metadata({'series_count':1,'channels':2,'z_planes':1,'series':0,'channel':0,'z':0,
     'source_path':'example_ATP.oir','shape':[600,256,256],'interval_s':.5,
     'pixel_x_um':.5,'pixel_y_um':.5,'dtype':'uint16'})

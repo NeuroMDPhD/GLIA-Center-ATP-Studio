@@ -1,7 +1,7 @@
 # GLIA Center ATP Studio 操作マニュアル / User manual
 
-日本語・英語併記 · バージョン 0.2.0 · 研究用プレビュー<br>
-Japanese–English · Version 0.2.0 · Research preview
+日本語・英語併記 · バージョン 0.2.1 · 研究用プレビュー<br>
+Japanese–English · Version 0.2.1 · Research preview
 
 ## 1. はじめに / Before you begin
 
@@ -38,7 +38,7 @@ The target is **Windows 10/11 x64**. Windows ARM64 is outside the tested scope. 
 |---|---|
 | 01 Prepare / 準備 | `Choose OIR`で原本を選び、時間間隔と画素サイズを確認します。 / Choose an OIR and check the interval and pixel sizes. |
 | Experiment / 実験情報 | 不要なら`Include experiment`のチェックを外します。 / Uncheck `Include experiment` if you do not want these details. |
-| Prepare files / ファイルを準備 | 保存先を決め、TIFF・MP4・PNG・CSVを作成します。 / Choose an output folder and create TIFF, MP4, PNG and CSV files. |
+| Prepare files / ファイルを準備 | OIRと同じフォルダーが初期保存先です。必要な形式をチェックし、準備を開始します。 / The OIR folder is selected by default. Check the formats you want, then prepare. |
 | 02 Detect / 検出 | 設定を確認し、`Run AQuA2`を押します。 / Check settings and select `Run AQuA2`. |
 | 03 Review / 確認 | 各ROAの位置と波形を見て、Keep・Exclude・Holdを選択します。 / Inspect each ROA’s location and trace; choose Keep, Exclude or Hold. |
 | 04 Export / 出力 | `Export selection`で採用ROAの結果を保存します。 / Select `Export selection` to save the kept ROAs. |
@@ -95,17 +95,32 @@ Uncheck it to skip these details. The fields become disabled, and a newly prepar
 
 ### 保存先と変換 / Output location and conversion
 
-`Save to`で保存先を選び、`Prepare files`を押します。毎回別のプロジェクトフォルダーを作成します。保存先には原本に加えてTIFF・動画・解析中の一時データを保存できる空き容量を確保してください。
+OIRを選択すると、`Save to`は自動的に**OIRと同じフォルダー**になります。`Browse`で別の保存先を指定することもできます。別のOIRを選ぶと、そのOIRのフォルダーに更新します。メタデータの再読み込みでは、手動指定した保存先を保持します。
 
-Choose `Save to`, then press `Prepare files`. A new project folder is created each time. Allow enough disk space for TIFF, movies and temporary analysis data in addition to the original recording.
+Choosing an OIR automatically sets `Save to` to **the folder containing that OIR**. Use `Browse` for another destination. Choosing a different OIR updates the destination to its folder; rereading metadata preserves your chosen destination.
 
-| 主な出力 / Main output | 内容 / Content |
+`Files to save`で **MP4・TIFF・CSV・PNGを個別にチェック**します。初期状態では全て選択されています。不要な形式は外してください。`Prepare files`を押すと、選んだ形式だけを指定フォルダーに保存します。PNGを選びCSVを外した場合も、投影画像と波形画像を作成できます。
+
+In `Files to save`, **check MP4, TIFF, CSV and PNG independently**. All start checked; uncheck unwanted formats. Press `Prepare files` to save only the selected formats into the destination folder. PNG projections and a trace image can be generated even when CSV is unchecked.
+
+| チェック / Selection | 出力 / Output |
 |---|---|
-| `raw/movie.ome.tif` | 選択チャネル・Z面の原画素値と適用した校正情報 / Source pixel values for the selected channel and Z plane, with applied calibration |
-| `raw/preview.mp4` | 原動画の表示用プレビュー / Display preview of the movie |
-| `raw/mean_projection.png`, `max_projection.png` | 平均・最大値投影 / Mean and maximum projections |
-| `raw/fov_trace.csv`, `fov_trace.png` | 視野全体の平均蛍光時系列 / Whole-field mean fluorescence trace |
-| `project.json` | 原本情報・校正値・設定・ファイル識別情報 / Source metadata, calibration, settings and file identifiers |
+| MP4 / 動画 | `…_preview.mp4`：選択チャネル・Z面のプレビュー / Preview for the selected channel and Z plane |
+| TIFF / 原画像 | `….ome.tif`：原画素値と適用した時空間校正 / Source pixels and applied spatial/temporal calibration |
+| CSV / 全視野の時系列 | `…_fov_trace.csv`：フレーム番号、取得時刻、視野全体の平均蛍光 / Frame number, acquisition time and whole-field mean fluorescence |
+| PNG / 投影・波形 | `…_mean_projection.png`、`…_max_projection.png`、`…_fov_trace.png`：平均投影・最大投影・全視野波形 / Mean projection, maximum projection and whole-field trace |
+
+出力名には元ファイル名、実行ごとの識別子、シリーズ・チャネル・Z面を含めます。原本や既存の出力を上書きしません。同じ記録を再変換すると、別の名前で保存します。
+
+Output names include the source stem, a unique preparation identifier, and series/channel/Z indices. Originals and existing outputs are preserved; repeating preparation creates different names.
+
+**解析プロジェクトも同じ保存先に新しく作成します。** `project.json`に原本情報・校正・選択形式・出力名・チェックサムを記録します。内部の `raw/movie.ome.tif` と `raw/time_s.npy` は検出・確認・定量に必要な作業データです。**TIFF出力を外しても、この内部TIFFは保持されます。** 外部出力を全部外しても解析できます。外部のMP4やPNGを移動しても、内部データが揃っていればプロジェクトを再開できます。
+
+**A new analysis project is created in the same destination.** Its `project.json` records source information, calibration, selected formats, output names and checksums. Internal `raw/movie.ome.tif` and `raw/time_s.npy` are working data for detection, review and measurement. **Unchecking TIFF suppresses the external TIFF copy; the internal working TIFF remains.** You can uncheck all external formats and still analyze. Moving external MP4 or PNG files does not prevent reopening a project with intact internal data.
+
+原本に加えて解析用TIFF・選択した外部出力・解析中の一時データを保存できる空き容量を確保してください。TIFF出力を選ぶと解析用とは別のコピーも保存します。
+
+Allow disk space for the original recording, the working TIFF, selected external outputs and temporary analysis data. Selecting TIFF saves an additional copy outside the project.
 
 MP4は15 fpsの表示用動画です。**再生時間は実際の撮影時間と異なる場合があります**。画像内に表示される取得時刻を使い、MP4から蛍光強度を定量しないでください。
 

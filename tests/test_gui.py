@@ -32,3 +32,22 @@ def test_optional_experiment_preserves_calibration_and_can_be_reenabled():
     assert win.preparation_settings()['animal_id']=='mouse123'
     assert win.preparation_settings()['drug_s']==60
     win.close()
+
+def test_choose_oir_defaults_to_source_folder_and_formats_are_independent(tmp_path,monkeypatch):
+    from pathlib import Path
+    app=W.QApplication.instance() or W.QApplication([]);win=MainWindow()
+    source=tmp_path/'source folder'/'test.oir';source.parent.mkdir();source.touch()
+    monkeypatch.setattr(W.QFileDialog,'getOpenFileName',lambda *a:(str(source),'Olympus OIR'))
+    monkeypatch.setattr(win,'reinspect',lambda:None)
+    win.pick_oir();assert Path(win.destination.text())==source.parent
+    assert all(w.isChecked() for w in win.output_formats.values())
+    win.output_formats['png'].setChecked(False);win.output_formats['tif'].setChecked(False)
+    assert win.preparation_settings()['prepare_formats']==dict(mp4=True,tif=False,csv=True,png=False)
+    win.destination.setText(str(tmp_path/'custom'));win.reinspect()
+    assert win.destination.text()==str(tmp_path/'custom')
+    win.pick_oir();assert Path(win.destination.text())==source.parent
+    # Cancelling the file picker leaves the chosen destination and options alone.
+    monkeypatch.setattr(W.QFileDialog,'getOpenFileName',lambda *a:('',''))
+    win.destination.setText(str(tmp_path/'custom'));win.pick_oir()
+    assert win.destination.text()==str(tmp_path/'custom') and not win.output_formats['png'].isChecked()
+    win.close()

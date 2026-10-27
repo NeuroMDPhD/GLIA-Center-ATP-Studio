@@ -1,3 +1,20 @@
+# v0.2.1 — 出力形式の選択 / Choose preparation outputs
+
+OIR選択時に同じフォルダーを初期保存先とし、MP4・TIFF・CSV・PNGをそれぞれ選択できるようになりました。
+
+Choosing an OIR now defaults to its folder, with independent MP4, TIFF, CSV and PNG checkboxes.
+
+- 選択した出力だけを保存先に作成。別フォルダーも指定可能。 / Save only selected formats beside the OIR, or choose another destination.
+- 原本・既存出力を保持し、再実行ごとに別名を使用。 / Preserve originals and existing outputs with unique filenames for each preparation.
+- 全形式を外しても解析・再開が可能。内部の解析用TIFFは保持。 / Analysis and reopening work with all external formats unchecked; the internal working TIFF remains.
+- 日本語・英語マニュアルと画面例を更新。 / Updated Japanese–English manual and screenshots.
+
+検証 / Validation: 33 automated tests passed on macOS arm64. Native Windows execution remains unverified.
+
+ZIP全体を展開して `GLIA Center ATP Studio.exe` をダブルクリックします。MATLAB不要です。 / Extract the entire Windows ZIP and double-click the executable; MATLAB is not required.
+
+---
+
 # v0.2.0 — GLIA Center ATP Studio
 
 全視野・ROA拡大像・波形を比較しながら、根拠付きの提案とキーボードで効率的に確認できるようになりました。

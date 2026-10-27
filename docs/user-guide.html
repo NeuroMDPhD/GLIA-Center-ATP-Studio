@@ -13,8 +13,8 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 @media(max-width:720px){main{padding:22px 16px;margin:0;border-radius:0}h1{font-size:26px}table{font-size:12px}th,td{padding:7px}}
 @media print{body{background:white}main{border:0;margin:0;padding:0}h2,h3{break-after:avoid}tr,img{break-inside:avoid}a{color:inherit}}
 </style></head><body><main><h1 id="glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</h1>
-<p>日本語・英語併記 · バージョン 0.2.0 · 研究用プレビュー<br>
-Japanese–English · Version 0.2.0 · Research preview</p>
+<p>日本語・英語併記 · バージョン 0.2.1 · 研究用プレビュー<br>
+Japanese–English · Version 0.2.1 · Research preview</p>
 <div class="toc">
 <ul>
 <li><a href="#glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</a><ul>
@@ -72,7 +72,7 @@ Japanese–English · Version 0.2.0 · Research preview</p>
 </tr>
 <tr>
 <td>Prepare files / ファイルを準備</td>
-<td>保存先を決め、TIFF・MP4・PNG・CSVを作成します。 / Choose an output folder and create TIFF, MP4, PNG and CSV files.</td>
+<td>OIRと同じフォルダーが初期保存先です。必要な形式をチェックし、準備を開始します。 / The OIR folder is selected by default. Check the formats you want, then prepare.</td>
 </tr>
 <tr>
 <td>02 Detect / 検出</td>
@@ -156,38 +156,42 @@ Japanese–English · Version 0.2.0 · Research preview</p>
 <p>不要な場合はチェックを外してください。入力欄が無効になり、その状態で新しく準備したプロジェクトと結果表にはこれらの情報を含めません。Treatment timeは<strong>記録開始からの秒数</strong>で、不明なら<code>Not specified</code>のままにします。解析元のファイル名・校正値・設定は追跡のため保存されます。</p>
 <p>Uncheck it to skip these details. The fields become disabled, and a newly prepared project and its output tables omit them. Treatment time is <strong>seconds from recording start</strong>; leave it <code>Not specified</code> if unknown. Source filename, calibration and analysis settings are still retained for traceability.</p>
 <h3 id="output-location-and-conversion">保存先と変換 / Output location and conversion</h3>
-<p><code>Save to</code>で保存先を選び、<code>Prepare files</code>を押します。毎回別のプロジェクトフォルダーを作成します。保存先には原本に加えてTIFF・動画・解析中の一時データを保存できる空き容量を確保してください。</p>
-<p>Choose <code>Save to</code>, then press <code>Prepare files</code>. A new project folder is created each time. Allow enough disk space for TIFF, movies and temporary analysis data in addition to the original recording.</p>
+<p>OIRを選択すると、<code>Save to</code>は自動的に<strong>OIRと同じフォルダー</strong>になります。<code>Browse</code>で別の保存先を指定することもできます。別のOIRを選ぶと、そのOIRのフォルダーに更新します。メタデータの再読み込みでは、手動指定した保存先を保持します。</p>
+<p>Choosing an OIR automatically sets <code>Save to</code> to <strong>the folder containing that OIR</strong>. Use <code>Browse</code> for another destination. Choosing a different OIR updates the destination to its folder; rereading metadata preserves your chosen destination.</p>
+<p><code>Files to save</code>で <strong>MP4・TIFF・CSV・PNGを個別にチェック</strong>します。初期状態では全て選択されています。不要な形式は外してください。<code>Prepare files</code>を押すと、選んだ形式だけを指定フォルダーに保存します。PNGを選びCSVを外した場合も、投影画像と波形画像を作成できます。</p>
+<p>In <code>Files to save</code>, <strong>check MP4, TIFF, CSV and PNG independently</strong>. All start checked; uncheck unwanted formats. Press <code>Prepare files</code> to save only the selected formats into the destination folder. PNG projections and a trace image can be generated even when CSV is unchecked.</p>
 <table>
 <thead>
 <tr>
-<th>主な出力 / Main output</th>
-<th>内容 / Content</th>
+<th>チェック / Selection</th>
+<th>出力 / Output</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>raw/movie.ome.tif</code></td>
-<td>選択チャネル・Z面の原画素値と適用した校正情報 / Source pixel values for the selected channel and Z plane, with applied calibration</td>
+<td>MP4 / 動画</td>
+<td><code>…_preview.mp4</code>：選択チャネル・Z面のプレビュー / Preview for the selected channel and Z plane</td>
 </tr>
 <tr>
-<td><code>raw/preview.mp4</code></td>
-<td>原動画の表示用プレビュー / Display preview of the movie</td>
+<td>TIFF / 原画像</td>
+<td><code>….ome.tif</code>：原画素値と適用した時空間校正 / Source pixels and applied spatial/temporal calibration</td>
 </tr>
 <tr>
-<td><code>raw/mean_projection.png</code>, <code>max_projection.png</code></td>
-<td>平均・最大値投影 / Mean and maximum projections</td>
+<td>CSV / 全視野の時系列</td>
+<td><code>…_fov_trace.csv</code>：フレーム番号、取得時刻、視野全体の平均蛍光 / Frame number, acquisition time and whole-field mean fluorescence</td>
 </tr>
 <tr>
-<td><code>raw/fov_trace.csv</code>, <code>fov_trace.png</code></td>
-<td>視野全体の平均蛍光時系列 / Whole-field mean fluorescence trace</td>
-</tr>
-<tr>
-<td><code>project.json</code></td>
-<td>原本情報・校正値・設定・ファイル識別情報 / Source metadata, calibration, settings and file identifiers</td>
+<td>PNG / 投影・波形</td>
+<td><code>…_mean_projection.png</code>、<code>…_max_projection.png</code>、<code>…_fov_trace.png</code>：平均投影・最大投影・全視野波形 / Mean projection, maximum projection and whole-field trace</td>
 </tr>
 </tbody>
 </table>
+<p>出力名には元ファイル名、実行ごとの識別子、シリーズ・チャネル・Z面を含めます。原本や既存の出力を上書きしません。同じ記録を再変換すると、別の名前で保存します。</p>
+<p>Output names include the source stem, a unique preparation identifier, and series/channel/Z indices. Originals and existing outputs are preserved; repeating preparation creates different names.</p>
+<p><strong>解析プロジェクトも同じ保存先に新しく作成します。</strong> <code>project.json</code>に原本情報・校正・選択形式・出力名・チェックサムを記録します。内部の <code>raw/movie.ome.tif</code> と <code>raw/time_s.npy</code> は検出・確認・定量に必要な作業データです。<strong>TIFF出力を外しても、この内部TIFFは保持されます。</strong> 外部出力を全部外しても解析できます。外部のMP4やPNGを移動しても、内部データが揃っていればプロジェクトを再開できます。</p>
+<p><strong>A new analysis project is created in the same destination.</strong> Its <code>project.json</code> records source information, calibration, selected formats, output names and checksums. Internal <code>raw/movie.ome.tif</code> and <code>raw/time_s.npy</code> are working data for detection, review and measurement. <strong>Unchecking TIFF suppresses the external TIFF copy; the internal working TIFF remains.</strong> You can uncheck all external formats and still analyze. Moving external MP4 or PNG files does not prevent reopening a project with intact internal data.</p>
+<p>原本に加えて解析用TIFF・選択した外部出力・解析中の一時データを保存できる空き容量を確保してください。TIFF出力を選ぶと解析用とは別のコピーも保存します。</p>
+<p>Allow disk space for the original recording, the working TIFF, selected external outputs and temporary analysis data. Selecting TIFF saves an additional copy outside the project.</p>
 <p>MP4は15 fpsの表示用動画です。<strong>再生時間は実際の撮影時間と異なる場合があります</strong>。画像内に表示される取得時刻を使い、MP4から蛍光強度を定量しないでください。</p>
 <p>MP4 playback is 15 fps. <strong>Playback duration may differ from acquisition duration.</strong> Use the acquisition timestamps shown in the movie; do not measure fluorescence intensity from MP4 pixels.</p>
 <h2 id="5-detectaqua2-detection-with-aqua2">5. Detect：AQuA2による検出 / Detection with AQuA2</h2>

@@ -11,6 +11,30 @@ from .media import limits, grayscale, movie_mp4, trace_png
 from . import __version__
 
 EXPERIMENT_FIELDS=('animal_id','slice_id','recording_id','condition','reviewer','drug_s')
+PREPARATION_FORMATS=('mp4','tif','csv','png')
+
+def preparation_formats(value=None):
+    if value is None:return dict.fromkeys(PREPARATION_FORMATS,True)
+    if not isinstance(value,dict) or set(value)!=set(PREPARATION_FORMATS) or any(type(v) is not bool for v in value.values()):
+        raise ValueError('Select MP4, TIFF, CSV and PNG output options. / 出力形式の選択を確認してください。')
+    return dict(value)
+
+def publish_preparation_files(files,destination,job):
+    """Publish only completed derivatives, without replacing an existing file."""
+    created=[];records=[]
+    try:
+        for source,name,kind in files:
+            job.check();target=Path(destination)/name
+            with target.open('xb') as out:
+                created.append(target)
+                with Path(source).open('rb') as src:
+                    while block:=src.read(4*1024*1024):
+                        job.check();out.write(block)
+            records.append(dict(name=name,format=kind,size=target.stat().st_size,sha256=sha256(target)))
+        job.check();return records
+    except BaseException:
+        for path in created:path.unlink(missing_ok=True)
+        raise
 
 def applied_settings(settings):
     settings=dict(settings)
@@ -45,24 +69,26 @@ def resolve_times(meta,interval,override=False):
 
 def create_project(meta,parent,settings,job=None):
     settings=applied_settings(settings)
+    formats=preparation_formats(settings.pop('prepare_formats',None))
     job=job or Job(); n,h,w=meta['shape']
     if n<10: raise ValueError('At least 10 time frames are required. / 10フレーム以上の時系列が必要です。')
     px=float(settings['pixel_x_um']);py=float(settings['pixel_y_um']);dt=float(settings['interval_s'])
     if not all(np.isfinite(v) and v>0 for v in (px,py,dt)): raise ValueError('Check temporal/spatial calibration. / 時間・画素サイズを確認してください。')
     times,time_source=resolve_times(meta,dt,settings.get('override_time',False))
-    source=Path(meta['source_path']); directory=new_directory(parent,source.stem+'_ATP')
+    source=Path(meta['source_path']).resolve();parent=Path(parent).expanduser().resolve() if parent else source.parent
+    directory=new_directory(parent,source.stem+'_ATP')
     for sub in ('raw','runs','exports','logs'): (directory/sub).mkdir()
     p=Project(directory)
     p.manifest=dict(schema_version=1,app_version=__version__,created_at=stamp(),status='converting',
         source=meta,acquisition={**settings,'time_source':time_source,'shape':[n,h,w]},
-        current_run=None,source_files=[])
+        current_run=None,source_files=[],preparation={'formats':formats,'output_directory':str(parent),'files':[]})
     p.save()
     try:
         for f in meta['used_files']:
             job.log('Hashing source / 原本の識別: '+Path(f).name)
             p.manifest['source_files'].append(dict(path=f,size=Path(f).stat().st_size,sha256=sha256(f)))
         p.save();raw=directory/'raw/pixels.partial'
-        job.log('OIR → source-resolution TIFF / 原解像度TIFF変換')
+        job.log('Reading source pixels for analysis / 解析用の原画素を読み込み')
         job.run(java_command('OirBridge',4)+['convert',source,meta['series'],meta['channel'],meta['z'],raw],directory/'logs/conversion.log')
         dtype={'uint8':'u1','uint16':'u2','int16':'i2','uint32':'u4','int32':'i4','float':'f4','double':'f8'}[meta['dtype']]
         dtype=np.dtype(('<' if meta['little_endian'] else '>')+dtype)
@@ -75,15 +101,25 @@ def create_project(meta,parent,settings,job=None):
                          'TimeIncrementUnit':'s','Plane':{'DeltaT':times.tolist(),'DeltaTUnit':['s']*n}})
         del a;raw.unlink();np.save(directory/'raw/time_s.npy',times)
         movie=p.movie();lo,hi=limits(movie)
-        mean=np.mean(movie,axis=0,dtype=np.float64);mx=np.max(movie,axis=0)
-        Image.fromarray(grayscale(mean,lo,hi)).save(directory/'raw/mean_projection.png')
-        Image.fromarray(grayscale(mx,lo,hi)).save(directory/'raw/max_projection.png')
-        signal=np.asarray([np.mean(frame,dtype=np.float64) for frame in movie])
-        write_csv(directory/'raw/fov_trace.csv',({'frame_1based':i+1,'time_s':t,'mean_intensity':v} for i,(t,v) in enumerate(zip(times,signal))))
-        trace_png(directory/'raw/fov_trace.png',times,[signal],['FOV mean'],'Whole-field fluorescence',settings.get('drug_s'))
-        movie_mp4(movie,directory/'raw/preview.mp4',times,px,job)
+        staging=directory/'preparation.partial';staging.mkdir();files=[]
+        prefix=f'{directory.name}_S{meta["series"]+1}_C{meta["channel"]+1}_Z{meta["z"]+1}'
+        def output(name,kind):
+            path=staging/name;files.append((path,prefix+'_'+name,kind));return path
+        if formats['tif']:files.append((directory/'raw/movie.ome.tif',prefix+'.ome.tif','tif'))
+        if formats['png']:
+            job.check();mean=np.mean(movie,axis=0,dtype=np.float64);mx=np.max(movie,axis=0)
+            Image.fromarray(grayscale(mean,lo,hi)).save(output('mean_projection.png','png'))
+            Image.fromarray(grayscale(mx,lo,hi)).save(output('max_projection.png','png'))
+        if formats['csv'] or formats['png']:
+            job.check();signal=np.asarray([np.mean(frame,dtype=np.float64) for frame in movie])
+            if formats['csv']:write_csv(output('fov_trace.csv','csv'),({'frame_1based':i+1,'time_s':t,'mean_intensity':v} for i,(t,v) in enumerate(zip(times,signal))))
+            if formats['png']:trace_png(output('fov_trace.png','png'),times,[signal],['FOV mean'],'Whole-field fluorescence',settings.get('drug_s'))
+        if formats['mp4']:movie_mp4(movie,output('preview.mp4','mp4'),times,px,job)
+        p.manifest['preparation']['files']=publish_preparation_files(files,parent,job)
+        shutil.rmtree(staging)
         p.manifest.update(status='prepared',display_limits=[lo,hi],raw_tiff_sha256=sha256(directory/'raw/movie.ome.tif'))
-        p.save();job.log('Prepared / 準備完了: MP4 · PNG · TIFF · CSV');return str(directory)
+        p.save();selected=' · '.join(k.upper() for k,v in formats.items() if v)
+        job.log('Prepared / 準備完了: '+(selected or 'Analysis project only / 解析プロジェクトのみ'));return str(directory)
     except Exception as e:
         p.manifest.update(status='cancelled' if isinstance(e,Cancelled) else 'failed',error=str(e));p.save();raise
 
