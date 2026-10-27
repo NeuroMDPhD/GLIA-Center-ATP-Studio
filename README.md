@@ -67,3 +67,7 @@ Activity-event detection is based on **AQuA2 (Activity Quantification and Analys
 [AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) と [Bio-Formats](https://www.openmicroscopy.org/bio-formats/) を使用します。アプリのソフトウェアライセンスは [GPL-3.0](LICENSE) です。外部ライブラリーとGLIAロゴにはそれぞれの権利・ライセンスが適用されます。制作者と問い合わせ先は左下とAboutに表示します。
 
 Uses [AQuA2-Fiji](https://github.com/yu-lab-vt/AQuA2-Fiji) and [Bio-Formats](https://www.openmicroscopy.org/bio-formats/). Application software is licensed under [GPL-3.0](LICENSE). Third-party components and the GLIA logo retain their respective rights and licenses. Creator and contact details appear at the bottom left and in About.
+
+## Reference
+
+Xuelong Mi, Alex Bo-Yuan Chen, Daniela Duarte, Erin Carey, Charlotte R. Taylor, Philipp N. Braaker, Mark Bright, Rafael G. Almeida, Jing-Xuan Lim, Virginia M. Rutten, Wei Zheng, Mengfan Wang, Michael E. Reitman, Yizhi Wang, Kira E. Poskanzer, David A. Lyons, Axel Nimmerjahn, Misha B. Ahrens, Guoqiang Yu, *Fast, Accurate, and Versatile Data Analysis Platform for the Quantification of Molecular Spatiotemporal Signals*, BioRxiv 592259; doi: [https://doi.org/10.1101/2024.05.02.592259](https://doi.org/10.1101/2024.05.02.592259).
