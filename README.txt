@@ -1,4 +1,4 @@
-GLIA Center ATP Studio 0.2.1 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.2.2 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
   dist/GLIA-Center-ATP-Studio-Windows-x64.zip

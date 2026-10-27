@@ -1,3 +1,15 @@
+# v0.2.2 — 制作者表示 / Creator attribution
+
+左下とAboutの制作者欄を次の英語3行に統一しました。 / The sidebar and About use the same three-line English attribution:
+
+Creator<br>
+Seunghwan Choi<br>
+medic@khu.ac.kr
+
+画面表示を確認しました。解析機能はv0.2.1と同じです。Windows実機での実行は未検証です。 / Display verified; analysis behavior is unchanged from v0.2.1. Native Windows execution remains unverified.
+
+---
+
 # v0.2.1 — 出力形式の選択 / Choose preparation outputs
 
 OIR選択時に同じフォルダーを初期保存先とし、MP4・TIFF・CSV・PNGをそれぞれ選択できるようになりました。

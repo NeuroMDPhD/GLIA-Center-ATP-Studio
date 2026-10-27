@@ -1,6 +1,6 @@
 # 検証状況 / Validation status
 
-2026-10-27 · GLIA Center ATP Studio 0.2.1
+2026-10-27 · GLIA Center ATP Studio 0.2.2
 
 | 項目 / Item | 状況 / Status |
 |---|---|
@@ -24,3 +24,7 @@ Original recordings, prior analyses, local QA projects and screenshots of real d
 
 - 出力形式の未選択・各単独選択・混在・全選択を合成画素で検証。MP4フレーム数、TIFF画素と校正、CSV時刻と平均値、PNG読込を確認。 / Synthetic-pixel checks cover none, individual, mixed and all formats, verifying MP4 frame counts, TIFF pixels/calibration, CSV times/means and PNG readability.
 - OIRフォルダーの自動設定、別保存先、再実行時の既存ファイル保持、ファイル衝突・中止時の後処理、外部出力なしでのプロジェクト再開を確認。 / Verified automatic OIR-folder selection, custom destinations, preservation on repeated runs, collision/cancellation cleanup and reopening without external derivatives.
+
+## v0.2.2の確認 / v0.2.2 checks
+
+制作者欄を英語3行に簡略化し、画面とAboutの表示を確認しました。機能検査33件はv0.2.1で実施済みです。 / Verified the simplified three-line English attribution in the sidebar and About. The 33 functional tests were last run for v0.2.1.
