@@ -1,11 +1,11 @@
 # 検証状況 / Validation status
 
-2026-10-28 · GLIA Center ATP Studio 0.4.0
+2026-10-28 · GLIA Center ATP Studio 0.4.1
 
 | 項目 / Item | 状況 / Status |
 |---|---|
 | macOS arm64での機能検証 / Functional verification on macOS arm64 | 実OIRの情報読込・画素変換・AQuA2実行・MAT読込・ROA確認・結果出力を確認。 / Real OIR metadata, pixel conversion, AQuA2 execution, MAT import, review and export verified. |
-| 自動検査 / Automated tests | 73件成功：従来42件、検出調整28件、別プロセスでの終了検証3件。 / 73 passing tests: 42 prior checks, 28 detection-guidance checks and 3 subprocess shutdown checks. |
+| 自動検査 / Automated tests | 74件成功：従来42件、検出調整・画面配置29件、別プロセスでの終了検証3件。 / 74 passing tests: 42 prior checks, 29 detection-guidance/layout checks and 3 subprocess shutdown checks. |
 | Windowsパッケージ / Windows package | x64の実行環境・Java・依存ライブラリーを同梱。ハッシュ・ZIP整合性・GUIランチャー・ロゴを静的確認。 / x64 runtime, Java and dependencies bundled; hashes, ZIP integrity, GUI launcher and icon statically checked. |
 | Windows実機 / Native Windows | **未検証 / Not yet executed or verified.** ローカルのZIP検証とは区別します。 / Separate from local ZIP validation. |
 | Java版とMATLAB版の同等性 / Java–MATLAB equivalence | **未確立 / Not established.** 前処理・エンジン版を揃えたベンチマークが必要。 / Requires a harmonized benchmark with matching preprocessing and engine versions. |
@@ -51,3 +51,7 @@ Original recordings, prior analyses, local QA projects and screenshots of real d
 - テスト終了時のPySide GUI解放によるクラッシュを修正しました。親ウィンドウをQt実行中に解放し、タイマーを停止します。別プロセスで通常終了・調整後・処理中の中止を検証し、終了コード0を確認しました。 / Fixed a PySide GUI-disposal crash during test shutdown. Parent windows are disposed while Qt is alive and timers stop. Separate processes verify clean exit after idle use, adjustment and cancellation, including exit code 0.
 - macOSのネイティブ画面でも起動と終了を確認しました。1640×1040と1000×700で検出画面を確認し、小さい画面ではページをスクロールできます。 / Also checked native macOS startup and shutdown. Inspected Detect at 1640×1040 and 1000×700; the page scrolls on smaller displays.
 - 初期値変更による実記録の最終イベント数・感度・偽陽性率の改善は未検証です。Windows実機検証も未実施です。 / Changes in final event counts, sensitivity and false-positive rates on real recordings have not been validated. Native Windows execution remains unverified.
+
+## v0.4.1の確認 / v0.4.1 checks
+
+小さい画面で折り返した説明が推薦値・ボタンに重ならないよう、検出タブの高さを内容に合わせました。1000×700で3種類の問題について要素の非重複を自動検査し、全74件が終了コード0で成功しました。 / Detect tabs now reserve enough height for wrapped explanations on smaller screens. An automated 1000×700 regression checks non-overlapping values, text and buttons for three problem types. All 74 tests passed with exit code 0.

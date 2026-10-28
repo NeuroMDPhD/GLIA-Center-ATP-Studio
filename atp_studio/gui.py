@@ -54,12 +54,15 @@ def double(value=0,minimum=0,maximum=100000,decimals=6):
 
 class PageScroll(W.QScrollArea):
     """Fit the page to the viewport; scroll only below its usable minimum size."""
+    wrap_height = False
     def setWidget(self,widget):
         super().setWidget(widget);widget.installEventFilter(self)
     def fit_content(self):
         widget=self.widget()
         if widget is None:return
         size=self.viewport().size().expandedTo(widget.minimumSizeHint()).expandedTo(widget.minimumSize())
+        if self.wrap_height and widget.layout() and widget.layout().hasHeightForWidth():
+            size.setHeight(max(size.height(), widget.layout().totalHeightForWidth(size.width())))
         if widget.size()!=size:widget.resize(size)
     def resizeEvent(self,event):
         super().resizeEvent(event);self.fit_content()
@@ -112,11 +115,11 @@ class MainWindow(W.QMainWindow):
             +'<p>Third-party credits and licenses / 外部ソフトウェアの著作権・ライセンス: THIRD_PARTY_NOTICES.txt</p>')
         box.setStandardButtons(W.QMessageBox.StandardButton.Ok);box.exec()
 
-    def page(self,title,sub):
+    def page(self,title,sub,wrap_height=False):
         page=W.QWidget();layout=W.QVBoxLayout(page);layout.setContentsMargins(2,0,2,0);layout.setSpacing(8)
         layout.addWidget(label(title,'heading'));layout.addWidget(label(sub,'muted'))
         layout.setSizeConstraint(W.QLayout.SizeConstraint.SetMinimumSize)
-        scroll=PageScroll();scroll.setWidgetResizable(False);scroll.setFrameShape(W.QFrame.Shape.NoFrame);scroll.setWidget(page);self.stack.addWidget(scroll);return layout
+        scroll=PageScroll();scroll.wrap_height=wrap_height;scroll.setWidgetResizable(False);scroll.setFrameShape(W.QFrame.Shape.NoFrame);scroll.setWidget(page);self.stack.addWidget(scroll);return layout
 
     def setup_prepare(self):
         v=self.page('Prepare your recording / 記録を準備','Read spatial and temporal metadata from OIR, then check or edit. / OIRの時空間情報を読み込み、確認・修正します。')
@@ -151,7 +154,7 @@ class MainWindow(W.QMainWindow):
         v.addStretch();self.prepare_btn=button('Prepare files / ファイルを準備  →',self.prepare,True);v.addWidget(self.prepare_btn,alignment=C.Qt.AlignmentFlag.AlignRight)
 
     def setup_detect(self):
-        v=self.page('Detect ATP activity / ATP活動を検出','Baseline & noise → active regions → temporal & spatial segmentation → features / 基準線・ノイズ → 活動領域 → 時間・空間分割 → 特徴量')
+        v=self.page('Detect ATP activity / ATP活動を検出','Baseline & noise → active regions → temporal & spatial segmentation → features / 基準線・ノイズ → 活動領域 → 時間・空間分割 → 特徴量',wrap_height=True)
         self.detect_info=label('Prepare a recording first. / 先に記録を準備してください。','muted');v.addWidget(self.detect_info)
         v.addWidget(label('Stricter defaults: threshold 3.5 · area 30 pixels · duration 6 frames · seed score 4.0. Validate on representative recordings. / 厳しめの初期値：活動閾値3.5・面積30画素・持続6フレーム・シード有意性4.0。代表記録で確認してください。','muted'))
         self.detection_panel=DetectionPanel(self.detection_context);self.params=self.detection_panel.params;v.addWidget(self.detection_panel,1)
@@ -530,6 +533,7 @@ class MainWindow(W.QMainWindow):
         else:
             self.timer.stop()
             self.processing.stop()
+            self.detection_panel.height_sizing.stop()
             self.detection_panel.parameter_table.row_sizing.stop()
             event.accept()
             # Dispose the parent and its children while Qt is still alive.

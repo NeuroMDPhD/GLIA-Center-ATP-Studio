@@ -1,3 +1,13 @@
+# v0.4.1 — 小さい画面の表示修正 / Small-screen layout fix
+
+小さい画面でも検出の提案値・説明・適用ボタンが重ならないよう、タブの高さを自動調整します。 / Automatically sizes Detect tabs so suggested values, explanations and buttons do not overlap on smaller displays.
+
+v0.4.0の厳しめの初期値（活動閾値3.5・面積30画素・持続6フレーム・シード有意性4.0）、問題別調整ガイド、Python終了クラッシュ修正、Professorアニメーション、Windows展開修正を含みます。 / Includes v0.4.0's stricter defaults (activity threshold 3.5, area 30 pixels, duration 6 frames, seed significance 4.0), problem-led guidance, Python shutdown fix, Professor animation and Windows extraction fix.
+
+検証 / Validation: 74 automated tests passed on macOS arm64 with clean process exit. Native Windows execution and accuracy of the new presets on real data remain unverified.
+
+**起動 / Start:** ZIP全体を新しい短い保存先（例：`C:\GLIA`）に展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。 / Extract the complete ZIP into a fresh short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`.
+
 # v0.4.0 — 検出調整ガイドと厳しめの初期値 / Guided detection and stricter defaults
 
 - 活動閾値3.0→3.5、最小面積20→30画素、最小持続5→6フレーム、シード有意性3.5→4.0。 / Activity threshold 3.0→3.5, minimum area 20→30 pixels, minimum duration 5→6 frames and seed significance 3.5→4.0.

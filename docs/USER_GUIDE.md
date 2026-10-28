@@ -1,7 +1,7 @@
 # GLIA Center ATP Studio 操作マニュアル / User manual
 
-日本語・英語併記 · バージョン 0.4.0 · 研究用プレビュー<br>
-Japanese–English · Version 0.4.0 · Research preview
+日本語・英語併記 · バージョン 0.4.1 · 研究用プレビュー<br>
+Japanese–English · Version 0.4.1 · Research preview
 
 ## 1. はじめに / Before you begin
 

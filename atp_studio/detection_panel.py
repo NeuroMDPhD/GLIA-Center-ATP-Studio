@@ -38,12 +38,27 @@ class DetectionPanel(W.QTabWidget):
         self.last_applied = None
         self.previous_settings = None
         self._changing = False
+        self.height_sizing = C.QTimer(self)
+        self.height_sizing.setSingleShot(True)
+        self.height_sizing.timeout.connect(self.update_minimum_height)
         self.setMinimumHeight(430)
         self.build_helper()
         self.build_parameters()
         for widget in self.params.values():
             widget.valueChanged.connect(self.settings_changed)
         self.refresh_context()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.height_sizing.start(0)
+
+    def update_minimum_height(self):
+        # QTabWidget does not propagate each page's wrapped-text height to the
+        # outer scroll area. Reserve it explicitly to prevent overlapping rows.
+        width = max(100, self.width() - 4)
+        height = max(self.widget(i).layout().totalHeightForWidth(width)
+                     for i in range(self.count()))
+        self.setMinimumHeight(max(430, height + self.tabBar().height() + 6))
 
     def settings(self):
         return {key: widget.value() for key, widget in self.params.items()}
@@ -192,6 +207,7 @@ class DetectionPanel(W.QTabWidget):
         self.apply_btn.setEnabled(False)
         self.preview_table.setRowCount(0)
         self.effect.clear()
+        self.height_sizing.start(0)
 
     def preview(self, *args):
         self.clear_proposal()
@@ -298,6 +314,7 @@ class DetectionPanel(W.QTabWidget):
         self.undo_btn.setEnabled(bool(self.last_applied and values == self.last_applied['after']))
         self.show_parameter_detail()
         self.parameter_table.resizeRowsToContents()
+        self.height_sizing.start(0)
 
     def show_parameter_detail(self):
         row = self.parameter_table.currentRow()

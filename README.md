@@ -12,7 +12,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.1/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.1/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
 1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
@@ -27,7 +27,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## マニュアル / Manual
 
-**v0.4.0:** 初期値を厳しくし、問題の選択・キーワード入力による調整ガイド、値の範囲と増減の影響、適用・Undoを追加しました。終了時のGUI解放も修正しました。Professorの処理中表示とWindows展開修正を含みます。 / Stricter defaults, problem selection or keyword search, parameter ranges and effects, preview/apply/undo, and safer GUI shutdown. Includes the Professor activity indicator and Windows extraction fix.
+**v0.4.1:** 初期値を厳しくし、問題の選択・キーワード入力による調整ガイド、値の範囲と増減の影響、適用・Undoを追加しました。終了時のGUI解放も修正しました。Professorの処理中表示とWindows展開修正を含みます。 / Stricter defaults, problem selection or keyword search, parameter ranges and effects, preview/apply/undo, and safer GUI shutdown. Includes the Professor activity indicator and Windows extraction fix.
 
 - [日本語・英語マニュアル / Japanese–English manual](docs/USER_GUIDE.md)
 - [HTML版 / HTML version](docs/user-guide.html) — ダウンロードしてブラウザーで開けます。アプリのHelpからも開けます。 / Download and open in a browser, or use Help in the app.

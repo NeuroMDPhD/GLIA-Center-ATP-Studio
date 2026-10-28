@@ -118,6 +118,35 @@ def test_search_asks_for_disambiguation_and_never_applies(panel):
     assert panel.issue.currentData() is None and not panel.apply_btn.isEnabled()
 
 
+def test_small_window_wrapped_content_does_not_overlap(qapp):
+    from PySide6 import QtCore as C, QtTest as T
+    from atp_studio.gui import MainWindow
+    from atp_studio.theme import install_fonts
+    install_fonts(qapp)
+    window = MainWindow()
+    window.resize(1000, 700)
+    window.go(1)
+    window.show()
+    panel = window.detection_panel
+    for key in ('noise', 'spatial_merged', 'drift'):
+        choose(panel, key)
+        T.QTest.qWait(40)
+        widgets = [panel.advice, panel.preview_table, panel.effect,
+                   panel.limitation, panel.apply_btn]
+        for first, second in zip(widgets, widgets[1:]):
+            assert first.geometry().bottom() < second.geometry().top()
+        page = panel.currentWidget()
+        assert page.height() >= page.layout().totalHeightForWidth(page.width())
+        outer = window.stack.currentWidget().widget()
+        assert outer.height() >= outer.layout().totalHeightForWidth(outer.width())
+        # The support note and Run row live outside the tab and must also fit.
+        layout = outer.layout()
+        assert layout.itemAt(4).geometry().bottom() < layout.itemAt(5).geometry().top()
+        assert layout.itemAt(5).geometry().bottom() < layout.itemAt(6).geometry().top()
+    window.close()
+    C.QCoreApplication.sendPostedEvents(None, C.QEvent.Type.DeferredDelete)
+
+
 def test_parameter_values_and_guidance_reach_saved_run_and_java_request(tmp_path, monkeypatch):
     p=Project(tmp_path);(tmp_path/'raw').mkdir();(tmp_path/'runs').mkdir()
     pixels=np.ones((60,24,24),dtype=np.uint16)*100
