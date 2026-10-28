@@ -72,6 +72,8 @@ def main():
     assert app.exec() == 0
     window.processing.stop()
     window.close()
+    from PySide6 import QtCore as C
+    C.QCoreApplication.sendPostedEvents(None, C.QEvent.Type.DeferredDelete)
     report = {'app_version': __version__, 'platform': sys.platform,
               'verified_file_count': len(actual), 'max_extracted_path_units': max_path,
               'qt_platform': app.platformName(), 'native_gui_created': True,

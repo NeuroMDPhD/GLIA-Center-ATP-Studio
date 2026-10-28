@@ -9,6 +9,8 @@ from .common import ROOT, Job, Cancelled, read_json
 from .project import Project, inspect_oir, create_project, detect, import_mat, export_selected, DEFAULT_DETECTION, applied_settings, preparation_formats
 from .branding import APP_NAME, creator_html
 from .processing import ProcessingIndicator
+from .detection_panel import DetectionPanel
+from .detection_guidance import validate_settings
 from .suggestions import LABELS, DEFAULTS as SUGGESTION_DEFAULTS, cached_suggestions, build_suggestions, reason_text, validate_config
 from . import __version__
 
@@ -151,19 +153,13 @@ class MainWindow(W.QMainWindow):
     def setup_detect(self):
         v=self.page('Detect ATP activity / ATP活動を検出','Baseline & noise → active regions → temporal & spatial segmentation → features / 基準線・ノイズ → 活動領域 → 時間・空間分割 → 特徴量')
         self.detect_info=label('Prepare a recording first. / 先に記録を準備してください。','muted');v.addWidget(self.detect_info)
-        v.addWidget(label('These are starting parameters, not validated ATP thresholds. Check representative recordings. / 初期値です。ATP用の確定閾値ではないため代表記録で調整してください。','muted'))
-        group=W.QGroupBox('Detection settings / 検出設定');f=W.QFormLayout(group);self.params={}
-        definitions=[('thrARScl','Activity threshold / 活動閾値 (noise SD)',True,0.1,20),('minSize','Minimum area / 最小面積 (pixels)',False,1,100000),
-            ('minDur','Minimum duration / 最小持続 (frames)',False,1,10000),('sigThr','Temporal threshold / 時間分割閾値',True,.1,20),
-            ('movAvgWin','Baseline smoothing / 基準線平滑化 (frames)',False,2,10000),('cut','Baseline segment / 基準線区間 (frames)',False,10,100000),
-            ('regMaskGap','Edge crop / 周辺除外 (pixels)',False,0,100),('median_radius','Median radius / メディアン半径 (pixels)',False,0,5),('memory_gb','Memory limit / メモリ上限 (GB)',False,2,64)]
-        for key,title,isfloat,lo,hi in definitions:
-            if isfloat:b=double(DEFAULT_DETECTION[key],lo,hi,2)
-            else:b=W.QSpinBox();b.setRange(lo,hi);b.setValue(DEFAULT_DETECTION[key])
-            self.params[key]=b;f.addRow(title,b)
-        v.addWidget(group)
+        v.addWidget(label('Stricter defaults: threshold 3.5 · area 30 pixels · duration 6 frames · seed score 4.0. Validate on representative recordings. / 厳しめの初期値：活動閾値3.5・面積30画素・持続6フレーム・シード有意性4.0。代表記録で確認してください。','muted'))
+        self.detection_panel=DetectionPanel(self.detection_context);self.params=self.detection_panel.params;v.addWidget(self.detection_panel,1)
         v.addWidget(label('Supports uniform 2D+t with square pixels. Global-event search, CFU and motion correction are not included. Every run preserves prior reviews. / 等間隔2D+t・正方画素に対応。全域イベント追加検出、CFU、動き補正は未対応。過去の確認履歴を保持します。','muted'))
         row=W.QHBoxLayout();row.addWidget(button('Import AQuA2 .mat / 読み込み…',self.pick_mat));row.addStretch();row.addWidget(button('Run AQuA2 / 検出開始  →',self.start_detection,True));v.addLayout(row);v.addStretch()
+
+    def detection_context(self):
+        return dict(self.project.manifest['acquisition']) if self.project else {}
 
     def setup_review(self):
         v=self.page('Review ROAs / 位置と波形を確認','');v.itemAt(1).widget().hide()
@@ -220,8 +216,9 @@ class MainWindow(W.QMainWindow):
             shortcut=G.QShortcut(G.QKeySequence(key),self);shortcut.setAutoRepeat(False);shortcut.activated.connect(lambda s=state:self.decide(s));self.shortcuts.append(shortcut)
         for key,fn in [('Space',self.toggle_play),(G.QKeySequence.StandardKey.Undo,self.undo_review)]:
             shortcut=G.QShortcut(G.QKeySequence(key),self);shortcut.setAutoRepeat(False);shortcut.activated.connect(fn);self.shortcuts.append(shortcut)
-        W.QApplication.instance().focusChanged.connect(lambda:self.update_shortcuts())
+        W.QApplication.instance().focusChanged.connect(self.update_shortcuts)
 
+    @C.Slot()
     def update_shortcuts(self):
         focus=W.QApplication.focusWidget()
         typing=isinstance(focus,(W.QLineEdit,W.QTextEdit,W.QPlainTextEdit,W.QAbstractSpinBox,W.QComboBox))
@@ -351,6 +348,7 @@ class MainWindow(W.QMainWindow):
             raise ValueError('This project is not fully prepared. Start file preparation again in a new project. / 準備が未完了です。新規プロジェクトで再変換してください。')
         self.project=p;self.movie=p.movie();self.times=p.times();self.preview_limits=p.manifest.get('display_limits',(0,255));self.events=p.events();self.voxel_cache={}
         self.run_settings=read_json(p.run_dir()/'settings.json') if p.run_dir() else {}
+        self.detection_panel.refresh_context(previous=self.run_settings.get('settings'),reset=True)
         self.suggestion_doc=cached_suggestions(p);self.pending_suggestions=bool(self.events and not self.suggestion_doc);self.undo_snapshot=None;self.undo_btn.setEnabled(False)
         from scipy.ndimage import median_filter
         sample=np.stack([median_filter(self.movie[i],size=3) for i in np.linspace(0,len(self.movie)-1,5,dtype=int)])
@@ -374,8 +372,10 @@ class MainWindow(W.QMainWindow):
         self.failure('Prepare or open a project first. / プロジェクトを準備するか開いてください。');return False
     def start_detection(self):
         if not self.require_project():return
-        cfg={k:w.value() for k,w in self.params.items()};path=self.project.path
-        self.run_job(lambda job:detect(path,cfg,job),lambda run:(self.load_project(path),self.go(2)))
+        try:cfg=validate_settings(self.detection_panel.settings(),self.detection_context())
+        except ValueError as e:self.failure(str(e));return
+        path=self.project.path;guidance=self.detection_panel.guidance_for_run()
+        self.run_job(lambda job:detect(path,cfg,job,guidance=guidance),lambda run:(self.load_project(path),self.go(2)))
     def pick_mat(self):
         if not self.require_project():return
         f,_=W.QFileDialog.getOpenFileName(self,'Choose AQuA2 MAT / MATを選択',str(Path.home()),'MATLAB v7.3 (*.mat)')
@@ -527,7 +527,14 @@ class MainWindow(W.QMainWindow):
     def closeEvent(self,event):
         if self.worker and self.worker.isRunning():
             self.cancel();self.status.setText('Wait for cancellation before closing. / 中止完了後に閉じてください。');event.ignore()
-        else:event.accept()
+        else:
+            self.timer.stop()
+            self.processing.stop()
+            self.detection_panel.parameter_table.row_sizing.stop()
+            event.accept()
+            # Dispose the parent and its children while Qt is still alive.
+            # Leaving GUI objects to Python interpreter finalization can crash PySide.
+            self.deleteLater()
 
 def main():
     if sys.platform=='win32':
@@ -537,6 +544,8 @@ def main():
     from .theme import install_fonts
     install_fonts(app)
     app.setWindowIcon(G.QIcon(str(ROOT/'assets/atp-studio.ico')))
-    win=MainWindow(sys.argv[1] if len(sys.argv)>1 else None);win.show();sys.exit(app.exec())
+    win=MainWindow(sys.argv[1] if len(sys.argv)>1 else None)
+    app.aboutToQuit.connect(win.deleteLater)
+    win.show();sys.exit(app.exec())
 
 if __name__=='__main__':main()

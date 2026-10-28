@@ -12,7 +12,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.3.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.3.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.4.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
 1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
@@ -27,7 +27,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## マニュアル / Manual
 
-**v0.3.0:** 処理中は左下でProfessorが動き、`Working / 処理中`と経過時間を表示します。中止要求後も処理が終了するまで表示し、完了・中止・エラーで停止します。v0.2.3のWindows展開修正も含みます。 / Professor animates at the bottom left while a task runs, alongside the status and elapsed time. It stays visible while cancellation is pending and stops on completion, cancellation or error. Includes the Windows extraction fix from v0.2.3.
+**v0.4.0:** 初期値を厳しくし、問題の選択・キーワード入力による調整ガイド、値の範囲と増減の影響、適用・Undoを追加しました。終了時のGUI解放も修正しました。Professorの処理中表示とWindows展開修正を含みます。 / Stricter defaults, problem selection or keyword search, parameter ranges and effects, preview/apply/undo, and safer GUI shutdown. Includes the Professor activity indicator and Windows extraction fix.
 
 - [日本語・英語マニュアル / Japanese–English manual](docs/USER_GUIDE.md)
 - [HTML版 / HTML version](docs/user-guide.html) — ダウンロードしてブラウザーで開けます。アプリのHelpからも開けます。 / Download and open in a browser, or use Help in the app.

@@ -1,11 +1,11 @@
 # 検証状況 / Validation status
 
-2026-10-28 · GLIA Center ATP Studio 0.3.0
+2026-10-28 · GLIA Center ATP Studio 0.4.0
 
 | 項目 / Item | 状況 / Status |
 |---|---|
 | macOS arm64での機能検証 / Functional verification on macOS arm64 | 実OIRの情報読込・画素変換・AQuA2実行・MAT読込・ROA確認・結果出力を確認。 / Real OIR metadata, pixel conversion, AQuA2 execution, MAT import, review and export verified. |
-| 自動検査 / Automated tests | 42件成功：従来の機能・Windows配布検査37件とProfessor表示の検査5件。 / 42 passing tests: the existing 37 functional/Windows packaging checks plus 5 Professor indicator checks. |
+| 自動検査 / Automated tests | 73件成功：従来42件、検出調整28件、別プロセスでの終了検証3件。 / 73 passing tests: 42 prior checks, 28 detection-guidance checks and 3 subprocess shutdown checks. |
 | Windowsパッケージ / Windows package | x64の実行環境・Java・依存ライブラリーを同梱。ハッシュ・ZIP整合性・GUIランチャー・ロゴを静的確認。 / x64 runtime, Java and dependencies bundled; hashes, ZIP integrity, GUI launcher and icon statically checked. |
 | Windows実機 / Native Windows | **未検証 / Not yet executed or verified.** ローカルのZIP検証とは区別します。 / Separate from local ZIP validation. |
 | Java版とMATLAB版の同等性 / Java–MATLAB equivalence | **未確立 / Not established.** 前処理・エンジン版を揃えたベンチマークが必要。 / Requires a harmonized benchmark with matching preprocessing and engine versions. |
@@ -42,3 +42,12 @@ Original recordings, prior analyses, local QA projects and screenshots of real d
 - バックグラウンド処理中のフレーム更新と経過時間、成功時の停止、中止処理中の継続、エラー表示前の停止、次の処理での再開を自動検査しました。 / Automated checks cover animation and elapsed-time updates during background work, stopping on success, continuing during cancellation, stopping before an error dialog and restarting for the next task.
 - 1640×1040と1000×700の画面で表示位置を確認しました。氏名・メールは従来の3行を保持しています。 / Inspected placement at 1640×1040 and 1000×700. The existing three-line creator attribution is retained.
 - macOS arm64で全42件の検査が成功しました。Windows配布の短いルート名とパス長検査も維持しています。 / All 42 checks passed on macOS arm64. The short Windows archive root and path-length checks remain in place.
+
+## v0.4.0の確認 / v0.4.0 checks
+
+- 厳しめの4初期値、問題ごとに一つの値を変更する規則、記録依存の範囲、単位換算、不正値の検出前拒否を検証しました。 / Checked the four stricter defaults, single-parameter rules, recording-dependent bounds, unit conversions and rejection of invalid values before detection.
+- Preview・適用・Undo、手動変更後の古い提案の無効化、曖昧な入力での選択要求、以前の設定の読込を検証しました。 / Checked preview/apply/undo, invalidation after manual edits, disambiguation of text input and previous-setting restoration.
+- 合成プロジェクトで、エンジン起動前の要求ファイルに実際の値が渡り、変更履歴がsettings.jsonに保存されることを確認しました。 / A synthetic project verifies actual parameter values in the engine request and guidance provenance in settings.json before launching the engine.
+- テスト終了時のPySide GUI解放によるクラッシュを修正しました。親ウィンドウをQt実行中に解放し、タイマーを停止します。別プロセスで通常終了・調整後・処理中の中止を検証し、終了コード0を確認しました。 / Fixed a PySide GUI-disposal crash during test shutdown. Parent windows are disposed while Qt is alive and timers stop. Separate processes verify clean exit after idle use, adjustment and cancellation, including exit code 0.
+- macOSのネイティブ画面でも起動と終了を確認しました。1640×1040と1000×700で検出画面を確認し、小さい画面ではページをスクロールできます。 / Also checked native macOS startup and shutdown. Inspected Detect at 1640×1040 and 1000×700; the page scrolls on smaller displays.
+- 初期値変更による実記録の最終イベント数・感度・偽陽性率の改善は未検証です。Windows実機検証も未実施です。 / Changes in final event counts, sensitivity and false-positive rates on real recordings have not been validated. Native Windows execution remains unverified.

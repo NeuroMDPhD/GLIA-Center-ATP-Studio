@@ -1,7 +1,7 @@
 # GLIA Center ATP Studio 操作マニュアル / User manual
 
-日本語・英語併記 · バージョン 0.3.0 · 研究用プレビュー<br>
-Japanese–English · Version 0.3.0 · Research preview
+日本語・英語併記 · バージョン 0.4.0 · 研究用プレビュー<br>
+Japanese–English · Version 0.4.0 · Research preview
 
 ## 1. はじめに / Before you begin
 
@@ -144,21 +144,86 @@ MP4 playback is 15 fps. **Playback duration may differ from acquisition duration
 
 ## 5. Detect：AQuA2による検出 / Detection with AQuA2
 
-準備完了後、`02 Detect`へ進みます。下表の初期値は開始点であり、ATP用に妥当性を確認した固定閾値ではありません。代表記録を用いて設定を確認し、群間比較では解析条件を揃えてください。
+準備完了後、`02 Detect`へ進みます。v0.4.0では弱い・小さい・短い候補を減らす方向に初期値を変更しました。変更は次回の検出に適用され、既存の結果・採否は書き換えません。
 
-After preparation, open `02 Detect`. The defaults below are starting points, not validated fixed thresholds for ATP. Check representative recordings and use harmonized settings for comparisons.
+After preparation, open `02 Detect`. Version 0.4.0 starts with stricter settings intended to reduce weak, small and brief candidates. Changes affect the next detection run; existing results and reviews are preserved.
 
-| 設定 / Setting | 初期値 / Default | 意味 / Meaning |
+| 設定 / Setting | 以前 / Earlier | 新しい初期値 / New default |
 |---|---|---|
-| Activity threshold / 活動閾値 | 3.0 noise SD | ノイズに対する活動検出の閾値 / Activity threshold relative to estimated noise |
-| Minimum area / 最小面積 | 20 pixels | 小さい候補領域を除く基準 / Minimum candidate area |
-| Minimum duration / 最小持続 | 5 frames | 短い候補活動を除く基準 / Minimum candidate duration |
-| Temporal threshold / 時間分割閾値 | 3.5 | AQuA2の時間分割に用いる閾値 / Threshold used for temporal segmentation |
-| Baseline smoothing / 基準線平滑化 | 25 frames | 基準線推定の平滑化窓 / Smoothing window for baseline estimation |
-| Baseline segment / 基準線区間 | 200 frames | 基準線推定の区間長 / Segment length for baseline estimation |
-| Edge crop / 周辺除外 | 5 pixels | 画像の各辺から除外する幅 / Margin removed from each image edge |
-| Median radius / メディアン半径 | 1 pixel | 半径1は3×3、0は無効 / Radius 1 means 3×3; 0 disables filtering |
-| Memory limit / メモリ上限 | 12 GB | AQuA2に割り当てるJavaヒープ上限。アプリ全体の使用量上限ではありません。 / Java heap limit for AQuA2, not a cap on total application memory |
+| Activity threshold / 活動閾値 | 3.0 noise SD | **3.5 noise SD** |
+| Minimum area / 最小面積 | 20 pixels | **30 pixels** |
+| Minimum duration / 最小持続 | 5 frames | **6 frames** |
+| Seed significance / シード有意性 | 3.5 | **4.0** |
+
+他の初期値は維持しています。初期値・提案は検証済みATP閾値ではありません。弱い実信号も除かれ得るため、代表記録で確認し、群間比較では条件を揃えてください。分割も変わるため、最終ROA数が必ず減るわけではありません。
+
+Other defaults are retained. Defaults and suggestions are not validated ATP thresholds. Weak real signals can be lost: check representative recordings and harmonize settings for group comparisons. Segmentation can also change, so fewer final ROAs are not guaranteed.
+
+### 問題から調整する / Adjust by problem
+
+![検出調整ガイド / Detection adjustment helper](screenshots/detection-guide.png)
+
+1. `Adjustment helper / 調整ガイド`で問題を選択します。英語・日本語で入力し、`Find issue / 問題を探す`で検索することもできます。これはローカルのキーワード検索です。複数候補の場合は、意図する問題を選びます。<br>
+   Select a problem, or describe it in English/Japanese and use `Find issue`. This is a local keyword search. Choose the intended problem when several match.
+2. 現在値→提案値、期待される影響と注意点を確認します。表示だけでは値は変わりません。<br>
+   Check the current → suggested value, expected effect and caution. Previewing does not change settings.
+3. `Apply suggestion / 提案を適用`を押し、`Run AQuA2`で再検出します。同じ信号・ノイズ領域で比較してください。<br>
+   Select `Apply suggestion`, then `Run AQuA2`. Compare the same signals and noise regions.
+4. `Undo adjustment / 調整を戻す`は直前の適用を戻します。手動変更後は新しい値を保護するためUndoを無効にします。<br>
+   `Undo adjustment` restores the last applied adjustment. It is disabled after manual edits to protect the newer values.
+
+| 問題 / Problem | 一回の提案 / One suggested adjustment |
+|---|---|
+| 弱い・ノイズ候補が多い / Too many weak or noisy events | 活動閾値 +0.5 / Activity threshold +0.5 |
+| 弱い信号を見逃す / Weak signals missed | 活動閾値 −0.5 / Activity threshold −0.5 |
+| 微小領域が多い / Too many tiny regions | 最小面積 ×1.25、切り上げ / Minimum area ×1.25, rounded up |
+| 短い点滅が多い / Brief flashes dominate | 最小持続 +1 frame / Minimum duration +1 frame |
+| 短い実信号を見逃す / Short real signals missed | 最小持続 −1 frame / Minimum duration −1 frame |
+| 隣接発生源が一つになる / Neighboring sources merge | 空間分離感度 +1 / Spatial source sensitivity +1 |
+| 一つの活動が細分化される / One spatial event is fragmented | 空間分離感度 −1 / Spatial source sensitivity −1 |
+| 時間特性の異なる活動が統合 / Different time courses merge | 時間統合の許容度 −0.1 / Temporal merge tolerance −0.1 |
+| 似た時間波形が分離したまま / Similar time courses stay split | 時間統合の許容度 +0.1 / Temporal merge tolerance +0.1 |
+| 画像周辺のアーティファクト / Border artifacts | 周辺除外 +1 pixel / Edge crop +1 pixel |
+
+一度に一つの値を小幅に調整し、許容範囲の端では追加変更しません。退色・ドリフト、動き、メモリ問題には一律の数値変更を提案せず、確認事項を表示します。動画を自動判定した提案ではなく、選択した問題に対する規則です。適用後に値を変えず検出した場合、規則版・問題・変更前後をrunの`settings.json`へ記録します。
+
+The helper proposes one small change at a time and stops at allowed limits. Bleaching/drift, motion and memory issues show checks instead of a universal numeric fix. Recommendations follow the selected problem; they do not automatically diagnose the movie. If the applied settings remain unchanged when detection starts, the run's `settings.json` records the rule version, issue and before/after settings.
+
+### 値・範囲・影響 / Values, ranges and effects
+
+![パラメーターと範囲 / Parameters and ranges](screenshots/detection-parameters.png)
+
+`Parameters & ranges / 値と範囲`で直接編集できます。行を選ぶと注意点が表示されます。下記はアプリが許可する範囲で、生物学的な推奨範囲ではありません。画面では記録に合わせた上限と秒・µm²への換算も表示します。
+
+Edit values directly in `Parameters & ranges`; select a row for cautions. These are application limits, not recommended biological ranges. The screen shows recording-specific limits and conversions to seconds and µm².
+
+| 設定 / Setting | 初期値 / Default | 許容範囲 / Allowed range | 増減の影響 / Effects |
+|---|---|---|---|
+| Activity threshold / 活動閾値 | 3.5 | 0.1–20 noise SD | ↑ Rejects weaker activity; usually fewer weak candidates. / 弱い活動を除き、弱い候補が減る傾向。<br>↓ Includes weaker activity and more noise; regions may connect. / 弱い活動とノイズを含み、領域がつながる場合があります。 |
+| Minimum area / 最小面積 | 30 | 1–100000 pixels | ↑ Rejects small regions and small sources. / 小さな領域・発生源を除きます。<br>↓ Retains smaller regions, including small noise patches. / 小さな領域と小さいノイズを残しやすくします。 |
+| Minimum duration / 最小持続 | 6 | 1–10000 frames | ↑ Rejects shorter candidates. / 短い候補を除きます。<br>↓ Retains briefer transients and brief noise. / 短い活動や瞬間的なノイズを残しやすくします。 |
+| Seed significance / シード有意性 | 4 | 0.1–20 score | ↑ Requires stronger temporal seed evidence. / 時間分割シードに強い証拠を要求します。<br>↓ Allows weaker temporal seeds; false seeds may increase. / 弱い時間分割シードを許容し、偽シードが増える場合があります。 |
+| Spatial source sensitivity / 空間分離感度 | 8 | 1–10 level | ↑ Separates sources at smaller onset-delay differences; may split more. / 小さい開始遅延の差でも発生源を分けやすくします。<br>↓ Requires larger delay differences; sources may stay together. / 大きな遅延差を要求し、発生源をまとめやすくします。 |
+| Temporal merge tolerance / 時間統合の許容度 | 0.6 | 0–1 ratio | ↑ Allows more dissimilar timing to merge into one super-event. / 時間特性が異なる領域も統合しやすくします。<br>↓ Makes temporal merging stricter; may separate more regions. / 時間統合を厳しくし、領域を分けやすくします。 |
+| Minimum source fraction / 最小発生源比率 | 0.01 | 0–1 fraction | ↑ Rejects small source seeds within a super-event; may split less. / 大領域内の小さな発生源を除き、分離を抑える場合があります。<br>↓ Allows smaller source seeds; may split more. / 小さな発生源を許容し、分離を増やす場合があります。 |
+| Gaussian smoothing / ガウス平滑化 | 0.5 | 0–5 sigma pixels | ↑ Smooths spatial noise more, but can blur neighboring signals. / 空間ノイズを抑えますが、隣接信号をぼかす場合があります。<br>↓ Preserves spatial detail and more noise. / 空間的な細部とノイズを残します。 |
+| Baseline smoothing / 基準線平滑化 | 25 | 2–1000 frames | ↑ Uses a smoother baseline estimate with less rapid variation. / 基準線を滑らかにし、速い変動を抑えます。<br>↓ Lets the baseline estimate follow faster fluctuations. / 基準線を速い変動に追従しやすくします。 |
+| Baseline segment / 基準線区間 | 200 | 10–9999 frames | ↑ Finds baseline minima over a longer interval; adapts less locally. / 長い区間で基準線の最小値を探し、局所変動への追従を抑えます。<br>↓ Follows local drift more, but may absorb sustained signals. / 局所的なドリフトに追従しますが、持続信号を基準線に含む場合があります。 |
+| Edge crop / 周辺除外 | 5 | 0–100 pixels per edge | ↑ Excludes a wider border and any real events there. / 広い周辺を除外し、そこにある実信号も除きます。<br>↓ Includes more of the image edge and its artifacts. / 周辺の画素とアーティファクトを含めます。 |
+| Median radius / メディアン半径 | 1 | 0–5 pixels | ↑ Suppresses isolated pixels more, but may erase tiny real events. / 孤立画素を抑えますが、小さい実信号も消す場合があります。<br>↓ Preserves smaller features and more pixel noise. / 小さな構造と画素ノイズを残します。 |
+| Memory limit / メモリ上限 | 12 | 2–64 GB | ↑ Allows a larger Java heap if enough RAM is available. / 空きRAMがあればJavaのヒープを大きくできます。<br>↓ Leaves more RAM for the system but can cause Java memory errors. / システムにRAMを残しますが、Javaのメモリ不足が起こり得ます。 |
+
+持続・平滑化窓の上限は記録フレーム数でも制限します。面積の上限は切り出し後の視野、周辺除外の上限は画像寸法に依存します。基準線区間は記録長に切り詰めて使用します。秒換算はN×Δtです。最小持続は候補の時間幅の判定であり、連続した明るいフレーム数ではありません。時間統合の許容度は正規化した波形タイミングの非類似度で、秒ではありません。
+
+Duration and smoothing windows are also limited by the frame count. Maximum area depends on the cropped field, and the edge margin depends on image dimensions. AQuA2 clips the baseline segment to the recording length. Seconds use N×Δt. Minimum duration tests candidate time span, not a required count of continuously bright frames. Temporal merge tolerance is normalized time-course dissimilarity, not seconds.
+
+`Strict defaults / 厳しめの初期値`はv0.4.0の初期値、`Earlier defaults / 以前の初期値`は以前の開始値に戻します。`Use last run / 前回の設定`は開いたrunに保存された設定を明示的に読み込みます。以前の設定が範囲外の場合は理由を表示し、黙って切り詰めません。
+
+`Strict defaults` restores the v0.4.0 starting values; `Earlier defaults` restores the earlier preset. `Use last run` explicitly loads settings recorded in the opened run. Out-of-range older settings show an explanation instead of being silently clipped.
+
+変更方向は同梱AQuA2-Fijiの実装を確認しています。変更量は本アプリの調整用規則です。 / Directions were checked against the bundled AQuA2-Fiji implementation; adjustment amounts are this app's heuristics:
+
+[活動領域 / Active regions](https://github.com/yu-lab-vt/AQuA2-Fiji/blob/ca807872077a736e906698047bd718ce54754eda/src/main/java/va/vt/cbilAQuA2/run/Step2Helper.java) · [時間分割 / Temporal segmentation](https://github.com/yu-lab-vt/AQuA2-Fiji/blob/ca807872077a736e906698047bd718ce54754eda/src/main/java/va/vt/cbilAQuA2/run/Step3Helper.java) · [空間分割 / Spatial segmentation](https://github.com/yu-lab-vt/AQuA2-Fiji/blob/ca807872077a736e906698047bd718ce54754eda/src/main/java/va/vt/cbilAQuA2/run/Step4Helper.java) · [基準線 / Baseline](https://github.com/yu-lab-vt/AQuA2-Fiji/blob/ca807872077a736e906698047bd718ce54754eda/src/main/java/va/vt/cbilAQuA2/run/Step1Helper.java)
 
 `Run AQuA2`を押すと、基準線・ノイズ推定、活動領域検出、時間分割、空間分割、特徴量抽出を行います。処理時間は記録と設定に依存します。キャンセル後は中止処理が終わるまで待ってください。解析をやり直すと新しいrunが作られ、以前の結果と確認履歴を保持します。
 

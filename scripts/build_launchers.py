@@ -53,7 +53,7 @@ def build_mac():
     info = {'CFBundleName': 'GLIA Center ATP Studio', 'CFBundleDisplayName': 'GLIA Center ATP Studio',
             'CFBundleExecutable': 'GLIA Center ATP Studio', 'CFBundleIconFile': 'atp-studio.icns',
             'CFBundleIdentifier': 'org.gliacenter.atpstudio.desktop', 'CFBundlePackageType': 'APPL',
-            'CFBundleVersion': '0.3.0', 'CFBundleShortVersionString': '0.3.0',
+            'CFBundleVersion': '0.4.0', 'CFBundleShortVersionString': '0.4.0',
             'LSMinimumSystemVersion': '11.0', 'NSHighResolutionCapable': True}
     (bundle / 'Info.plist').write_bytes(plistlib.dumps(info))
     subprocess.run(['clang', '-Os', '-Wall', '-Wextra', str(ROOT / 'launcher/macos_launcher.c'),

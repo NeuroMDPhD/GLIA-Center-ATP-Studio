@@ -1,4 +1,4 @@
-GLIA Center ATP Studio 0.3.0 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.4.0 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
   dist/GLIA-Center-ATP-Studio-Windows-x64.zip
@@ -25,8 +25,8 @@ Processing indicator / 処理中の表示
   処理中は左下でProfessorが動き、状態と経過時間を表示します。
   After Cancel, Stopping remains visible until the task ends. The animation then stops.
   Cancel後は処理終了まで「中止処理中」を表示し、終了時にアニメーションが停止します。
-  v0.3.0 includes the shorter Windows extraction paths introduced in v0.2.3.
-  v0.3.0はv0.2.3のWindows展開パス短縮も含みます。
+  v0.4.0 includes the shorter Windows extraction paths introduced in v0.2.3.
+  v0.4.0はv0.2.3のWindows展開パス短縮も含みます。
 
 Experiment details are optional. Uncheck Include experiment to skip them.
 実験情報は任意です。「実験情報を含める」のチェックを外すと省略できます。
@@ -55,3 +55,13 @@ Preparation files / 準備時の出力
   選択したファイルは初期設定でOIRと同じフォルダーに、重複しない名前で保存します。
   The project retains its working TIFF even when TIFF export is unchecked.
   TIFF出力を外しても、解析用TIFFはプロジェクト内に保持します。
+
+Detect adjustment helper / 検出の調整ガイド
+  Stricter defaults: activity threshold 3.5, area 30 pixels, duration 6 frames, seed significance 4.0.
+  厳しめの初期値：活動閾値3.5、最小面積30画素、最小持続6フレーム、シード有意性4.0。
+  Select a problem or search in English/Japanese. Preview the change, apply it, then Run AQuA2.
+  問題を選ぶか英語・日本語で検索し、変更を確認・適用してから再検出してください。
+  Parameters & ranges explains increasing/decreasing each value; Undo restores the last adjustment.
+  「値と範囲」で増減の影響を確認でき、Undoで直前の調整を戻せます。
+  Earlier defaults and Use last run are available. Existing results and reviews are preserved.
+  以前の初期値・前回の設定も選べます。既存の結果と確認履歴は保持します。

@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from PySide6 import QtWidgets as W
+from PySide6 import QtCore as C, QtWidgets as W
 from atp_studio.gui import MainWindow
 
 app=W.QApplication([])
@@ -32,6 +32,7 @@ T.QTest.qWait(350)
 assert window.grab().save(str(out/'processing.png'))
 release.set();window.worker.wait(5000);app.processEvents()
 window.close()
+C.QCoreApplication.sendPostedEvents(None, C.QEvent.Type.DeferredDelete)
 print(out/'prepare.png')
 print(out/'processing.png')
 
@@ -66,5 +67,14 @@ with tempfile.TemporaryDirectory(prefix='glia-manual-') as tmp:
     _store_events(p,p.run_dir(),records,(n,h,w),(0,0),'synthetic illustration',Job());build_suggestions(p)
     window=MainWindow(path);window.go(2);window.resize(1760,1080);window.show();T.QTest.qWait(200)
     window.status.setText('Synthetic illustration / 合成データによる説明画面（実験結果ではありません）');app.processEvents()
-    assert window.grab().save(str(out/'review.png'));window.close()
+    assert window.grab().save(str(out/'review.png'))
+    window.go(1);window.resize(1640,1040)
+    window.detect_info.setText('Synthetic example / 合成データの説明例\n100 frames · Δt 0.5 s · 1 µm/pixel\nProject / 保存先: C:\\GLIA\\Example')
+    window.detection_panel.issue.setCurrentIndex(window.detection_panel.issue.findData('noise'))
+    app.processEvents();T.QTest.qWait(100)
+    assert window.grab().save(str(out/'detection-guide.png'))
+    window.detection_panel.setCurrentIndex(1);app.processEvents();T.QTest.qWait(100)
+    assert window.grab().save(str(out/'detection-parameters.png'))
+    window.close()
+    C.QCoreApplication.sendPostedEvents(None, C.QEvent.Type.DeferredDelete)
 print(out/'review.png')

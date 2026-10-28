@@ -184,10 +184,9 @@ def _store_events(p,run,records,shape,offset,engine,job):
     write_csv(run/'all_detected_events.csv',rows,fields=None if rows else ['event_id','engine','peak_dff','area_um2','qc_flags'])
     return rows
 
-DEFAULT_DETECTION=dict(thrARScl=3.0,minSize=20,minDur=5,sigThr=3.5,smoXY=.5,
-    movAvgWin=25,cut=200,sourceSensitivity=8,sourceSzRatio=.01,regMaskGap=5,memory_gb=12,median_radius=1)
+from .detection_guidance import DEFAULT_DETECTION, validate_settings
 
-def detect(p,settings,job=None):
+def detect(p,settings,job=None,guidance=None):
     job=job or Job();p=Project(p) if not isinstance(p,Project) else p
     if sha256(p.path/'raw/movie.ome.tif')!=p.manifest['raw_tiff_sha256']:
         raise ValueError('Prepared TIFF has changed. Create a new project. / TIFFが変更されています。新規プロジェクトを作成してください。')
@@ -196,12 +195,12 @@ def detect(p,settings,job=None):
         raise ValueError('Irregular timestamps: AQuA2 requires uniform intervals. / 不等間隔時系列には未対応です。')
     if not np.isclose(a['pixel_x_um'],a['pixel_y_um'],rtol=.01):
         raise ValueError('Square pixels are required. Check X/Y calibration. / 正方画素が必要です。X/Yを確認してください。')
-    cfg={**DEFAULT_DETECTION,**settings};movie=p.movie();n,h,w=movie.shape;gap=int(cfg['regMaskGap'])
-    if gap<0 or gap*2>=min(h,w)-4: raise ValueError('Edge crop is too large. / 周辺除外幅が大きすぎます。')
-    if cfg['movAvgWin']>n or cfg['minDur']>n: raise ValueError('Window exceeds recording length. / 時間窓が記録より長いです。')
+    movie=p.movie();n,h,w=movie.shape
+    cfg=validate_settings(settings,{'shape':[n,h,w]});gap=cfg['regMaskGap']
     run=new_directory(p.path/'runs','aqua2');settings_path=run/'settings.json'
     runmeta=dict(status='running',started_at=stamp(),engine='AQuA2-Fiji',engine_commit=ENGINE_COMMIT,
                  input_sha256=p.manifest['raw_tiff_sha256'],settings=cfg,offset_yx=[gap,gap],shape=[n,h-2*gap,w-2*gap])
+    if guidance and guidance.get('after')==cfg:runmeta['parameter_guidance']=guidance
     save_json(settings_path,runmeta)
     try:
         crop=movie[:,gap:h-gap if gap else h,gap:w-gap if gap else w]

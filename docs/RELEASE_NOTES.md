@@ -1,3 +1,18 @@
+# v0.4.0 — 検出調整ガイドと厳しめの初期値 / Guided detection and stricter defaults
+
+- 活動閾値3.0→3.5、最小面積20→30画素、最小持続5→6フレーム、シード有意性3.5→4.0。 / Activity threshold 3.0→3.5, minimum area 20→30 pixels, minimum duration 5→6 frames and seed significance 3.5→4.0.
+- 問題の選択・英語/日本語キーワード入力から、一つの値の小幅な調整を提案します。適用前に値と影響を確認し、Undoで戻せます。 / Select a problem or search with English/Japanese keywords to preview a small adjustment to one parameter, apply it and undo it.
+- 13項目の範囲、増減の影響、秒・µm²換算を表示します。以前の初期値・前回の設定も選択できます。 / Displays ranges and effects for 13 parameters, with seconds/µm² conversions and options to restore earlier defaults or last-run settings.
+- 推奨の変更履歴を保存し、既存の結果・確認履歴を保持します。基準線窓の範囲を固定版エンジンの補正表に合わせて制限しました。 / Saves applied-guidance provenance and preserves existing results/reviews. Baseline-window limits follow the pinned engine's bias-table support.
+- GUIを解放する順序を修正し、検証時のPython終了クラッシュに対応しました。 / Corrects GUI disposal order to address the Python shutdown crash seen during validation.
+- Professorの処理中アニメーションと、短いWindows展開パスを含みます。日本語・英語マニュアルを更新しました。 / Includes the Professor activity animation and shorter Windows extraction paths, with an updated Japanese–English manual.
+
+提案は設定調整の開始点です。実信号の採否は確認が必要で、最終ROA数の減少を保証するものではありません。 / Suggestions are starting points for tuning. Review real signals; fewer final ROAs are not guaranteed.
+
+検証 / Validation: 73 automated tests passed on macOS arm64, including independent process exit checks. Native macOS startup/shutdown and small-screen layout checked. Native Windows execution and real-data accuracy of the new presets remain unverified.
+
+**起動 / Start:** 新しい短い保存先（例：`C:\GLIA`）にZIP全体を展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。既存プロジェクトは`Open project`で開けます。 / Extract the entire ZIP into a fresh short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`. Reopen existing projects with `Open project`.
+
 # v0.3.0 — Professorによる処理中表示 / Professor activity indicator
 
 - 処理中は左下でProfessorのGIFが動き、`Working / 処理中`と経過時間を表示します。 / Professor animates at the bottom left while a task runs, with status and elapsed time.
