@@ -1,3 +1,16 @@
+# v0.3.0 — Professorによる処理中表示 / Professor activity indicator
+
+- 処理中は左下でProfessorのGIFが動き、`Working / 処理中`と経過時間を表示します。 / Professor animates at the bottom left while a task runs, with status and elapsed time.
+- メタデータ読込、ファイル変換、AQuA2、提案計算および出力で同じ表示を使用します。 / The indicator covers metadata reading, file conversion, AQuA2, suggestion calculation and export.
+- 中止要求後は実際の終了まで`Stopping… / 中止処理中…`を表示し、完了・中止・エラー時に停止します。 / After Cancel, `Stopping… / 中止処理中…` remains visible until the task ends; the animation stops on completion, cancellation or error.
+- ユーザーが選択したProfessorの既存アニメーションを使用します。 / Uses the existing animation from the user's selected Professor pet.
+- v0.2.3のWindows展開修正、従来の確認・選択・出力機能を含みます。 / Includes the v0.2.3 Windows extraction fix and previous review, selection and export features.
+- 日本語・英語マニュアルに動作例を追加しました。 / Adds an animation preview and screenshot to the Japanese–English manual.
+
+検証 / Validation: 42 automated tests passed on macOS arm64. Verified animation playback during a worker task, elapsed time, success, cancellation, errors, restart and the 1000×700 layout. ZIP paths remain limited to 140 UTF-16 units. Native Windows execution remains unverified.
+
+**起動 / Start:** ZIPを新しい短い保存先（例：`C:\GLIA`）に全て展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。 / Extract the entire ZIP into a new short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`.
+
 # v0.2.3 — Windows展開エラーの修正 / Windows extraction fix
 
 WindowsでZIPを展開する際の`0x80010135`（パスが長すぎる）に対応しました。 / Addresses `0x80010135` (path too long) while extracting the Windows ZIP.

@@ -13,8 +13,8 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 @media(max-width:720px){main{padding:22px 16px;margin:0;border-radius:0}h1{font-size:26px}table{font-size:12px}th,td{padding:7px}}
 @media print{body{background:white}main{border:0;margin:0;padding:0}h2,h3{break-after:avoid}tr,img{break-inside:avoid}a{color:inherit}}
 </style></head><body><main><h1 id="glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</h1>
-<p>日本語・英語併記 · バージョン 0.2.3 · 研究用プレビュー<br>
-Japanese–English · Version 0.2.3 · Research preview</p>
+<p>日本語・英語併記 · バージョン 0.3.0 · 研究用プレビュー<br>
+Japanese–English · Version 0.3.0 · Research preview</p>
 <div class="toc">
 <ul>
 <li><a href="#glia-center-atp-studio-user-manual">GLIA Center ATP Studio 操作マニュアル / User manual</a><ul>
@@ -88,6 +88,14 @@ Japanese–English · Version 0.2.3 · Research preview</p>
 </tr>
 </tbody>
 </table>
+<h3 id="professor-professor-activity-indicator">Professorの処理中表示 / Professor activity indicator</h3>
+<p><img alt="Professorの処理中アニメーション / Professor processing animation" src="screenshots/professor-working.gif" /></p>
+<p>メタデータ読込、ファイル変換、AQuA2検出、提案計算、結果出力などの処理中は、左下にProfessorのアニメーションと<code>Working / 処理中</code>、経過時間が表示されます。操作は不要です。これは処理中であることを示す表示で、残り時間や進捗率の推定ではありません。</p>
+<p>While metadata reading, conversion, AQuA2 detection, suggestion calculation or export runs, Professor animates at the bottom left with <code>Working / 処理中</code> and elapsed time. No action is needed. The animation indicates an active task; it does not estimate the remaining time or completion percentage.</p>
+<p><code>Cancel / 中止</code>を押すと<code>Stopping… / 中止処理中…</code>に変わり、実際に処理が終了するまで表示を続けます。完了・中止・エラー後はアニメーションを停止して非表示にします。</p>
+<p>Selecting <code>Cancel / 中止</code> changes the label to <code>Stopping… / 中止処理中…</code>; the indicator remains visible until the task actually ends. It stops and disappears after completion, cancellation or an error.</p>
+<p><img alt="Professorの配置例 / Example placement of Professor" src="screenshots/processing.png" /></p>
+<p>この画面は説明用で、実験データを使用していません。 / This screen is illustrative and uses no experimental data.</p>
 <h2 id="4-prepare-file-and-calibration">4. Prepare：ファイルと時空間設定 / File and calibration</h2>
 <p><img alt="準備画面の説明例 / Illustrative Prepare screen" src="screenshots/prepare.png" /></p>
 <p>上の画面例は説明用で、実験データを含みません。 / The example above is illustrative and contains no experimental data.</p>

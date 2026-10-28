@@ -10,7 +10,8 @@ def test_reported_qml_object_is_excluded_but_runtime_and_licenses_remain():
                                 + '/QmlAssetDownloaderPrivate_resources_1/.qt/rcc/'
                                 + 'qrc_qmake_Qt_labs_assetdownloader_init.cpp.obj')
     for path in ('QtWidgets.pyd', 'Qt6Widgets.dll', 'Qt6Core.dll', 'Qt6Gui.dll',
-                 'plugins/platforms/qwindows.dll', 'plugins/imageformats/qjpeg.dll'):
+                 'plugins/platforms/qwindows.dll', 'plugins/imageformats/qjpeg.dll',
+                 'plugins/imageformats/qgif.dll'):
         assert shipped_path(prefix + path)
     assert shipped_path('python/Lib/site-packages/pyside6_essentials-6.12.0.dist-info/licenses/LICENSES.json')
     assert shipped_path('runtime/jre/bin/java.exe')

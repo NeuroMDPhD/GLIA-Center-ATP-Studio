@@ -41,6 +41,7 @@ def main():
         z.write(docs/'VALIDATION.md','VALIDATION.md')
         z.write(ROOT/'THIRD_PARTY_NOTICES.txt','THIRD_PARTY_NOTICES.txt')
         for p in sorted((docs/'screenshots').glob('*.png')):z.write(p,'screenshots/'+p.name)
+        for p in sorted((docs/'screenshots').glob('*.gif')):z.write(p,'screenshots/'+p.name)
     with zipfile.ZipFile(archive) as z:assert z.testzip() is None
     digest=hashlib.sha256(archive.read_bytes()).hexdigest()
     archive.with_suffix('.zip.sha256').write_text(digest+'  '+archive.name+'\n',encoding='utf-8')

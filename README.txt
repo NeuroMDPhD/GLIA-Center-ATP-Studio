@@ -1,4 +1,4 @@
-GLIA Center ATP Studio 0.2.3 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.3.0 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
   dist/GLIA-Center-ATP-Studio-Windows-x64.zip
@@ -19,6 +19,14 @@ Help / 操作ガイド
   docs/user-guide.html (Japanese + English)
   If startup fails, a message identifies the startup.log file.
   起動に失敗した場合は、startup.logの保存先をメッセージで表示します。
+
+Processing indicator / 処理中の表示
+  Professor animates at the bottom left while a task runs, with status and elapsed time.
+  処理中は左下でProfessorが動き、状態と経過時間を表示します。
+  After Cancel, Stopping remains visible until the task ends. The animation then stops.
+  Cancel後は処理終了まで「中止処理中」を表示し、終了時にアニメーションが停止します。
+  v0.3.0 includes the shorter Windows extraction paths introduced in v0.2.3.
+  v0.3.0はv0.2.3のWindows展開パス短縮も含みます。
 
 Experiment details are optional. Uncheck Include experiment to skip them.
 実験情報は任意です。「実験情報を含める」のチェックを外すと省略できます。

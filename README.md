@@ -12,7 +12,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.3/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.3/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.3.0/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.3.0/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
 1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
@@ -21,11 +21,13 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 3. MATLAB・Fiji・Pythonの別途インストールは不要です。解析はローカルで行います。<br>
    No separate MATLAB, Fiji or Python installation is required. Analysis runs locally.
 
-**展開エラー `0x80010135` / Extraction error:** v0.2.3では未使用のQMLファイルを除外し、ZIP内の最長パスを211文字から130文字に短縮しました。以前の版でエラーが出た場合は、v0.2.3を新しい短い保存先に全て展開してください。途中まで展開したフォルダーへの上書きやファイルのスキップは避けてください。 / v0.2.3 removes unused QML files and reduces the longest ZIP path from 211 to 130 characters. If an earlier version failed, extract v0.2.3 fully into a new short destination; do not merge it into a partial extraction or skip files.
+**展開エラー `0x80010135` / Extraction error:** v0.2.3では未使用のQMLファイルを除外し、ZIP内の最長パスを211文字から130文字に短縮しました。以前の版でエラーが出た場合は、最新版を新しい短い保存先に全て展開してください。途中まで展開したフォルダーへの上書きやファイルのスキップは避けてください。 / v0.2.3 removes unused QML files and reduces the longest ZIP path from 211 to 130 characters. If an earlier version failed, extract the latest version fully into a new short destination; do not merge it into a partial extraction or skip files.
 
 **対象 / Target:** Windows 10/11 x64。研究用プレビューです。Windows実機での起動・全工程検証は未実施です。 / Research preview; native Windows startup and end-to-end execution remain unverified. See [検証状況 / Validation status](docs/VALIDATION.md).
 
 ## マニュアル / Manual
+
+**v0.3.0:** 処理中は左下でProfessorが動き、`Working / 処理中`と経過時間を表示します。中止要求後も処理が終了するまで表示し、完了・中止・エラーで停止します。v0.2.3のWindows展開修正も含みます。 / Professor animates at the bottom left while a task runs, alongside the status and elapsed time. It stays visible while cancellation is pending and stops on completion, cancellation or error. Includes the Windows extraction fix from v0.2.3.
 
 - [日本語・英語マニュアル / Japanese–English manual](docs/USER_GUIDE.md)
 - [HTML版 / HTML version](docs/user-guide.html) — ダウンロードしてブラウザーで開けます。アプリのHelpからも開けます。 / Download and open in a browser, or use Help in the app.

@@ -22,8 +22,18 @@ window.status.setText('Illustrative example / 説明用（実データではあ�
 window.show();app.processEvents()
 out=ROOT/'docs/screenshots';out.mkdir(exist_ok=True)
 assert window.grab().save(str(out/'prepare.png'))
+# The worker waits only for this illustration; no data or analysis is used.
+from threading import Event
+from PySide6 import QtTest as T
+release=Event();window.go(1)
+window.run_job(lambda job:release.wait(5),lambda result:None)
+window.status.setText('Illustrative processing state / 処理中表示の説明例（実データではありません）')
+T.QTest.qWait(350)
+assert window.grab().save(str(out/'processing.png'))
+release.set();window.worker.wait(5000);app.processEvents()
 window.close()
 print(out/'prepare.png')
+print(out/'processing.png')
 
 # Reproducible illustrative review screen: synthetic movie and events only.
 import tempfile

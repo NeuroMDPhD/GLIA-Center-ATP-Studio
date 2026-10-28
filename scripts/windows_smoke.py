@@ -62,12 +62,15 @@ def main():
     assert app.platformName() == 'windows'
     window = MainWindow()
     window.show()
+    assert window.processing.movie.isValid() and window.processing.movie.frameCount() == 6
+    window.processing.start()
     app.processEvents()
     assert window.isVisible() and window.stack.count() == 4
     report_path.parent.mkdir(parents=True, exist_ok=True)
     assert window.grab().save(str(report_path.with_suffix('.png')))
     QtCore.QTimer.singleShot(500, app.quit)
     assert app.exec() == 0
+    window.processing.stop()
     window.close()
     report = {'app_version': __version__, 'platform': sys.platform,
               'verified_file_count': len(actual), 'max_extracted_path_units': max_path,

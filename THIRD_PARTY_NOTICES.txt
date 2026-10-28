@@ -47,3 +47,9 @@ IBM Plex Sans and IBM Plex Sans JP
   University-inspired interface colors: #007bc1 and #062c54 from
   https://www.yamanashi.ac.jp/ (website theme, checked 2026-10-27).
   This styling does not assert institutional endorsement or formal brand certification.
+
+Professor progress mascot
+  User-selected custom Professor pet, supplied for inclusion in this application.
+  The existing active-work animation is converted to GIF without redrawing the artwork.
+  Original sprite sheet, GIF, conversion details and hashes: assets/professor/.
+  The pet artwork retains its original ownership and is not relicensed by this notice.

@@ -1,7 +1,7 @@
 # GLIA Center ATP Studio 操作マニュアル / User manual
 
-日本語・英語併記 · バージョン 0.2.3 · 研究用プレビュー<br>
-Japanese–English · Version 0.2.3 · Research preview
+日本語・英語併記 · バージョン 0.3.0 · 研究用プレビュー<br>
+Japanese–English · Version 0.3.0 · Research preview
 
 ## 1. はじめに / Before you begin
 
@@ -42,6 +42,22 @@ The target is **Windows 10/11 x64**. Windows ARM64 is outside the tested scope. 
 | 02 Detect / 検出 | 設定を確認し、`Run AQuA2`を押します。 / Check settings and select `Run AQuA2`. |
 | 03 Review / 確認 | 各ROAの位置と波形を見て、Keep・Exclude・Holdを選択します。 / Inspect each ROA’s location and trace; choose Keep, Exclude or Hold. |
 | 04 Export / 出力 | `Export selection`で採用ROAの結果を保存します。 / Select `Export selection` to save the kept ROAs. |
+
+### Professorの処理中表示 / Professor activity indicator
+
+![Professorの処理中アニメーション / Professor processing animation](screenshots/professor-working.gif)
+
+メタデータ読込、ファイル変換、AQuA2検出、提案計算、結果出力などの処理中は、左下にProfessorのアニメーションと`Working / 処理中`、経過時間が表示されます。操作は不要です。これは処理中であることを示す表示で、残り時間や進捗率の推定ではありません。
+
+While metadata reading, conversion, AQuA2 detection, suggestion calculation or export runs, Professor animates at the bottom left with `Working / 処理中` and elapsed time. No action is needed. The animation indicates an active task; it does not estimate the remaining time or completion percentage.
+
+`Cancel / 中止`を押すと`Stopping… / 中止処理中…`に変わり、実際に処理が終了するまで表示を続けます。完了・中止・エラー後はアニメーションを停止して非表示にします。
+
+Selecting `Cancel / 中止` changes the label to `Stopping… / 中止処理中…`; the indicator remains visible until the task actually ends. It stops and disappears after completion, cancellation or an error.
+
+![Professorの配置例 / Example placement of Professor](screenshots/processing.png)
+
+この画面は説明用で、実験データを使用していません。 / This screen is illustrative and uses no experimental data.
 
 ## 4. Prepare：ファイルと時空間設定 / File and calibration
 

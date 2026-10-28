@@ -59,7 +59,8 @@ def main():
     out = ROOT / 'dist/GLIA-Center-ATP-Studio-Windows-x64'
     required = ('python/python.exe', 'python/pythonw.exe', 'GLIA Center ATP Studio.exe',
                 'runtime/jre/bin/java.exe', 'python/Lib/site-packages/PySide6/QtWidgets.pyd',
-                'python/Lib/site-packages/PySide6/plugins/platforms/qwindows.dll')
+                'python/Lib/site-packages/PySide6/plugins/platforms/qwindows.dll',
+                'python/Lib/site-packages/PySide6/plugins/imageformats/qgif.dll')
     for name in required:
         if not (out / name).is_file():
             raise RuntimeError(f'Missing Windows runtime file: {name}')
@@ -74,13 +75,13 @@ def main():
     shutil.copytree(ROOT / 'vendor/AQuA2-Fiji', out / 'vendor/AQuA2-Fiji', dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns('.git'))
     for name in ('launch.py', 'START.bat', 'README.txt', 'README.md', 'LICENSE',
-                 'THIRD_PARTY_NOTICES.txt', 'requirements.txt', 'requirements-dev.txt', 'DEPENDENCIES.json'):
+                 'THIRD_PARTY_NOTICES.txt', 'requirements.txt', 'requirements-dev.txt', 'DEPENDENCIES.json', 'pytest.ini'):
         shutil.copy2(ROOT / name, out / name)
     p = out / 'START.bat'
     p.write_bytes(p.read_text().replace('\r\n', '\n').replace('\n', '\r\n').encode('utf-8'))
     (out / 'scripts').mkdir(exist_ok=True)
     for name in ('build_java.py', 'build_launchers.py', 'bootstrap_engine.py', 'build_manual.py',
-                 'manual_screenshot.py', 'package_windows.py', 'windows_smoke.py'):
+                 'manual_screenshot.py', 'package_windows.py', 'windows_smoke.py', 'build_professor_gif.py'):
         shutil.copy2(ROOT / 'scripts' / name, out / 'scripts' / name)
     shutil.copytree(ROOT / 'tests', out / 'tests', dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns('__pycache__'))

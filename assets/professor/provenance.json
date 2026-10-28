@@ -1,0 +1,40 @@
+{
+  "name": "Professor",
+  "source_pet_id": "pet_6abc7f9cc4188191835b7a109f4d0aa4",
+  "source": "User-selected active custom pet, downloaded through the Pets service",
+  "sprite_version": 2,
+  "source_size_px": [
+    1536,
+    2288
+  ],
+  "animation": {
+    "state": "running (active work)",
+    "row_0based": 7,
+    "columns_0based": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "frame_size_px": [
+      192,
+      208
+    ],
+    "durations_ms": [
+      120,
+      120,
+      120,
+      120,
+      120,
+      220
+    ],
+    "loop": "infinite"
+  },
+  "conversion": "Existing pixels only; shared GIF palette, binary transparency, disposal=2. No artwork redraw.",
+  "files": {
+    "source.webp": "88b73fc72b104bce11dec6e99c4146edc792178e69cf83a6fb6d6d0bffde6e4e",
+    "working.gif": "cf8fc69d3648e755318158a11825395c06be26221a0e45d2353a163840835611"
+  }
+}

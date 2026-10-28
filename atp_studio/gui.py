@@ -8,6 +8,7 @@ from scipy.ndimage import binary_erosion
 from .common import ROOT, Job, Cancelled, read_json
 from .project import Project, inspect_oir, create_project, detect, import_mat, export_selected, DEFAULT_DETECTION, applied_settings, preparation_formats
 from .branding import APP_NAME, creator_html
+from .processing import ProcessingIndicator
 from .suggestions import LABELS, DEFAULTS as SUGGESTION_DEFAULTS, cached_suggestions, build_suggestions, reason_text, validate_config
 from . import __version__
 
@@ -87,7 +88,8 @@ class MainWindow(W.QMainWindow):
         self.stack=W.QStackedWidget()
         for i,text in enumerate(['01   Prepare / 準備','02   Detect / 検出','03   Review / 確認','04   Export / 出力']):
             b=W.QPushButton(text);b.setObjectName('nav');b.setCheckable(True);b.clicked.connect(lambda checked=False,n=i:self.go(n));sl.addWidget(b);self.nav.append(b)
-        sl.addStretch();self.creator_label=label(creator_html(),'creator');self.creator_label.setOpenExternalLinks(True);sl.addWidget(self.creator_label)
+        sl.addStretch();self.processing=ProcessingIndicator();sl.addWidget(self.processing)
+        self.creator_label=label(creator_html(),'creator');self.creator_label.setOpenExternalLinks(True);sl.addWidget(self.creator_label)
         body.addWidget(sidebar);body.addWidget(self.stack,1);outer.addLayout(body,1)
         self.setup_prepare();self.setup_detect();self.setup_review();self.setup_export()
         self.progress=W.QProgressBar();self.progress.setFixedHeight(5);self.progress.setRange(0,1);self.progress.setValue(0);self.progress.setTextVisible(False);outer.addWidget(self.progress)
@@ -286,17 +288,20 @@ class MainWindow(W.QMainWindow):
         if self.worker and self.worker.isRunning():return
         self.timer.stop();self.play.setText('▶ Play / 再生');self.stack.setEnabled(False);self.open_btn.setEnabled(False);self.update_shortcuts()
         for b in self.nav:b.setEnabled(False)
-        self.progress.setRange(0,0);self.cancel_btn.setEnabled(True)
+        self.progress.setRange(0,0);self.cancel_btn.setEnabled(True);self.processing.start()
         self.worker=Worker(fn);self.worker.message.connect(self.log);self.worker.succeeded.connect(on_success);self.worker.failed.connect(self.failure);self.worker.finished.connect(self.job_finished);self.worker.start()
     def job_finished(self):
+        self.processing.stop()
         self.stack.setEnabled(True);self.open_btn.setEnabled(True)
         for b in self.nav:b.setEnabled(True)
         self.progress.setRange(0,1);self.progress.setValue(1);self.cancel_btn.setEnabled(False);self.update_shortcuts()
         if self.pending_suggestions:C.QTimer.singleShot(0,self.calculate_suggestions)
     def failure(self,message):
+        self.processing.stop()
         self.log(message);box=W.QMessageBox(self);box.setWindowTitle('Task incomplete / 処理未完了');box.setText(message.split('\n\n')[0]);box.setDetailedText(message);box.exec()
     def cancel(self):
-        if self.worker:self.worker.job.cancel.set();self.status.setText('Cancelling… / 中止しています…')
+        if self.worker and self.worker.isRunning():
+            self.worker.job.cancel.set();self.processing.request_stop();self.status.setText('Cancelling… / 中止しています…')
     def pick_oir(self):
         path,_=W.QFileDialog.getOpenFileName(self,'Choose OIR / OIRを選択',str(Path.home()),'Olympus OIR (*.oir)')
         if path:
