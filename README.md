@@ -1,5 +1,9 @@
 # GLIA Center ATP Studio
 
+<p align="center">
+  <img src="assets/glia-center-atp-studio-logo.png" alt="GLIA Center ATP Studio logo" width="720">
+</p>
+
 **OIRからATP活動の確認・定量まで / From OIR to reviewed ATP activity**
 
 **山梨大学・[山梨GLIAセンター](https://glia.yamanashi.ac.jp/)のメンバー向けに開発した解析アプリです。**
@@ -31,6 +35,7 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 | Version | 更新内容 / Changes |
 |---|---|
+| Unreleased | リポジトリにプロジェクトロゴを追加。 / Added the project logo to the repository. |
 | [v0.4.1](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.4.1) | 小さい画面で提案値・説明・ボタンが重なる問題を修正。 / Fix overlapping values, explanations and buttons on small screens. |
 | [v0.4.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.4.0) | 厳しめの検出初期値、問題別の調整提案、範囲・影響の説明、Python終了時の修正。 / Stricter defaults, problem-led recommendations, parameter ranges/effects and a Python shutdown fix. |
 | [v0.3.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.3.0) | Professorの処理中アニメーション、状態・経過時間の表示。 / Professor animation with processing status and elapsed time. |

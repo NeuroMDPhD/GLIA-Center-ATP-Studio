@@ -2,6 +2,10 @@
 
 各バージョンの機能追加・改善・不具合修正を記載します。 / Features, improvements and fixes for each version.
 
+## 未リリース / Unreleased
+
+- READMEにプロジェクトロゴを追加しました。 / Added the project logo to the README.
+
 ## v0.4.1 — 小さい画面の表示修正 / Small-screen layout fix
 
 ### 更新内容 / Changes
