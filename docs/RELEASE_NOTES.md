@@ -1,3 +1,18 @@
+# v0.2.3 — Windows展開エラーの修正 / Windows extraction fix
+
+WindowsでZIPを展開する際の`0x80010135`（パスが長すぎる）に対応しました。 / Addresses `0x80010135` (path too long) while extracting the Windows ZIP.
+
+- 未使用のQt QMLファイルを配布から除外し、内部フォルダー名を`GLIA-ATP`に短縮しました。最長パスは211文字から130文字です。 / Removes unused Qt QML files and shortens the internal folder name to `GLIA-ATP`, reducing the longest archive path from 211 to 130 characters.
+- Qt Widgets、Windowsプラグイン、Python、Java、解析ライブラリーおよびライセンスを保持します。 / Retains Qt Widgets, Windows plugins, Python, Java, analysis libraries and licenses.
+- 配布時のパス長検査を追加しました。 / Adds path-length regression checks during packaging.
+- 検出パラメーター・測定値の計算・保存済みプロジェクト形式は変更していません。 / Detection parameters, measurement calculations and saved project formats are unchanged.
+
+**起動 / Start:** ZIPを新しい短い保存先（例：`C:\GLIA`）に全て展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックしてください。旧版の途中まで展開したフォルダーに重ねず、ファイルをスキップしないでください。 / Extract the complete ZIP into a new short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`. Do not merge it into a partially extracted older copy or skip files.
+
+既存の解析プロジェクトは保持し、新版の`Open project`から再開できます。 / Preserve existing analysis projects and resume them with `Open project` in the new version.
+
+検証 / Validation: 37 automated tests passed on macOS arm64. ZIP integrity, extracted file hashes and path lengths checked locally. Native Windows startup and end-to-end execution remain unverified.
+
 # v0.2.2 — 制作者表示 / Creator attribution
 
 左下とAboutの制作者欄を次の英語3行に統一しました。 / The sidebar and About use the same three-line English attribution:

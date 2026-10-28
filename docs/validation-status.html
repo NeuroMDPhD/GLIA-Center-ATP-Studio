@@ -13,7 +13,7 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 @media(max-width:720px){main{padding:22px 16px;margin:0;border-radius:0}h1{font-size:26px}table{font-size:12px}th,td{padding:7px}}
 @media print{body{background:white}main{border:0;margin:0;padding:0}h2,h3{break-after:avoid}tr,img{break-inside:avoid}a{color:inherit}}
 </style></head><body><main><h1 id="validation-status">検証状況 / Validation status</h1>
-<p>2026-10-27 · GLIA Center ATP Studio 0.2.2</p>
+<p>2026-10-28 · GLIA Center ATP Studio 0.2.3</p>
 <table>
 <thead>
 <tr>
@@ -28,7 +28,7 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 </tr>
 <tr>
 <td>自動検査 / Automated tests</td>
-<td>33件成功：校正、単位、打切り、既知の減衰、座標、入力照合、採否保存、空出力、実験情報の省略など。 / 33 passing tests covering calibration, units, censoring, known decay, coordinates, input matching, review persistence, empty selection and experiment opt-out.</td>
+<td>37件成功：従来の機能検査33件とWindows配布の回帰検査4件。 / 37 passing tests: the existing 33 functional checks plus 4 Windows packaging regression checks.</td>
 </tr>
 <tr>
 <td>Windowsパッケージ / Windows package</td>
@@ -36,7 +36,7 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 </tr>
 <tr>
 <td>Windows実機 / Native Windows</td>
-<td><strong>未検証 / Not yet executed or verified.</strong></td>
+<td><strong>未検証 / Not yet executed or verified.</strong> ローカルのZIP検証とは区別します。 / Separate from local ZIP validation.</td>
 </tr>
 <tr>
 <td>Java版とMATLAB版の同等性 / Java–MATLAB equivalence</td>
@@ -58,4 +58,11 @@ img{max-width:100%;height:auto;border:1px solid #dbe5e1;border-radius:8px}li{mar
 <li>OIRフォルダーの自動設定、別保存先、再実行時の既存ファイル保持、ファイル衝突・中止時の後処理、外部出力なしでのプロジェクト再開を確認。 / Verified automatic OIR-folder selection, custom destinations, preservation on repeated runs, collision/cancellation cleanup and reopening without external derivatives.</li>
 </ul>
 <h2 id="v022-v022-checks">v0.2.2の確認 / v0.2.2 checks</h2>
-<p>制作者欄を英語3行に簡略化し、画面とAboutの表示を確認しました。機能検査33件はv0.2.1で実施済みです。 / Verified the simplified three-line English attribution in the sidebar and About. The 33 functional tests were last run for v0.2.1.</p></main></body></html>
+<p>制作者欄を英語3行に簡略化し、画面とAboutの表示を確認しました。機能検査33件はv0.2.1で実施済みです。 / Verified the simplified three-line English attribution in the sidebar and About. The 33 functional tests were last run for v0.2.1.</p>
+<h2 id="v023-v023-checks">v0.2.3の確認 / v0.2.3 checks</h2>
+<ul>
+<li>Windowsの展開エラー<code>0x80010135</code>で報告された<code>qrc_qmake_Qt_labs_assetdownloader_init.cpp.obj</code>を旧配布物内で特定。未使用の<code>PySide6/qml/</code>を除外し、ZIPルートを<code>GLIA-ATP</code>に短縮しました。 / Located the exact object file reported in the Windows extraction error in the previous release. Excluded unused <code>PySide6/qml/</code> assets and shortened the archive root to <code>GLIA-ATP</code>.</li>
+<li>ZIP内の最長パスは211文字から130文字へ短縮。140 UTF-16単位を超えるパスをビルド時に拒否します。 / Longest archive path reduced from 211 to 130 characters; the build rejects paths over 140 UTF-16 code units.</li>
+<li>全37件の自動検査がmacOS arm64で成功しました。検出パラメーター、エンジン、定量式は変更していません。 / All 37 automated checks passed on macOS arm64. Detection parameters, engine and measurement formulas are unchanged.</li>
+<li>日本語・空白を含む一般的なWindows展開先を想定した全パスの長さ、ZIP整合性、ローカル展開後の全ファイルハッシュを確認しました。GitHubの認証にworkflow権限がないため、Windows自動実行は行っていません。 / Checked all path lengths against a representative Windows destination containing Japanese and spaces, ZIP integrity, and every file hash after local extraction. Native Windows automation was not run because the available GitHub authentication lacks workflow permission.</li>
+</ul></main></body></html>

@@ -1,9 +1,9 @@
-GLIA Center ATP Studio 0.2.2 — Research preview / 研究用プレビュー
+GLIA Center ATP Studio 0.2.3 — Research preview / 研究用プレビュー
 
 Windows portable package / Windowsポータブル版
   dist/GLIA-Center-ATP-Studio-Windows-x64.zip
-  Extract the whole archive, then double-click GLIA Center ATP Studio.exe (GLIA logo).
-  ZIP全体を展開し、GLIAロゴのGLIA Center ATP Studio.exeをダブルクリックしてください。
+  Extract All to a short destination such as C:\GLIA, open GLIA-ATP, then double-click GLIA Center ATP Studio.exe.
+  「すべて展開」でC:\GLIAなどの短い保存先を指定し、GLIA-ATP内のGLIA Center ATP Studio.exeをダブルクリックしてください。
   Keep the executable with its accompanying folders; no setup or commands are needed.
   実行ファイルを同梱フォルダーと一緒に保存してください。セットアップやコマンド入力は不要です。
   MATLAB, Fiji and Python installations are not required.
@@ -28,8 +28,14 @@ Flow / 手順
   OIR情報・時空間設定 → ファイル変換 → AQuA2 → ROA確認 → 採用結果の出力
 
 Verification / 検証
-  See docs/validation-status.html. Native Windows execution has not yet been verified.
-  docs/validation-status.htmlを参照。Windows実機での動作確認は未実施です。
+  See docs/validation-status.html. Native Windows startup and end-to-end execution remain unverified.
+  docs/validation-status.htmlを参照。Windows実機での起動・全工程検証は未実施です。
+
+Extraction error 0x80010135 / 展開エラー
+  Use v0.2.3 or later, and extract fully into a new short destination such as C:\GLIA.
+  v0.2.3以降を新しい短い保存先（例：C:\GLIA）に全て展開してください。
+  Do not skip files or merge with a partly extracted older version. Existing analysis projects can be opened separately.
+  ファイルをスキップせず、途中まで展開した旧版と混在させないでください。既存の解析プロジェクトは別途開けます。
 
 Original recordings, prior analyses and local QA projects are not included in the distribution.
 実験原本・既存解析・ローカル検証プロジェクトは配布物に含めていません。

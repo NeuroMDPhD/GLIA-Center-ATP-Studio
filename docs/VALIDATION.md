@@ -1,13 +1,13 @@
 # 検証状況 / Validation status
 
-2026-10-27 · GLIA Center ATP Studio 0.2.2
+2026-10-28 · GLIA Center ATP Studio 0.2.3
 
 | 項目 / Item | 状況 / Status |
 |---|---|
 | macOS arm64での機能検証 / Functional verification on macOS arm64 | 実OIRの情報読込・画素変換・AQuA2実行・MAT読込・ROA確認・結果出力を確認。 / Real OIR metadata, pixel conversion, AQuA2 execution, MAT import, review and export verified. |
-| 自動検査 / Automated tests | 33件成功：校正、単位、打切り、既知の減衰、座標、入力照合、採否保存、空出力、実験情報の省略など。 / 33 passing tests covering calibration, units, censoring, known decay, coordinates, input matching, review persistence, empty selection and experiment opt-out. |
+| 自動検査 / Automated tests | 37件成功：従来の機能検査33件とWindows配布の回帰検査4件。 / 37 passing tests: the existing 33 functional checks plus 4 Windows packaging regression checks. |
 | Windowsパッケージ / Windows package | x64の実行環境・Java・依存ライブラリーを同梱。ハッシュ・ZIP整合性・GUIランチャー・ロゴを静的確認。 / x64 runtime, Java and dependencies bundled; hashes, ZIP integrity, GUI launcher and icon statically checked. |
-| Windows実機 / Native Windows | **未検証 / Not yet executed or verified.** |
+| Windows実機 / Native Windows | **未検証 / Not yet executed or verified.** ローカルのZIP検証とは区別します。 / Separate from local ZIP validation. |
 | Java版とMATLAB版の同等性 / Java–MATLAB equivalence | **未確立 / Not established.** 前処理・エンジン版を揃えたベンチマークが必要。 / Requires a harmonized benchmark with matching preprocessing and engine versions. |
 
 実験原本、既存解析、ローカル検証プロジェクトおよび実データの画面画像は公開リポジトリに含めません。マニュアルの説明画面は実験結果ではありません。
@@ -28,3 +28,10 @@ Original recordings, prior analyses, local QA projects and screenshots of real d
 ## v0.2.2の確認 / v0.2.2 checks
 
 制作者欄を英語3行に簡略化し、画面とAboutの表示を確認しました。機能検査33件はv0.2.1で実施済みです。 / Verified the simplified three-line English attribution in the sidebar and About. The 33 functional tests were last run for v0.2.1.
+
+## v0.2.3の確認 / v0.2.3 checks
+
+- Windowsの展開エラー`0x80010135`で報告された`qrc_qmake_Qt_labs_assetdownloader_init.cpp.obj`を旧配布物内で特定。未使用の`PySide6/qml/`を除外し、ZIPルートを`GLIA-ATP`に短縮しました。 / Located the exact object file reported in the Windows extraction error in the previous release. Excluded unused `PySide6/qml/` assets and shortened the archive root to `GLIA-ATP`.
+- ZIP内の最長パスは211文字から130文字へ短縮。140 UTF-16単位を超えるパスをビルド時に拒否します。 / Longest archive path reduced from 211 to 130 characters; the build rejects paths over 140 UTF-16 code units.
+- 全37件の自動検査がmacOS arm64で成功しました。検出パラメーター、エンジン、定量式は変更していません。 / All 37 automated checks passed on macOS arm64. Detection parameters, engine and measurement formulas are unchanged.
+- 日本語・空白を含む一般的なWindows展開先を想定した全パスの長さ、ZIP整合性、ローカル展開後の全ファイルハッシュを確認しました。GitHubの認証にworkflow権限がないため、Windows自動実行は行っていません。 / Checked all path lengths against a representative Windows destination containing Japanese and spaces, ZIP integrity, and every file hash after local extraction. Native Windows automation was not run because the available GitHub authentication lacks workflow permission.

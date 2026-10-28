@@ -1,7 +1,7 @@
 # GLIA Center ATP Studio 操作マニュアル / User manual
 
-日本語・英語併記 · バージョン 0.2.2 · 研究用プレビュー<br>
-Japanese–English · Version 0.2.2 · Research preview
+日本語・英語併記 · バージョン 0.2.3 · 研究用プレビュー<br>
+Japanese–English · Version 0.2.3 · Research preview
 
 ## 1. はじめに / Before you begin
 
@@ -17,10 +17,10 @@ The workflow is **Prepare → Detect → Review → Export**. Outputs go into a 
 
 1. GitHubの **[Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from **[Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)** on GitHub.
-2. ZIPを右クリックし、**すべて展開**を選びます。例：`C:\ATPStudio`。<br>
-   Right-click the ZIP and choose **Extract All**, for example into `C:\ATPStudio`.
-3. 展開したフォルダー内のGLIAロゴ付き **`GLIA Center ATP Studio.exe`** をダブルクリックします。<br>
-   Double-click **`GLIA Center ATP Studio.exe`** with the GLIA logo inside the extracted folder.
+2. ZIPを右クリックし、**すべて展開**を選びます。展開先は短いパス（例：`C:\GLIA`）を指定します。<br>
+   Right-click the ZIP and choose **Extract All**. Use a short destination such as `C:\GLIA`.
+3. 展開された`GLIA-ATP`フォルダー内のGLIAロゴ付き **`GLIA Center ATP Studio.exe`** をダブルクリックします。例：`C:\GLIA\GLIA-ATP\GLIA Center ATP Studio.exe`。<br>
+   Open the extracted `GLIA-ATP` folder and double-click **`GLIA Center ATP Studio.exe`** with the GLIA logo, for example `C:\GLIA\GLIA-ATP\GLIA Center ATP Studio.exe`.
 4. 実行ファイルだけを移動せず、`python`、`runtime`、`assets`などの同梱フォルダーを一緒に保持します。<br>
    Keep accompanying folders such as `python`, `runtime` and `assets` together with the executable.
 
@@ -28,9 +28,9 @@ MATLAB・Fiji・Python・Javaの別途インストールは不要です。通常
 
 No separate MATLAB, Fiji, Python or Java installation is required. Normal use needs no commands. GitHub’s automatically generated “Source code” ZIP is for developers and does not include the runtime.
 
-対象は **Windows 10/11 x64** です。Windows ARM64は検証対象に含みません。512×512画素・720フレーム程度では32 GB RAMを目安にし、検出時のメモリ上限は使用可能なRAMより低くします。現時点ではWindows実機での起動・全工程検証が未実施です。[検証状況](VALIDATION.md)を確認してください。
+対象は **Windows 10/11 x64** です。Windows ARM64は検証対象に含みません。512×512画素・720フレーム程度では32 GB RAMを目安にし、検出時のメモリ上限は使用可能なRAMより低くします。Windows実機での起動・全工程検証は未実施です。[検証状況](VALIDATION.md)を確認してください。
 
-The target is **Windows 10/11 x64**. Windows ARM64 is outside the tested scope. For recordings near 512×512 pixels and 720 frames, 32 GB RAM is a practical starting point; set the detection memory limit below available RAM. Native Windows startup and end-to-end verification are still pending. See [Validation status](VALIDATION.md).
+The target is **Windows 10/11 x64**. Windows ARM64 is outside the tested scope. For recordings near 512×512 pixels and 720 frames, 32 GB RAM is a practical starting point; set the detection memory limit below available RAM. Native Windows startup and end-to-end verification remain pending. See [Validation status](VALIDATION.md).
 
 ## 3. 最短手順 / Quick start
 
@@ -297,6 +297,7 @@ Use `Open project` and select `project.json` inside the project folder. Review s
 | 状況 / Symptom | 対処 / Action |
 |---|---|
 | 起動しない / App does not open | ZIP全体を展開したか、実行ファイルと同梱フォルダーが一緒か確認します。表示された起動ログの場所を確認します。 / Verify full extraction and keep bundled folders beside the executable. Check the startup-log location shown in any error message. |
+| 展開エラー `0x80010135`・パスが長すぎる / Path too long while extracting | v0.2.3以降をダウンロードし、新しい短い展開先（例：`C:\GLIA`）に全て展開します。旧版の途中まで展開したフォルダーと混在させず、ファイルをスキップしないでください。既存の解析プロジェクトは削除せず、起動後に`Open project`で開きます。 / Download v0.2.3 or later and extract fully into a new short destination such as `C:\GLIA`. Do not merge with a partly extracted old version or skip files. Preserve existing analysis projects and reopen them with `Open project`. |
 | Interval・Pixelが0 / Calibration is 0 | OIRから取得できていません。撮影記録を確認し正しい値を入力します。 / Metadata was unavailable; enter correct values from acquisition records. |
 | 違うチャネルに見える / Wrong channel appears selected | 撮影時のチャネル割り当てを確認し、選択後にRead metadataを押します。 / Check acquisition channel assignments and press Read metadata after changing the selection. |
 | 分割OIRを開けない / Split OIR cannot be read | マスターと補助ファイルを同じ場所に置き、マスターを選びます。 / Keep the master and companion files together and select the master. |

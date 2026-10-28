@@ -67,6 +67,10 @@ python scripts/package_windows.py
 
 `package_windows.py` requires the runtimes to be staged first; it does not download the Windows runtimes automatically. Their sources and checksums are recorded in the distribution’s `RUNTIME_SOURCES.json`.
 
+ZIP内のルート名は`GLIA-ATP`です。このアプリはQt Widgetsを使用するため、未使用の`PySide6/qml/`を配布対象から除外します。元のステージング環境は保持します。WidgetsのDLL・Windowsプラグイン・ライセンスは同梱します。ZIP内のパスがUTF-16で140単位を超えるとビルドを停止します。 / The ZIP root is `GLIA-ATP`. This Qt Widgets app omits unused `PySide6/qml/` assets from the release while preserving the original staging tree. Widgets DLLs, Windows plugins and licenses remain included. Packaging fails if an archive path exceeds 140 UTF-16 code units.
+
+Windows検査用の`python\python.exe scripts\windows_smoke.py C:\GLIA-check\report.json`を配布ルートから実行できます。全ファイルのハッシュ、合成画素の入出力、同梱GUI、JavaおよびFFmpegを確認し、結果と起動画面を保存します。この検査はWindows実機では未実施です。研究データは使用しません。 / A developer can run `python\python.exe scripts\windows_smoke.py C:\GLIA-check\report.json` from the extracted app root on Windows. It checks every file hash, synthetic pixel I/O, the bundled GUI, Java and FFmpeg, then saves a report and startup screenshot. This native Windows check has not yet been executed. No research data is used.
+
 macOSの`--mac`オプションは、そのMacの`.venv`を起動するローカル`.app`を作ります。別のMacへそのまま配れる独立した配布版ではありません。
 
 The `--mac` option creates a local `.app` launcher using that Mac’s `.venv`. It is not a standalone distribution for other Macs.

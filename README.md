@@ -12,16 +12,18 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 ## ダウンロードと起動 / Download and start
 
-[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.2/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.2/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
+[Windowsアプリ / Windows app](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.3/GLIA-Center-ATP-Studio-Windows-x64.zip) · [マニュアルZIP / Manual ZIP](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/download/v0.2.3/GLIA-Center-ATP-Studio-Manual-JA-EN.zip) · [Releases](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases)
 
 1. このリポジトリの **Releases** から `GLIA-Center-ATP-Studio-Windows-x64.zip` をダウンロードします。GitHubの「Source code」ZIPは実行パッケージではありません。<br>
    Download `GLIA-Center-ATP-Studio-Windows-x64.zip` from this repository’s **Releases**. GitHub’s automatic “Source code” ZIP is not the ready-to-run app.
-2. ZIP全体を展開し、GLIAロゴの **`GLIA Center ATP Studio.exe`** をダブルクリックします。実行ファイルと同梱フォルダーを一緒に保持してください。<br>
-   Extract the entire ZIP, then double-click **`GLIA Center ATP Studio.exe`** with the GLIA logo. Keep the executable and accompanying folders together.
+2. ZIPを右クリックして「すべて展開」を選び、展開先に短いパス（例：`C:\GLIA`）を指定します。展開された`GLIA-ATP`フォルダー内の **`GLIA Center ATP Studio.exe`** をダブルクリックします。実行ファイルと同梱フォルダーを一緒に保持してください。<br>
+   Right-click the ZIP, choose **Extract All**, and use a short destination such as `C:\GLIA`. Open the extracted `GLIA-ATP` folder and double-click **`GLIA Center ATP Studio.exe`**. Keep the executable and accompanying folders together.
 3. MATLAB・Fiji・Pythonの別途インストールは不要です。解析はローカルで行います。<br>
    No separate MATLAB, Fiji or Python installation is required. Analysis runs locally.
 
-**対象 / Target:** Windows 10/11 x64。研究用プレビューです。Windows実機検証は未実施です。 / Research preview; native Windows execution has not yet been verified. See [検証状況 / Validation status](docs/VALIDATION.md).
+**展開エラー `0x80010135` / Extraction error:** v0.2.3では未使用のQMLファイルを除外し、ZIP内の最長パスを211文字から130文字に短縮しました。以前の版でエラーが出た場合は、v0.2.3を新しい短い保存先に全て展開してください。途中まで展開したフォルダーへの上書きやファイルのスキップは避けてください。 / v0.2.3 removes unused QML files and reduces the longest ZIP path from 211 to 130 characters. If an earlier version failed, extract v0.2.3 fully into a new short destination; do not merge it into a partial extraction or skip files.
+
+**対象 / Target:** Windows 10/11 x64。研究用プレビューです。Windows実機での起動・全工程検証は未実施です。 / Research preview; native Windows startup and end-to-end execution remain unverified. See [検証状況 / Validation status](docs/VALIDATION.md).
 
 ## マニュアル / Manual
 
