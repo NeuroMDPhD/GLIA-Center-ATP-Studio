@@ -80,3 +80,13 @@ The `--mac` option creates a local `.app` launcher using that Mac’s `.venv`. I
 原本OIR/OIB/MAT、プロジェクト、実データの画像、ログ、ローカル検証フォルダー、個別環境パス、認証情報は公開しません。アプリソースと資料はGit、実行パッケージと独立マニュアルはGitHub Releasesで管理します。
 
 Exclude original OIR/OIB/MAT files, projects, real-data images, logs, local QA folders, machine-specific paths and credentials. Keep application sources and documentation in Git; distribute executable packages and the standalone manual through GitHub Releases.
+
+## リリースの更新履歴 / Release changelog
+
+各バージョンの公開時には、次を更新します。 / For every version:
+
+1. `docs/RELEASE_NOTES.md`に、その版で追加・改善・修正したユーザー向けの動作を日本語・英語で記載します。色・フォントなどのデザイン選択は更新内容に含めません。 / Document user-facing additions, improvements and fixes in Japanese and English. Omit design-choice commentary such as colors and fonts.
+2. `README.md`の更新履歴に、バージョン・主な変更・Releaseへのリンクを追加します。 / Add the version, main changes and release link to the README history.
+3. GitHub Releaseにも同じ版の変更内容を掲載し、検証結果は実施した範囲だけを記載します。 / Publish the corresponding notes on GitHub Releases and report only verification actually performed.
+
+第三者コンポーネントの著作権・ライセンス表示は保持します。 / Retain third-party copyright and license notices.

@@ -1,4 +1,10 @@
-# v0.4.1 — 小さい画面の表示修正 / Small-screen layout fix
+# 更新履歴 / Release notes
+
+各バージョンの機能追加・改善・不具合修正を記載します。 / Features, improvements and fixes for each version.
+
+## v0.4.1 — 小さい画面の表示修正 / Small-screen layout fix
+
+### 更新内容 / Changes
 
 小さい画面でも検出の提案値・説明・適用ボタンが重ならないよう、タブの高さを自動調整します。 / Automatically sizes Detect tabs so suggested values, explanations and buttons do not overlap on smaller displays.
 
@@ -8,7 +14,9 @@ v0.4.0の厳しめの初期値（活動閾値3.5・面積30画素・持続6フ�
 
 **起動 / Start:** ZIP全体を新しい短い保存先（例：`C:\GLIA`）に展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。 / Extract the complete ZIP into a fresh short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`.
 
-# v0.4.0 — 検出調整ガイドと厳しめの初期値 / Guided detection and stricter defaults
+## v0.4.0 — 検出調整ガイドと厳しめの初期値 / Guided detection and stricter defaults
+
+### 更新内容 / Changes
 
 - 活動閾値3.0→3.5、最小面積20→30画素、最小持続5→6フレーム、シード有意性3.5→4.0。 / Activity threshold 3.0→3.5, minimum area 20→30 pixels, minimum duration 5→6 frames and seed significance 3.5→4.0.
 - 問題の選択・英語/日本語キーワード入力から、一つの値の小幅な調整を提案します。適用前に値と影響を確認し、Undoで戻せます。 / Select a problem or search with English/Japanese keywords to preview a small adjustment to one parameter, apply it and undo it.
@@ -23,12 +31,13 @@ v0.4.0の厳しめの初期値（活動閾値3.5・面積30画素・持続6フ�
 
 **起動 / Start:** 新しい短い保存先（例：`C:\GLIA`）にZIP全体を展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。既存プロジェクトは`Open project`で開けます。 / Extract the entire ZIP into a fresh short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`. Reopen existing projects with `Open project`.
 
-# v0.3.0 — Professorによる処理中表示 / Professor activity indicator
+## v0.3.0 — Professorによる処理中表示 / Professor activity indicator
+
+### 更新内容 / Changes
 
 - 処理中は左下でProfessorのGIFが動き、`Working / 処理中`と経過時間を表示します。 / Professor animates at the bottom left while a task runs, with status and elapsed time.
 - メタデータ読込、ファイル変換、AQuA2、提案計算および出力で同じ表示を使用します。 / The indicator covers metadata reading, file conversion, AQuA2, suggestion calculation and export.
 - 中止要求後は実際の終了まで`Stopping… / 中止処理中…`を表示し、完了・中止・エラー時に停止します。 / After Cancel, `Stopping… / 中止処理中…` remains visible until the task ends; the animation stops on completion, cancellation or error.
-- ユーザーが選択したProfessorの既存アニメーションを使用します。 / Uses the existing animation from the user's selected Professor pet.
 - v0.2.3のWindows展開修正、従来の確認・選択・出力機能を含みます。 / Includes the v0.2.3 Windows extraction fix and previous review, selection and export features.
 - 日本語・英語マニュアルに動作例を追加しました。 / Adds an animation preview and screenshot to the Japanese–English manual.
 
@@ -36,7 +45,9 @@ v0.4.0の厳しめの初期値（活動閾値3.5・面積30画素・持続6フ�
 
 **起動 / Start:** ZIPを新しい短い保存先（例：`C:\GLIA`）に全て展開し、`GLIA-ATP`内の`GLIA Center ATP Studio.exe`をダブルクリックします。 / Extract the entire ZIP into a new short destination such as `C:\GLIA`, then double-click `GLIA Center ATP Studio.exe` inside `GLIA-ATP`.
 
-# v0.2.3 — Windows展開エラーの修正 / Windows extraction fix
+## v0.2.3 — Windows展開エラーの修正 / Windows extraction fix
+
+### 更新内容 / Changes
 
 WindowsでZIPを展開する際の`0x80010135`（パスが長すぎる）に対応しました。 / Addresses `0x80010135` (path too long) while extracting the Windows ZIP.
 
@@ -51,7 +62,9 @@ WindowsでZIPを展開する際の`0x80010135`（パスが長すぎる）に対�
 
 検証 / Validation: 37 automated tests passed on macOS arm64. ZIP integrity, extracted file hashes and path lengths checked locally. Native Windows startup and end-to-end execution remain unverified.
 
-# v0.2.2 — 制作者表示 / Creator attribution
+## v0.2.2 — 制作者表示 / Creator attribution
+
+### 更新内容 / Changes
 
 左下とAboutの制作者欄を次の英語3行に統一しました。 / The sidebar and About use the same three-line English attribution:
 
@@ -63,7 +76,9 @@ medic@khu.ac.kr
 
 ---
 
-# v0.2.1 — 出力形式の選択 / Choose preparation outputs
+## v0.2.1 — 出力形式の選択 / Choose preparation outputs
+
+### 更新内容 / Changes
 
 OIR選択時に同じフォルダーを初期保存先とし、MP4・TIFF・CSV・PNGをそれぞれ選択できるようになりました。
 
@@ -80,7 +95,9 @@ ZIP全体を展開して `GLIA Center ATP Studio.exe` をダブルクリック�
 
 ---
 
-# v0.2.0 — GLIA Center ATP Studio
+## v0.2.0 — GLIA Center ATP Studio
+
+### 更新内容 / Changes
 
 全視野・ROA拡大像・波形を比較しながら、根拠付きの提案とキーボードで効率的に確認できるようになりました。
 
@@ -89,7 +106,7 @@ Review ROAs with synchronized full-field and close-up views, explainable suggest
 - 全視野＋拡大像、波形下の再生バー。 / Full-field and close-up views; playback below the trace.
 - 信号候補・要確認・ノイズ疑いと根拠、調整可能な基準、出力への保存。 / Signal-candidate, check and noise-like suggestions with reasons, adjustable thresholds and export snapshots.
 - Shift複数選択、A/Enter採用、R/Delete除外、H保留、Uリセット、Ctrl/Cmd+Zで直前の操作を戻す。 / Shift selection, A/Enter Keep, R/Delete Exclude, H Hold, U Reset and Ctrl/Cmd+Z Undo.
-- GLIA Center ATP Studioへ改名。大学サイトを参考に青・紺へ変更し、IBM Plex Sans / JPを同梱。制作者・連絡先を左下に表示。 / Renamed to GLIA Center ATP Studio, with university-inspired blue/navy colors, bundled IBM Plex Sans / JP, and creator/contact at bottom left.
+- GLIA Center ATP Studioへ改名し、制作者・連絡先を左下に表示。 / Renamed to GLIA Center ATP Studio and added creator/contact information at bottom left.
 
 `GLIA-Center-ATP-Studio-Windows-x64.zip`を全て展開し、`GLIA Center ATP Studio.exe`をダブルクリックします。 / Extract the full Windows ZIP and double-click `GLIA Center ATP Studio.exe`.
 
@@ -97,9 +114,13 @@ Review ROAs with synchronized full-field and close-up views, explainable suggest
 
 既存のプロジェクトを開けます。提案は人による確認の補助で、検証済みATP分類器ではありません。Windows実機での実行検証は未実施です。 / Existing projects remain compatible. Suggestions assist human review and are not a validated ATP classifier. Native Windows execution has not yet been verified.
 
+検証 / Validation: 22 automated tests passed on macOS arm64. Native Windows execution remains unverified.
+
 ---
 
-# v0.1.0 — 研究用プレビュー / Research preview
+## v0.1.0 — 研究用プレビュー / Research preview
+
+### 更新内容 / Changes
 
 OIR選択から、時空間設定、AQuA2検出、ROA確認、採用結果の出力までをまとめた日本語・英語対応アプリです。
 

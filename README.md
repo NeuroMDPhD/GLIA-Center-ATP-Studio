@@ -25,9 +25,22 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 
 **対象 / Target:** Windows 10/11 x64。研究用プレビューです。Windows実機での起動・全工程検証は未実施です。 / Research preview; native Windows startup and end-to-end execution remain unverified. See [検証状況 / Validation status](docs/VALIDATION.md).
 
-## マニュアル / Manual
+## 更新履歴 / Version history
 
-**v0.4.1:** 初期値を厳しくし、問題の選択・キーワード入力による調整ガイド、値の範囲と増減の影響、適用・Undoを追加しました。終了時のGUI解放も修正しました。Professorの処理中表示とWindows展開修正を含みます。 / Stricter defaults, problem selection or keyword search, parameter ranges and effects, preview/apply/undo, and safer GUI shutdown. Includes the Professor activity indicator and Windows extraction fix.
+[各バージョンの詳しい変更内容 / Detailed release notes](docs/RELEASE_NOTES.md)
+
+| Version | 更新内容 / Changes |
+|---|---|
+| [v0.4.1](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.4.1) | 小さい画面で提案値・説明・ボタンが重なる問題を修正。 / Fix overlapping values, explanations and buttons on small screens. |
+| [v0.4.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.4.0) | 厳しめの検出初期値、問題別の調整提案、範囲・影響の説明、Python終了時の修正。 / Stricter defaults, problem-led recommendations, parameter ranges/effects and a Python shutdown fix. |
+| [v0.3.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.3.0) | Professorの処理中アニメーション、状態・経過時間の表示。 / Professor animation with processing status and elapsed time. |
+| [v0.2.3](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.2.3) | Windows展開エラー0x80010135に対応。 / Fix Windows extraction error 0x80010135. |
+| [v0.2.2](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.2.2) | 制作者・問い合わせ先の表示を統一。 / Consistent creator and contact information. |
+| [v0.2.1](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.2.1) | MP4・TIFF・CSV・PNGの個別選択と、OIRフォルダーへの保存。 / Independent MP4/TIFF/CSV/PNG selection and saving beside the OIR. |
+| [v0.2.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.2.0) | 全視野と拡大像、ROA確認の提案、Shift選択、キーボード採否、Undo。 / Full-field and close-up views, review suggestions, Shift selection, keyboard decisions and undo. |
+| [v0.1.0](https://github.com/NeuroMDPhD/GLIA-Center-ATP-Studio/releases/tag/v0.1.0) | OIR読込からAQuA2検出、ROA確認、定量結果出力までの初回公開。 / First release: OIR import, AQuA2 detection, ROA review and quantitative export. |
+
+## マニュアル / Manual
 
 - [日本語・英語マニュアル / Japanese–English manual](docs/USER_GUIDE.md)
 - [HTML版 / HTML version](docs/user-guide.html) — ダウンロードしてブラウザーで開けます。アプリのHelpからも開けます。 / Download and open in a browser, or use Help in the app.
@@ -46,7 +59,6 @@ A desktop analysis app for Windows. Read OIR spatial and temporal metadata, dete
 - 全視野とROA拡大像を同時に表示し、波形下のバーで再生します。 / View the full field and selected ROA side by side; playback is below the trace.
 - 根拠付きの信号候補・要確認・ノイズ疑いの提案を表示します。最終判断はユーザーが行います。 / Explainable signal-candidate, check and noise-like suggestions support human review.
 - Shiftで範囲選択し、A/Enter（採用）、R/Delete（除外）、H（保留）で一括確認できます。 / Shift-select rows and review them together with A/Enter (Keep), R/Delete (Exclude) or H (Hold).
-- 山梨大学サイトに基づく青・紺色と、同梱のIBM Plex Sans / JPフォントを使用します。 / Blue and navy styling follows the university website, with bundled IBM Plex Sans / JP fonts.
 - 面積、ピーク、持続時間、AUC、FWHM、上昇・下降時間、減衰τなどを出力します。 / Export area, peak, duration, AUC, FWHM, rise/fall times and decay τ.
 - 原本を保持し、解析設定と確認履歴を保存します。 / Preserve source files and save analysis settings and review history.
 

@@ -44,9 +44,6 @@ IBM Plex Sans and IBM Plex Sans JP
   https://github.com/IBM/plex
   Copyright IBM Corp. Licensed under the SIL Open Font License 1.1.
   Bundled unmodified fonts, license and source hashes: assets/fonts/.
-  University-inspired interface colors: #007bc1 and #062c54 from
-  https://www.yamanashi.ac.jp/ (website theme, checked 2026-10-27).
-  This styling does not assert institutional endorsement or formal brand certification.
 
 Professor progress mascot
   User-selected custom Professor pet, supplied for inclusion in this application.
